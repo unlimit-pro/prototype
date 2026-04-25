@@ -1,0 +1,1985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unlimit.pro - Intelligent System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background-color: #ffffff;
+            color: #1a1a1a;
+            line-height: 1.5;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* ==================== SIDEBAR ==================== */
+        .sidebar {
+            width: 60px;
+            background-color: #ffffff;
+            border-right: 1px solid #cccccc;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+            justify-content: space-between;
+            transition: width 0.3s ease;
+        }
+
+        .sidebar.expanded {
+            width: 200px;
+            align-items: stretch;
+        }
+
+        .sidebar.hidden {
+            display: none;
+        }
+
+        .sidebar-header {
+            font-size: 20px;
+            font-weight: bold;
+            border-bottom: none;
+            padding-bottom: 0;
+            width: 100%;
+            text-align: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .sidebar-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            align-items: center;
+        }
+
+        .sidebar-bottom {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-menu-item {
+            padding: 12px;
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            border-radius: 4px;
+        }
+
+        .sidebar.expanded .sidebar-menu-item {
+            width: 100%;
+            justify-content: flex-start;
+            padding-left: 15px;
+        }
+
+        .sidebar-text {
+            display: none;
+            font-size: 14px;
+            margin-left: 10px;
+            white-space: nowrap;
+        }
+
+        .sidebar.expanded .sidebar-text {
+            display: block;
+        }
+
+        .sidebar-menu-item:hover {
+            background-color: #eeeeee;
+            border-color: #999;
+        }
+
+        .sidebar-menu-item.selected {
+            background-color: #e0e0e0;
+            border-color: #1a1a1a;
+            font-weight: bold;
+        }
+
+        .sidebar-tooltip {
+            position: absolute;
+            left: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: #1a1a1a;
+            color: #ffffff;
+            padding: 6px 10px;
+            border-radius: 3px;
+            white-space: nowrap;
+            font-size: 12px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+            margin-left: 10px;
+        }
+
+        .sidebar-menu-item:hover .sidebar-tooltip {
+            opacity: 1;
+        }
+
+        .sidebar.expanded .sidebar-tooltip {
+            display: none !important;
+        }
+
+        /* ==================== MAIN CONTENT ==================== */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ==================== TOP BAR ==================== */
+        .top-bar {
+            background-color: #ffffff;
+            border-bottom: 1px solid #cccccc;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            min-height: 60px;
+        }
+
+        .top-bar-left {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .top-bar-right {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: 1px solid #999;
+            background-color: #f5f5f5;
+            color: #1a1a1a;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+            border-radius: 3px;
+        }
+
+        .btn:hover {
+            background-color: #e0e0e0;
+            border-color: #666;
+        }
+
+        .btn-primary {
+            background-color: #1a1a1a;
+            border-color: #1a1a1a;
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+        .btn-primary:hover {
+            background-color: #333;
+            border-color: #333;
+        }
+
+        .btn-danger {
+            background-color: #ffe0e0;
+            border-color: #ff6b6b;
+            color: #d32f2f;
+        }
+
+        .btn-danger:hover {
+            background-color: #ffcccc;
+            border-color: #d32f2f;
+        }
+
+        .btn-loading {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Auth States */
+        .auth-unauthenticated {
+            display: flex;
+            gap: 10px;
+        }
+
+        .auth-no-wallet {
+            display: flex;
+            gap: 10px;
+        }
+
+        .auth-connected {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .wallet-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: #f5f5f5;
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+
+        .wallet-balance {
+            font-weight: bold;
+            white-space: nowrap;
+            color: #1a1a1a;
+        }
+
+        .wallet-address {
+            font-family: monospace;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #cccccc 0%, #999999 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            min-width: 180px;
+            z-index: 100;
+            display: none;
+            margin-top: 5px;
+            border-radius: 3px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .dropdown-menu.active {
+            display: block;
+        }
+
+        .dropdown-menu-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            color: #1a1a1a;
+        }
+
+        .dropdown-menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-menu-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .dropdown-menu-item.danger {
+            color: #d32f2f;
+        }
+
+        .sidebar-dropdown {
+            top: auto;
+            bottom: 0;
+            left: 100%;
+            right: auto;
+            margin-left: 15px;
+            margin-top: 0;
+        }
+
+        .sidebar.expanded .sidebar-dropdown {
+            left: 0;
+            bottom: 100%;
+            margin-left: 0;
+            margin-bottom: 5px;
+            width: 100%;
+        }
+
+        /* ==================== CONTENT AREA ==================== */
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+            background-color: #ffffff;
+        }
+
+        .page-hidden {
+            display: none !important;
+        }
+
+        /* ==================== SETTINGS PAGE ==================== */
+        .settings-header {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 15px;
+            color: #1a1a1a;
+        }
+
+        .settings-tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 0;
+        }
+
+        .tab {
+            padding: 12px 20px;
+            background-color: transparent;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+            color: #666;
+            border-radius: 3px 3px 0 0;
+        }
+
+        .tab:hover {
+            background-color: #f5f5f5;
+            border-color: #999;
+            color: #1a1a1a;
+        }
+
+        .tab.active {
+            background-color: #ffffff;
+            border-color: #999;
+            border-bottom: 2px solid #1a1a1a;
+            margin-bottom: -1px;
+            color: #1a1a1a;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* ==================== FORMS ==================== */
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 14px;
+            color: #1a1a1a;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-input,
+        .form-select {
+            width: 100%;
+            max-width: 400px;
+            padding: 10px 12px;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            color: #1a1a1a;
+            font-size: 14px;
+            transition: border-color 0.2s;
+            border-radius: 3px;
+        }
+
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: #1a1a1a;
+            background-color: #fafafa;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-input:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background-color: #f5f5f5;
+        }
+
+        /* ==================== CARDS ==================== */
+        .card {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 3px;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+            color: #1a1a1a;
+        }
+
+        .card-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .card-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+            color: #1a1a1a;
+        }
+
+        .card-row:last-child {
+            border-bottom: none;
+        }
+
+        .card-label {
+            color: #666;
+            font-size: 13px;
+        }
+
+        .card-value {
+            font-weight: bold;
+            word-break: break-all;
+        }
+
+        /* ==================== BADGE ==================== */
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+        }
+
+        .badge-success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+
+        .badge-warning {
+            background-color: #fff3cd;
+            border-color: #ffeeba;
+            color: #856404;
+        }
+
+        .badge-danger {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+
+        /* ==================== PROGRESS BAR ==================== */
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            overflow: hidden;
+            border-radius: 2px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: #1a1a1a;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 5px;
+            font-size: 11px;
+            color: #ffffff;
+        }
+
+        /* ==================== TABLE ==================== */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        thead {
+            background-color: #f9f9f9;
+            border-bottom: 2px solid #ddd;
+        }
+
+        th {
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+            font-size: 13px;
+            color: #666;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+            color: #1a1a1a;
+        }
+
+        tr:hover {
+            background-color: #fafafa;
+        }
+
+        /* ==================== MODAL ==================== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(3px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            padding: 30px;
+            border-radius: 3px;
+            min-width: 500px;
+            max-width: 90%;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+
+        .modal-header {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 15px;
+            color: #1a1a1a;
+        }
+
+        .modal-body {
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        /* ==================== TOAST ==================== */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px 20px;
+            border-radius: 3px;
+            z-index: 2000;
+            display: none;
+            animation: slideIn 0.3s ease-out;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .toast.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* ==================== MISC ==================== */
+        .position-relative {
+            position: relative;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        .empty-state-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #666;
+        }
+
+        .lock-icon {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            background-color: #999;
+            margin-right: 5px;
+            text-align: center;
+            line-height: 16px;
+            font-size: 10px;
+        }
+
+        .toggle-switch {
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .toggle-switch.active {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: #999;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: left 0.3s;
+        }
+
+        .toggle-switch.active::after {
+            left: 28px;
+            background-color: #28a745;
+        }
+
+        .icon-btn {
+            background: none;
+            border: 1px solid #ddd;
+            padding: 8px 12px;
+            cursor: pointer;
+            color: #666;
+            transition: all 0.2s;
+            font-size: 12px;
+            border-radius: 3px;
+        }
+
+        .icon-btn:hover {
+            background-color: #f5f5f5;
+            color: #1a1a1a;
+            border-color: #999;
+        }
+
+        .icon-btn.copied {
+            color: #155724;
+            border-color: #c3e6cb;
+            background-color: #d4edda;
+        }
+
+        .inline-flex {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .truncated {
+            font-family: monospace;
+            font-size: 13px;
+            color: #1a1a1a;
+        }
+
+        /* Trial Banner */
+        .trial-banner {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            border-radius: 3px;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: #856404;
+            font-size: 14px;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid #1a1a1a;
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .icon-copy::before {
+            content: '📋';
+            font-size: 14px;
+        }
+
+        .icon-trash::before {
+            content: '🗑';
+            font-size: 14px;
+        }
+
+        .icon-check::before {
+            content: '✓';
+            font-size: 14px;
+        }
+
+        .copy-tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 5px 10px;
+            border-radius: 2px;
+            white-space: nowrap;
+            font-size: 11px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+            margin-bottom: 5px;
+        }
+
+        .icon-btn.show-tooltip .copy-tooltip {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- SIDEBAR -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header" onclick="toggleSidebar()" title="Toggle Sidebar" style="cursor: pointer;">U</div>
+            <div class="sidebar-menu-item selected" onclick="navigateTo('dashboard')" style="margin-bottom: 5px;">
+                <span>📊</span><span class="sidebar-text">Dashboard</span>
+                <div class="sidebar-tooltip">Dashboard</div>
+            </div>
+            <div style="flex: 1;"></div>
+            <div class="sidebar-bottom">
+                <div class="sidebar-menu-item" onclick="toggleSidebar()">
+                    <span id="sidebarToggleIcon">❯</span><span class="sidebar-text">Collapse</span>
+                    <div class="sidebar-tooltip" id="sidebarToggleTooltip">Expand</div>
+                </div>
+                <div class="sidebar-menu-item" onclick="navigateTo('settings')">
+                    <span>⚙️</span><span class="sidebar-text">Settings</span>
+                    <div class="sidebar-tooltip">Settings</div>
+                </div>
+                <div class="position-relative" id="sidebarAuthContainer" style="width: 100%; display: flex; justify-content: center;">
+                    <!-- Sidebar Avatar will be rendered here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <!-- TOP BAR -->
+            <div class="top-bar">
+                <div class="top-bar-left">Unlimit.pro</div>
+                <div class="top-bar-right" id="authContainer">
+                    <!-- Auth states will be rendered here -->
+                </div>
+            </div>
+
+            <!-- CONTENT -->
+            <div class="content" id="content">
+                <!-- Pages will be rendered here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- MODALS -->
+    <div class="modal" id="confirmDeleteModal">
+        <div class="modal-content">
+            <div class="modal-header">Confirm Action</div>
+            <div class="modal-body" id="confirmDeleteText">
+                Are you sure?
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModal('confirmDeleteModal')">Cancel</button>
+                <button class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="disconnectModal">
+        <div class="modal-content">
+            <div class="modal-header">Account Settings</div>
+            <div class="modal-body">
+                <div class="card-row">
+                    <div>Disconnect Wallet</div>
+                    <button class="btn" onclick="disconnectWallet()">Disconnect</button>
+                </div>
+                <div class="card-row">
+                    <div>Sign Out</div>
+                    <button class="btn btn-danger" onclick="signOut()">Sign Out</button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModal('disconnectModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="addCardModal">
+        <div class="modal-content">
+            <div class="modal-header">Start Your Pro Trial — Payment Details</div>
+            <div class="modal-body">
+                <div style="background-color: #f5f5f5; padding: 10px; margin-bottom: 15px; border-radius: 3px; font-size: 12px; color: #444;">
+                    Enter your card to start the 14-day Pro trial. You will not be charged today — billing begins automatically when the trial ends and renews monthly. Cancel any time before then to avoid charges.
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Cardholder Name</label>
+                    <input type="text" class="form-input" placeholder="John Doe" id="cardholderName">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Card Number</label>
+                    <input type="text" class="form-input" placeholder="1234 5678 9012 3456" id="cardNumber" maxlength="19">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Expiry Date</label>
+                        <input type="text" class="form-input" placeholder="MM/YY" id="expiryDate" maxlength="5">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">CVC</label>
+                        <input type="text" class="form-input" placeholder="123" id="cvc" maxlength="4">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModal('addCardModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="saveCard()">Start Trial</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CORS Whitelist Modal -->
+    <div class="modal" id="corsModal">
+        <div class="modal-content">
+            <div class="modal-header">Add CORS Whitelist Domain</div>
+            <div class="modal-body">
+                <div style="background-color: #f5f5f5; padding: 10px; margin-bottom: 15px; border-radius: 3px; font-size: 12px;">
+                    <strong>Currently whitelisted:</strong><br>
+                    <div id="currentCorsList" style="margin-top: 5px;"></div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Domain URL</label>
+                    <input type="text" class="form-input" id="corsInput" placeholder="https://myapp.com" style="max-width: 100%;">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModal('corsModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="saveCORS()">Add Domain</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- IP Whitelist Modal -->
+    <div class="modal" id="ipModal">
+        <div class="modal-content">
+            <div class="modal-header">Add IP Whitelist</div>
+            <div class="modal-body">
+                <div style="background-color: #f5f5f5; padding: 10px; margin-bottom: 15px; border-radius: 3px; font-size: 12px;">
+                    <strong>Currently whitelisted:</strong><br>
+                    <div id="currentIPList" style="margin-top: 5px;"></div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">IP Address</label>
+                    <input type="text" class="form-input" id="ipInput" placeholder="192.168.1.1" style="max-width: 100%;">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModal('ipModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="saveIP()">Add IP</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create API Key Modal -->
+    <div class="modal" id="createKeyModal">
+        <div class="modal-content">
+            <div class="modal-header">Create New API Key</div>
+            <div class="modal-body">
+                <div style="background-color: #f5f5f5; padding: 10px; margin-bottom: 15px; border-radius: 3px; font-size: 12px; color: #444;">
+                    Give your API key a descriptive label so you can identify it later (e.g., "Production Server", "Mobile App", "Staging").
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Key Label</label>
+                    <input type="text" class="form-input" id="apiKeyLabel" placeholder="e.g. Production Server">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModal('createKeyModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="confirmCreateAPIKey()">Create Key</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // ==================== STATE MANAGEMENT ====================
+        const appState = {
+            authState: 'unauthenticated', // 'unauthenticated' | 'loggedIn' | 'walletConnected'
+            user: {
+                username: '',
+                email: '',
+                walletAddress: '',
+                balance: 0,
+                tier: 'Free', // Free | Pro | Enterprise
+                planStatus: 'Active', // Active | Trial | Canceled | Past Due | Paused
+                loginProvider: 'google', // google (SSO) — email immutable when google
+                avatarUrl: null // null -> default avatar (upload deferred to backend ticket)
+            },
+            currentTab: 'account',
+            currentPage: 'dashboard',
+            apiKeys: [],
+            cards: [],
+            corsDomains: ['https://myapp.com', 'https://api.example.com'],
+            ipAddresses: ['192.168.1.1', '10.0.0.5'],
+            notifications: {
+                whaleMovements: false,
+                alphaInsights: false,
+                marketAlerts: false,
+                portfolioUpdates: false
+            }
+        };
+
+        // ==================== INITIALIZATION ====================
+        function init() {
+            renderAuthState();
+            renderDashboard();
+        }
+
+        // ==================== AUTH MANAGEMENT ====================
+        function renderAuthState() {
+            const container = document.getElementById('authContainer');
+            const sidebar = document.getElementById('sidebar');
+            const sidebarAuthContainer = document.getElementById('sidebarAuthContainer');
+            
+            if (appState.authState === 'unauthenticated') {
+                sidebar.classList.add('hidden');
+                container.innerHTML = `
+                    <button class="btn" onclick="signIn()">Sign In</button>
+                    <button class="btn btn-primary" onclick="signUp()">Sign Up</button>
+                `;
+                sidebarAuthContainer.innerHTML = '';
+            } else if (appState.authState === 'loggedIn') {
+                sidebar.classList.remove('hidden');
+                container.innerHTML = `
+                    <button class="btn btn-primary" onclick="connectWallet(event)">Connect Wallet</button>
+                `;
+                renderSidebarAvatar();
+            } else if (appState.authState === 'walletConnected') {
+                sidebar.classList.remove('hidden');
+                const addr = truncateAddress(appState.user.walletAddress);
+                container.innerHTML = `
+                    <div class="wallet-info">
+                        <div>
+                            <div class="wallet-balance">${appState.user.balance} SOL</div>
+                            <div class="wallet-address">${addr}</div>
+                        </div>
+                    </div>
+                `;
+                renderSidebarAvatar();
+            }
+        }
+
+        function renderSidebarAvatar() {
+            const sidebarAuthContainer = document.getElementById('sidebarAuthContainer');
+            const username = appState.user.username || 'User';
+            const initial = username.charAt(0).toUpperCase();
+
+            sidebarAuthContainer.innerHTML = `
+                <div class="sidebar-menu-item" onclick="toggleDropdown(event)">
+                    <div class="avatar" style="width: 26px; height: 26px; font-size: 12px; flex-shrink: 0; margin-left: -2px;">${initial}</div>
+                    <span class="sidebar-text" style="overflow: hidden; text-overflow: ellipsis;">${username}</span>
+                    <div class="sidebar-tooltip">Account</div>
+                </div>
+                <div class="dropdown-menu sidebar-dropdown" id="authDropdown">
+                    ${appState.authState === 'walletConnected' ? '<div class="dropdown-menu-item" onclick="disconnectWallet()">Disconnect Wallet</div>' : ''}
+                    <div class="dropdown-menu-item danger" onclick="signOut()">Sign Out</div>
+                </div>
+            `;
+        }
+
+        function signIn() {
+            appState.authState = 'loggedIn';
+            appState.user = {
+                username: 'john_doe',
+                email: 'john@example.com',
+                walletAddress: '',
+                balance: 0,
+                tier: 'Free',
+                planStatus: 'Active',
+                loginProvider: 'google',
+                avatarUrl: null
+            };
+            renderAuthState();
+            showToast('Signed in successfully');
+        }
+
+        function signUp() {
+            appState.authState = 'loggedIn';
+            appState.user = {
+                username: 'new_user',
+                email: 'newuser@example.com',
+                walletAddress: '',
+                balance: 0,
+                tier: 'Free',
+                planStatus: 'Active',
+                loginProvider: 'google',
+                avatarUrl: null
+            };
+            renderAuthState();
+            showToast('Account created successfully');
+        }
+
+        function connectWallet(e) {
+            let btn;
+            if (e && e.currentTarget) {
+                btn = e.currentTarget;
+            } else if (e && e.target) {
+                btn = e.target.closest('.btn');
+            }
+            
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner"></span> Connecting...';
+            }
+
+            // Simulate connection delay
+            setTimeout(() => {
+                appState.authState = 'walletConnected';
+                appState.user.walletAddress = 'GvT5p9xYzN8kL2qR5sT9uW3xY7zA1bC4dE5fG6hI9jK0pZ1';
+                appState.user.balance = 124.5;
+                renderAuthState();
+                showToast('Wallet successfully linked');
+                appState.currentPage = 'settings';
+                renderSettings();
+            }, 2000);
+        }
+
+        function disconnectWallet() {
+            appState.authState = 'loggedIn';
+            appState.user.walletAddress = '';
+            appState.user.balance = 0;
+            closeModal('disconnectModal');
+            renderAuthState();
+            renderDashboard();
+            showToast('Wallet disconnected');
+        }
+
+        function signOut() {
+            appState.authState = 'unauthenticated';
+            appState.user = {
+                username: '',
+                email: '',
+                walletAddress: '',
+                balance: 0,
+                tier: 'Free',
+                planStatus: 'Active',
+                loginProvider: 'google',
+                avatarUrl: null
+            };
+            appState.currentPage = 'dashboard';
+            closeModal('disconnectModal');
+            renderAuthState();
+            renderDashboard();
+            showToast('Signed out successfully');
+        }
+
+        function toggleDropdown(e) {
+            if (e) {
+                e.stopPropagation();
+            }
+            const dropdown = document.getElementById('authDropdown');
+            if (dropdown) {
+                dropdown.classList.toggle('active');
+            }
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('expanded');
+            const header = sidebar.querySelector('.sidebar-header');
+            const toggleIcon = document.getElementById('sidebarToggleIcon');
+            const toggleTooltip = document.getElementById('sidebarToggleTooltip');
+            
+            if (sidebar.classList.contains('expanded')) {
+                header.textContent = 'Unlimit';
+                if (toggleIcon) toggleIcon.textContent = '❮';
+                if (toggleTooltip) toggleTooltip.textContent = 'Collapse';
+            } else {
+                header.textContent = 'U';
+                if (toggleIcon) toggleIcon.textContent = '❯';
+                if (toggleTooltip) toggleTooltip.textContent = 'Expand';
+            }
+        }
+
+        document.addEventListener('click', () => {
+            const dropdown = document.getElementById('authDropdown');
+            if (dropdown) {
+                dropdown.classList.remove('active');
+            }
+        });
+
+        // ==================== TRUNCATE ADDRESS ====================
+        function truncateAddress(addr) {
+            if (!addr) return '';
+            return addr.substring(0, 6) + '...' + addr.substring(addr.length - 5);
+        }
+
+        // ==================== NAVIGATION ====================
+        function navigateTo(page) {
+            appState.currentPage = page;
+            
+            if (page === 'settings') {
+                if (appState.authState === 'unauthenticated') {
+                    showToast('Please sign in first');
+                    return;
+                }
+                renderSettings();
+            } else if (page === 'dashboard') {
+                renderDashboard();
+            }
+        }
+
+        // ==================== DASHBOARD PAGE ====================
+        function renderDashboard() {
+            const content = document.getElementById('content');
+            content.innerHTML = `
+                <div style="padding: 40px; text-align: center; color: #666;">
+                    <h1 style="font-size: 32px; margin-bottom: 20px;">Welcome to Unlimit</h1>
+                    <p>Intelligent System</p>
+                    <p style="margin-top: 30px; color: #666;">
+                        ${appState.authState === 'unauthenticated' 
+                            ? 'Sign in to get started' 
+                            : appState.authState === 'loggedIn'
+                            ? 'Connect your wallet to access all features'
+                            : 'You are all set! Start exploring the analytics.'}
+                    </p>
+                </div>
+            `;
+        }
+
+        // ==================== SETTINGS PAGE ====================
+        function renderSettings() {
+            if (appState.authState === 'unauthenticated') {
+                showToast('Please sign in first');
+                return;
+            }
+
+            const content = document.getElementById('content');
+            const currentTab = appState.currentTab || 'account';
+            
+            content.innerHTML = `
+                <div class="settings-header">Settings</div>
+                <div class="settings-tabs">
+                    <button class="tab ${currentTab === 'account' ? 'active' : ''}" onclick="switchTab('account', event)">Account</button>
+                    <button class="tab ${currentTab === 'billing' ? 'active' : ''}" onclick="switchTab('billing', event)">Billing & Subscription</button>
+                    <button class="tab ${currentTab === 'api' ? 'active' : ''}" onclick="switchTab('api', event)">API Keys</button>
+                </div>
+
+                <div id="accountTab" class="tab-content ${currentTab === 'account' ? 'active' : ''}">
+                    ${renderAccountTab()}
+                </div>
+                <div id="billingTab" class="tab-content ${currentTab === 'billing' ? 'active' : ''}">
+                    ${renderBillingTab()}
+                </div>
+                <div id="apiTab" class="tab-content ${currentTab === 'api' ? 'active' : ''}">
+                    ${renderAPITab()}
+                </div>
+            `;
+            appState.currentPage = 'settings';
+        }
+
+        function switchTab(tab, e) {
+            appState.currentTab = tab;
+            
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+            
+            // Show selected tab
+            document.getElementById(tab + 'Tab').classList.add('active');
+            
+            if (e && e.currentTarget) {
+                e.currentTarget.classList.add('active');
+            } else if (e && e.target) {
+                e.target.classList.add('active');
+            }
+        }
+
+        // ==================== ACCOUNT TAB ====================
+        // Design note: per Requirements Review (Apr 2026):
+        //   - Username is editable with an explicit Save button.
+        //   - Email is immutable for Google SSO users (verified at sign-up,
+        //     backend keys records by user ID). Shown grayed out.
+        //   - Avatar shows a default image in this sprint; upload functionality
+        //     is deferred (backend ticket to be created by @marcus).
+        function renderAccountTab() {
+            const initial = (appState.user.username || appState.user.email || 'U')
+                .charAt(0).toUpperCase();
+            return `
+                <div class="card">
+                    <div class="card-title">Account Information</div>
+                    <div class="card-content">
+                        <!-- Avatar (default image only; upload pending backend ticket) -->
+                        <div class="form-group" style="display: flex; align-items: center; gap: 20px;">
+                            <div class="avatar" style="width: 64px; height: 64px; font-size: 24px;">${initial}</div>
+                            <div>
+                                <div class="card-label">Profile Picture</div>
+                                <div style="font-size: 12px; color: #666; margin-top: 4px;">
+                                    Using default avatar. Upload will be available in a future sprint.
+                                </div>
+                                <button class="btn" disabled style="margin-top: 8px;" title="Coming soon">Upload Image</button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Username</label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <input type="text" class="form-input" value="${appState.user.username}" id="usernameInput" style="flex: 1;" oninput="onUsernameChange()">
+                                <button class="btn btn-primary" id="saveUsernameBtn" onclick="saveUsername()" disabled>Save</button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" class="form-input" value="${appState.user.email}" id="emailInput" disabled>
+                            <div style="font-size: 12px; color: #666; margin-top: 4px;">
+                                🔒 Email is linked to your Google Single Sign-On account and cannot be changed.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Linked Wallet</div>
+                    <div class="card-content">
+                        <div class="card-row">
+                            <div>
+                                <div class="card-label">Wallet Address</div>
+                                <div class="card-value truncated">${appState.user.walletAddress || 'No wallet connected'}</div>
+                            </div>
+                            ${appState.user.walletAddress ? `
+                            <div>
+                                <!-- TODO: Unlink behavior pending product owner confirmation
+                                     (action item: @marcus to confirm whether users may
+                                      unlink a previously connected wallet). -->
+                                <button class="btn btn-danger" onclick="disconnectWallet()">Unlink</button>
+                            </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function onUsernameChange() {
+            const input = document.getElementById('usernameInput');
+            const btn = document.getElementById('saveUsernameBtn');
+            if (!input || !btn) return;
+            const changed = input.value.trim() !== appState.user.username && input.value.trim().length > 0;
+            btn.disabled = !changed;
+        }
+
+        function saveUsername() {
+            const input = document.getElementById('usernameInput');
+            if (!input) return;
+            const newName = input.value.trim();
+            if (!newName) {
+                showToast('Username cannot be empty');
+                return;
+            }
+            appState.user.username = newName;
+            const btn = document.getElementById('saveUsernameBtn');
+            if (btn) btn.disabled = true;
+            renderAuthState();
+            showToast('Username updated');
+        }
+
+        // ==================== BILLING TAB ====================
+        // Design notes per Requirements Review (Apr 2026):
+        //   - Manual "Payment Methods" section removed. Card entry is captured
+        //     inline through the "Start Trial" flow; renewals charge automatically.
+        //   - Current plan shows a status badge (Active / Trial / Canceled / Past Due).
+        //   - A Cancel Subscription action is available for paid tiers.
+        //   - Billing history supports a comprehensive set of statuses
+        //     (Paid, Pending, Failed, Refunded, Canceled, Void).
+        function renderBillingTab() {
+            const tier = appState.user.tier;
+            const planStatus = appState.user.planStatus || (tier === 'Free' ? 'Active' : 'Active');
+            const statusBadgeClass = {
+                'Active': 'badge-success',
+                'Trial': 'badge-warning',
+                'Canceled': 'badge-danger',
+                'Past Due': 'badge-danger'
+            }[planStatus] || 'badge-success';
+
+            return `
+                <!-- Current Plan Summary -->
+                <div class="card">
+                    <div class="card-title">Current Plan</div>
+                    <div class="card-content">
+                        <div class="card-row">
+                            <div>
+                                <div class="card-label">Plan Tier</div>
+                                <div class="card-value">${tier}</div>
+                            </div>
+                            <div>
+                                <span class="badge ${statusBadgeClass}">${planStatus.toUpperCase()}</span>
+                            </div>
+                        </div>
+                        <div style="font-size: 12px; color: #666; margin-top: 10px;">
+                            Possible plan statuses:
+                            <strong>Active</strong>, <strong>Trial</strong>, <strong>Canceled</strong>,
+                            <strong>Past Due</strong>.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trial Banner (if applicable) -->
+                ${tier === 'Pro' && planStatus === 'Trial' ? `
+                    <div class="trial-banner">
+                        ⏰ Your trial ends in 7 days. A payment method is on file and will be charged automatically when the trial ends.
+                    </div>
+                ` : ''}
+
+                ${tier !== 'Free' && planStatus === 'Canceled' ? `
+                    <div class="trial-banner" style="background-color: #f8d7da; border-color: #f5c6cb;">
+                        ❌ Your subscription is canceled. You'll retain access until the end of your current billing period.
+                    </div>
+                ` : ''}
+
+                <!-- Subscription Plans Table -->
+                <div class="card">
+                    <div class="card-title">Subscription Plans</div>
+                    <table style="font-size: 13px;">
+                        <thead>
+                            <tr>
+                                <th>Plan</th>
+                                <th>Monthly</th>
+                                <th>Yearly</th>
+                                <th>Wallet Limit</th>
+                                <th>API Calls/Day</th>
+                                <th>Data History</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="background-color: ${tier === 'Free' ? '#f0f0f0' : 'transparent'};">
+                                <td><strong>Free</strong></td>
+                                <td>$0</td>
+                                <td>$0</td>
+                                <td>10</td>
+                                <td>1,000</td>
+                                <td>7 days</td>
+                            </tr>
+                            <tr style="background-color: ${tier === 'Pro' ? '#f0f0f0' : 'transparent'};">
+                                <td><strong>Pro</strong></td>
+                                <td>$45</td>
+                                <td>$450</td>
+                                <td>Unlimited</td>
+                                <td>10,000</td>
+                                <td>90 days</td>
+                            </tr>
+                            <tr style="background-color: ${tier === 'Enterprise' ? '#f0f0f0' : 'transparent'};">
+                                <td><strong>Enterprise</strong></td>
+                                <td>Custom</td>
+                                <td>Custom</td>
+                                <td>Unlimited</td>
+                                <td>Unlimited</td>
+                                <td>Full</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Plan Actions -->
+                <div class="card">
+                    <div class="card-title">Plan Management</div>
+                    <div class="card-content">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-top: 15px;">
+                            <div style="padding: 15px; border: 1px solid #ddd; border-radius: 3px;">
+                                <div style="font-weight: bold; margin-bottom: 10px;">Free</div>
+                                ${tier !== 'Free' ? '<button class="btn" onclick="downgradePlan(\'Free\')">Downgrade</button>' : '<button class="btn" disabled>Current Plan</button>'}
+                            </div>
+                            <div style="padding: 15px; border: ${tier === 'Pro' ? '2px solid #1a1a1a' : '1px solid #ddd'}; border-radius: 3px;">
+                                <div style="font-weight: bold; margin-bottom: 10px;">Pro <span style="background-color: #fff3cd; color: #856404; padding: 2px 6px; border-radius: 2px; font-size: 10px;">14-Day Trial</span></div>
+                                ${tier !== 'Pro' ? '<button class="btn btn-primary" onclick="startTrial()">Start Trial</button>' : '<button class="btn" disabled>Current Plan</button>'}
+                            </div>
+                            <div style="padding: 15px; border: 1px solid #ddd; border-radius: 3px;">
+                                <div style="font-weight: bold; margin-bottom: 10px;">Enterprise</div>
+                                <button class="btn" onclick="contactSales()">Contact Sales</button>
+                            </div>
+                        </div>
+
+                        ${tier !== 'Free' && planStatus !== 'Canceled' ? `
+                            <div style="margin-top: 20px; border-top: 1px solid #f0f0f0; padding-top: 15px;">
+                                <button class="btn btn-danger" onclick="cancelSubscription()">Cancel Subscription</button>
+                                <div style="font-size: 12px; color: #666; margin-top: 6px;">
+                                    You'll keep access until the end of the current billing period.
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+
+                <!-- Billing History -->
+                <div class="card">
+                    <div class="card-title">Billing History</div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Invoice ID</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2026-04-01</td>
+                                <td>INV-001234</td>
+                                <td>$45.00</td>
+                                <td><span class="badge badge-success">PAID</span></td>
+                                <td><a style="color: #666; text-decoration: underline; cursor: pointer;">Download PDF</a></td>
+                            </tr>
+                            <tr>
+                                <td>2026-03-01</td>
+                                <td>INV-001233</td>
+                                <td>$45.00</td>
+                                <td><span class="badge badge-warning">PENDING</span></td>
+                                <td><a style="color: #666; text-decoration: underline; cursor: pointer;">View</a></td>
+                            </tr>
+                            <tr>
+                                <td>2026-02-01</td>
+                                <td>INV-001232</td>
+                                <td>$45.00</td>
+                                <td><span class="badge badge-danger">FAILED</span></td>
+                                <td><a style="color: #666; text-decoration: underline; cursor: pointer;">Retry Payment</a></td>
+                            </tr>
+                            <tr>
+                                <td>2026-01-15</td>
+                                <td>INV-001231</td>
+                                <td>$45.00</td>
+                                <td><span class="badge">REFUNDED</span></td>
+                                <td><a style="color: #666; text-decoration: underline; cursor: pointer;">Download PDF</a></td>
+                            </tr>
+                            <tr>
+                                <td>2026-01-01</td>
+                                <td>INV-001230</td>
+                                <td>$45.00</td>
+                                <td><span class="badge">CANCELED</span></td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td>2025-12-01</td>
+                                <td>INV-001229</td>
+                                <td>$45.00</td>
+                                <td><span class="badge">VOID</span></td>
+                                <td>—</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div style="font-size: 12px; color: #666; margin-top: 10px; padding: 0 10px 10px;">
+                        Statuses: <strong>Paid</strong>, <strong>Pending</strong>,
+                        <strong>Failed</strong>, <strong>Refunded</strong>,
+                        <strong>Canceled</strong>, <strong>Void</strong>.
+                    </div>
+                </div>
+            `;
+        }
+
+        function downgradePlan(plan) {
+            appState.user.tier = plan;
+            renderSettings();
+            showToast('Downgrade scheduled. Changes take effect at the end of your billing period.');
+        }
+
+        function toggleBilling(e) {
+            if (e && e.target) {
+                e.target.classList.toggle('active');
+            }
+            showToast('Billing interval updated');
+        }
+
+        function upgradeToPro() {
+            // Legacy entry point retained for compatibility; the new Start Trial
+            // flow routes users through the payment entry modal first.
+            startTrial();
+        }
+
+        function startTrial() {
+            // Per Apr 2026 requirements review: clicking Start Trial must
+            // navigate directly to a payment entry screen to capture the
+            // credit card. Subscription then renews automatically each month.
+            openModal('addCardModal');
+        }
+
+        function cancelSubscription() {
+            // Cancel: End the subscription; features available through billing period end,
+            // then plan reverts to Free.
+            openModal('confirmDeleteModal');
+            document.getElementById('confirmDeleteText').textContent =
+                'Cancel your subscription? You will retain access to paid features until the end of ' +
+                'the current billing period, after which your plan will revert to Free. ' +
+                'If you change your mind, you can always resubscribe.';
+            const btn = document.getElementById('confirmDeleteBtn');
+            btn.textContent = 'Cancel Subscription';
+            btn.onclick = () => {
+                appState.user.planStatus = 'Canceled';
+                closeModal('confirmDeleteModal');
+                btn.textContent = 'Delete';
+                renderSettings();
+                showToast('Subscription canceled. Access continues until the end of the billing period.');
+            };
+        }
+
+        function contactSales() {
+            showToast('Opening sales contact form...');
+            alert('Contact our sales team at sales@unlimit.pro for Enterprise plans');
+        }
+
+        function saveCard() {
+            const name = document.getElementById('cardholderName').value;
+            const number = document.getElementById('cardNumber').value;
+            const expiry = document.getElementById('expiryDate').value;
+            const cvc = document.getElementById('cvc').value;
+
+            if (!name || !number || !expiry || !cvc) {
+                showToast('Please fill in all fields');
+                return;
+            }
+
+            // Card is stored on file for automatic monthly billing. The manual
+            // "Payment Methods" panel has been removed per the Apr 2026 review.
+            appState.cards = [{ name, number, expiry, cvc }];
+            appState.user.tier = 'Pro';
+            appState.user.planStatus = 'Trial';
+
+            closeModal('addCardModal');
+            document.getElementById('cardholderName').value = '';
+            document.getElementById('cardNumber').value = '';
+            document.getElementById('expiryDate').value = '';
+            document.getElementById('cvc').value = '';
+
+            renderSettings();
+            showToast('Trial started! 14 days free — your card will be charged automatically afterwards.');
+        }
+
+        // ==================== API KEYS TAB ====================
+        function renderAPITab() {
+            const keysHTML = appState.apiKeys.length === 0 
+                ? `<div class="empty-state"><div class="empty-state-title">No API Keys</div><p>Create your first API key to get started</p></div>`
+                : appState.apiKeys.map((key, idx) => `
+                    <div class="card">
+                        <div class="card-row">
+                            <div>
+                                <div class="card-label">${key.label || 'Key ' + (idx + 1)}</div>
+                                <div class="card-value truncated" style="font-family: monospace; font-size: 12px;">${key.masked}</div>
+                                <div style="font-size: 12px; color: #666; margin-top: 5px;">Created: ${key.created}</div>
+                            </div>
+                            <div class="inline-flex">
+                                <button class="icon-btn" onclick="copyAPIKey('${key.full}', event)">
+                                    <span class="icon-copy"></span>
+                                </button>
+                                <button class="icon-btn" onclick="revokeAPIKey(${idx})">
+                                    <span class="icon-trash"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+            return `
+                <div style="margin-bottom: 20px;">
+                    <button class="btn btn-primary" onclick="createAPIKey()">+ Create New Key</button>
+                </div>
+
+                ${keysHTML}
+
+                <!-- Usage & Limits -->
+                <div class="card" style="margin-top: 30px;">
+                    <div class="card-title">API Usage & Limits</div>
+                    <div class="card-content">
+                        <div class="card-row">
+                            <div>
+                                <div class="card-label">Monthly Request Quota</div>
+                                <div style="margin-top: 10px;">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 65%;">65%</div>
+                                    </div>
+                                    <div style="font-size: 12px; color: #666; margin-top: 5px;">6,500 / 10,000 requests</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-row" style="border-top: 1px solid #2a2a2a;">
+                            <div>
+                                <div class="card-label">Current Rate Limit</div>
+                                <div class="card-value">100 req/sec</div>
+                            </div>
+                        </div>
+                        <div class="card-row" style="border-top: 1px solid #2a2a2a;">
+                            <button class="btn" onclick="navigateToUpgrade()">⬆ Upgrade Plan</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Security Settings -->
+                <div class="card" style="margin-top: 20px;">
+                    <div class="card-title">Security Settings</div>
+                    <div class="card-content">
+                        <div style="margin-bottom: 20px;">
+                            <div class="card-label" style="margin-bottom: 10px;">CORS Whitelist</div>
+                            <div style="font-size: 12px; color: #666; margin-bottom: 10px;">Restrict API access by domain</div>
+                            <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px;">
+                                ${appState.corsDomains.map((domain, idx) => `
+                                    <div style="background-color: #f0f0f0; padding: 6px 10px; border-radius: 3px; display: flex; align-items: center; gap: 8px; font-size: 12px;">
+                                        <span>${domain}</span>
+                                        <button class="icon-btn" style="padding: 2px 4px; font-size: 10px;" onclick="removeCORSDomain(${idx})">✕</button>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <button class="btn" type="button" onclick="editCORS()" style="font-size: 12px; padding: 8px 12px;">+ Add Domain</button>
+                        </div>
+                        <div style="border-top: 1px solid #ddd; padding-top: 15px;">
+                            <div class="card-label" style="margin-bottom: 10px;">IP Whitelist</div>
+                            <div style="font-size: 12px; color: #666; margin-bottom: 10px;">Restrict API access by IP address</div>
+                            <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px;">
+                                ${appState.ipAddresses.map((ip, idx) => `
+                                    <div style="background-color: #f0f0f0; padding: 6px 10px; border-radius: 3px; display: flex; align-items: center; gap: 8px; font-size: 12px;">
+                                        <span>${ip}</span>
+                                        <button class="icon-btn" style="padding: 2px 4px; font-size: 10px;" onclick="removeIP(${idx})">✕</button>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <button class="btn" type="button" onclick="editIPWhitelist()" style="font-size: 12px; padding: 8px 12px;">+ Add IP</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function createAPIKey() {
+            document.getElementById('apiKeyLabel').value = '';
+            openModal('createKeyModal');
+        }
+
+        function confirmCreateAPIKey() {
+            const label = document.getElementById('apiKeyLabel').value.trim();
+            if (!label) {
+                showToast('Please enter a label for the API key');
+                return;
+            }
+            const key = 'ak_live_' + Math.random().toString(36).substring(2, 15);
+            const masked = 'ak_live_••••' + key.substring(key.length - 4);
+            appState.apiKeys.push({
+                label: label,
+                full: key,
+                masked: masked,
+                created: new Date().toISOString().split('T')[0]
+            });
+            closeModal('createKeyModal');
+            renderSettings();
+            showToast('API key created successfully');
+        }
+
+        function copyAPIKey(key, e) {
+            // Use execCommand as a fallback for iframe environments where navigator.clipboard is restricted
+            const textArea = document.createElement("textarea");
+            textArea.value = key;
+            textArea.style.position = "fixed";  // Prevent scrolling to bottom
+            textArea.style.left = "-999999px";
+            textArea.style.top = "-999999px";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                document.execCommand('copy');
+            } catch (err) {
+                console.error('Fallback: Oops, unable to copy', err);
+            }
+            
+            document.body.removeChild(textArea);
+
+            // UI Feedback
+            if (e) {
+                const targetBtn = e.target.closest('.icon-btn');
+                if (targetBtn) {
+                    targetBtn.classList.add('show-tooltip');
+                    targetBtn.innerHTML = '<span class="icon-check"></span><div class="copy-tooltip">Copied!</div>';
+                    setTimeout(() => {
+                        targetBtn.classList.remove('show-tooltip');
+                        targetBtn.innerHTML = '<span class="icon-copy"></span>';
+                    }, 2000);
+                }
+            }
+        }
+
+        function revokeAPIKey(idx) {
+            openModal('confirmDeleteModal');
+            document.getElementById('confirmDeleteText').textContent = 'Revoke this API key? Any services currently using this key will be disconnected immediately. This action is irreversible.';
+            document.getElementById('confirmDeleteBtn').textContent = 'Revoke';
+            document.getElementById('confirmDeleteBtn').onclick = () => {
+                appState.apiKeys.splice(idx, 1);
+                closeModal('confirmDeleteModal');
+                renderSettings();
+                showToast('API key revoked');
+            };
+        }
+
+        function editCORS() {
+            try {
+                document.getElementById('corsInput').value = '';
+                document.getElementById('currentCorsList').innerHTML = appState.corsDomains.length > 0 
+                    ? appState.corsDomains.join(', ')
+                    : '<em style="color: #999;">No domains whitelisted yet</em>';
+                openModal('corsModal');
+                setTimeout(() => {
+                    document.getElementById('corsInput').focus();
+                }, 100);
+            } catch (err) {
+                console.error('Error in editCORS:', err);
+                showToast('Error: ' + err.message);
+            }
+        }
+
+        function saveCORS() {
+            try {
+                const domain = document.getElementById('corsInput').value.trim();
+                if (domain) {
+                    appState.corsDomains.push(domain);
+                    showToast('✓ CORS domain added: ' + domain);
+                    closeModal('corsModal');
+                    renderSettings();
+                } else {
+                    showToast('Please enter a valid domain');
+                }
+            } catch (err) {
+                console.error('Error in saveCORS:', err);
+                showToast('Error: ' + err.message);
+            }
+        }
+
+        function removeCORSDomain(idx) {
+            const domain = appState.corsDomains[idx];
+            appState.corsDomains.splice(idx, 1);
+            showToast('✓ Domain removed: ' + domain);
+            renderSettings();
+        }
+
+        function editIPWhitelist() {
+            try {
+                document.getElementById('ipInput').value = '';
+                document.getElementById('currentIPList').innerHTML = appState.ipAddresses.length > 0 
+                    ? appState.ipAddresses.join(', ')
+                    : '<em style="color: #999;">No IP addresses whitelisted yet</em>';
+                openModal('ipModal');
+                setTimeout(() => {
+                    document.getElementById('ipInput').focus();
+                }, 100);
+            } catch (err) {
+                console.error('Error in editIPWhitelist:', err);
+                showToast('Error: ' + err.message);
+            }
+        }
+
+        function saveIP() {
+            try {
+                const ip = document.getElementById('ipInput').value.trim();
+                if (ip) {
+                    appState.ipAddresses.push(ip);
+                    showToast('✓ IP address whitelisted: ' + ip);
+                    closeModal('ipModal');
+                    renderSettings();
+                } else {
+                    showToast('Please enter a valid IP address');
+                }
+            } catch (err) {
+                console.error('Error in saveIP:', err);
+                showToast('Error: ' + err.message);
+            }
+        }
+
+        function removeIP(idx) {
+            const ip = appState.ipAddresses[idx];
+            appState.ipAddresses.splice(idx, 1);
+            showToast('✓ IP removed: ' + ip);
+            renderSettings();
+        }
+
+        function navigateToUpgrade() {
+            switchTab('billing');
+        }
+
+        // ==================== NOTIFICATIONS TAB ====================
+        function renderNotificationsTab() {
+            return `
+                <div class="card">
+                    <div class="card-title">Alert Configuration</div>
+                    <div class="card-content">
+                        <div class="card-row">
+                            <div>
+                                <div class="card-label">Whale Movements</div>
+                                <div style="font-size: 12px; color: #666;">Large transactions detected</div>
+                            </div>
+                            <div class="toggle-switch" onclick="toggleNotification('whaleMovements', event)"></div>
+                        </div>
+                        <div class="card-row" style="border-top: 1px solid #2a2a2a;">
+                            <div>
+                                <div class="card-label">Alpha Insights</div>
+                                <div style="font-size: 12px; color: #666;">Early market analysis</div>
+                            </div>
+                            <div class="toggle-switch" onclick="toggleNotification('alphaInsights', event)"></div>
+                        </div>
+                        <div class="card-row" style="border-top: 1px solid #2a2a2a;">
+                            <div>
+                                <div class="card-label">
+                                    <span class="lock-icon">🔒</span>Market Alerts
+                                </div>
+                                <div style="font-size: 12px; color: #666;">Pro feature - Available on Pro plans</div>
+                            </div>
+                            <div class="toggle-switch" style="opacity: 0.5; cursor: not-allowed;"></div>
+                        </div>
+                        <div class="card-row" style="border-top: 1px solid #f0f0f0;">
+                            <div>
+                                <div class="card-label">
+                                    <span class="lock-icon">🔒</span>Portfolio Updates
+                                </div>
+                                <div style="font-size: 12px; color: #666;">Pro feature - Available on Pro plans</div>
+                            </div>
+                            <div class="toggle-switch" style="opacity: 0.5; cursor: not-allowed;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Delivery Channels</div>
+                    <div class="card-content">
+                        <div class="card-row">
+                            <div>
+                                <div class="card-label">Browser Notifications</div>
+                                <div style="font-size: 12px; color: #666;">Real-time alerts</div>
+                            </div>
+                            <div class="toggle-switch active" onclick="toggleChannel('browser', event)"></div>
+                        </div>
+                        <div class="card-row" style="border-top: 1px solid #2a2a2a;">
+                            <div>
+                                <div class="card-label">Email Digest</div>
+                                <div style="font-size: 12px; color: #666;">Daily summary emails</div>
+                            </div>
+                            <div class="toggle-switch" onclick="toggleChannel('email', event)"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function toggleNotification(key, e) {
+            if (key === 'marketAlerts' || key === 'portfolioUpdates') {
+                showToast('Upgrade to Pro unlock these notifications');
+                return;
+            }
+            appState.notifications[key] = !appState.notifications[key];
+            if (e && e.target) {
+                e.target.closest('.toggle-switch').classList.toggle('active');
+            }
+            showToast(key + ' ' + (appState.notifications[key] ? 'enabled' : 'disabled'));
+        }
+
+        function toggleChannel(channel, e) {
+            if (e && e.target) {
+                e.target.closest('.toggle-switch').classList.toggle('active');
+                showToast(channel + ' notifications ' + (e.target.closest('.toggle-switch').classList.contains('active') ? 'enabled' : 'disabled'));
+            }
+        }
+
+        // ==================== MODAL HELPERS ====================
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        // ==================== TOAST ====================
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('active');
+            
+            setTimeout(() => {
+                toast.classList.remove('active');
+            }, 3000);
+        }
+
+        // ==================== INIT ==================== 
+        init();
+    </script>
+</body>
+</html>
