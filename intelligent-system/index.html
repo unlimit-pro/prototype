@@ -2125,6 +2125,8 @@
 
             if (page === 'settings') {
                 if (appState.authState === 'unauthenticated') { showToast('Please sign in first'); return; }
+                if (!appState._settingsTabSet) appState.currentTab = 'billing';
+                appState._settingsTabSet = false;
                 renderSettings();
             } else if (page === 'overview')    { renderOverview(); }
             else if (page === 'top100')        { renderTop100(); }
@@ -2362,48 +2364,63 @@
             signalsFilter: 'all'
         });
 
-        // ==================== WELCOME PAGE ====================
-
+        // ==================== WELCOME PAGE (unauthenticated) ====================
+        // Shows live Top Solana Assets table + sign-in prompt strip.
+        // Smart Money / Feed / Signals are locked behind auth.
         function renderWelcome() {
+            const fmtP = p => p < 0.001 ? '$' + p.toFixed(6) : p < 1 ? '$' + p.toFixed(4) : '$' + p.toFixed(2);
+            const rows = [...top100Tokens].sort((a,b) => a.rank - b.rank).map(t => `
+                <tr class="row-click" onclick="openTokenDrawer('${t.sym}')" title="View ${t.name} detail">
+                    <td style="padding:10px 14px;color:#888;">${t.rank}</td>
+                    <td style="padding:10px 14px;">
+                        <div class="asset-cell">
+                            <div class="asset-icon">${t.sym.substring(0,3)}</div>
+                            <div><div class="asset-sym">${t.sym}</div><div class="asset-name">${t.name}</div></div>
+                        </div>
+                    </td>
+                    <td class="price-cell" style="padding:10px 14px;">${fmtP(t.price)}</td>
+                    <td class="${t.pos ? 'change-pos' : 'change-neg'}" style="padding:10px 14px;">${t.pos ? '↑' : '↓'} ${Math.abs(t.change).toFixed(2)}%</td>
+                    <td style="padding:10px 14px;color:#666;font-size:12px;">${t.mcap}</td>
+                    <td style="text-align:right;padding-right:16px;"><span style="font-size:10px;color:#aaa;letter-spacing:0.04em;">Detail →</span></td>
+                </tr>`).join('');
 
             document.getElementById('content').innerHTML = `
-
-                <div class="welcome-page">
-
-                    <div style="font-size:48px;margin-bottom:16px;">📊</div>
-
-                    <h1>Welcome to Unlimit.pro</h1>
-
-                    <div class="welcome-tagline">
-
-                        The Intelligent System for Solana on-chain analytics.<br>
-
-                        Track elite wallets, monitor markets, and act on AI-enriched signals.
-
+                <!-- Top Solana Assets (publicly visible) -->
+                <div class="widget">
+                    <div class="widget-header">
+                        <div class="widget-title">💎 Top Solana Assets</div>
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <span class="realtime-badge">Real-time Feed</span>
+                            <span style="font-size:11px;color:#888;">Click any row for detail</span>
+                        </div>
                     </div>
-
-                    <div class="welcome-features">
-
-                        <span class="welcome-feature-chip">⚡ Smart Money Tracking</span>
-
-                        <span class="welcome-feature-chip">💎 Top 100 Solana Assets</span>
-
-                        <span class="welcome-feature-chip">📰 AI Intelligence Feed</span>
-
-                        <span class="welcome-feature-chip">🔔 Live Elite Signals</span>
-
+                    <div class="widget-body">
+                        <table style="margin-top:0;">
+                            <thead>
+                                <tr>
+                                    <th>RANK</th><th>ASSET</th><th>PRICE (USD)</th><th>24H CHANGE</th><th>MARKET CAP</th><th></th>
+                                </tr>
+                            </thead>
+                            <tbody>${rows}</tbody>
+                        </table>
                     </div>
-
-                    <div class="welcome-note">
-
-                        Use the <strong>Sign In</strong> button in the top-right corner to get started.
-
-                    </div>
-
                 </div>
 
+                <!-- Locked feature teasers -->
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:20px;">
+                    ${[
+                        { icon:'⚡', title:'Smart Money Leaderboard', desc:'Track top-performing Solana wallets by PnL and win rate.' },
+                        { icon:'📰', title:'AI Intelligence Feed',    desc:'On-chain correlated news enriched by LLM predictions.' },
+                        { icon:'🔔', title:'Live Elite Signals',      desc:'Real-time buy/sell signals pushed via WebSocket, <5s latency.' }
+                    ].map(f => `
+                        <div style="border:1px dashed #ccc;border-radius:3px;padding:18px 16px;opacity:0.6;position:relative;">
+                            <div style="font-size:22px;margin-bottom:8px;">${f.icon}</div>
+                            <div style="font-weight:700;font-size:13px;margin-bottom:5px;">${f.title}</div>
+                            <div style="font-size:12px;color:#666;line-height:1.5;">${f.desc}</div>
+                            <div style="position:absolute;top:10px;right:12px;font-size:10px;font-weight:700;letter-spacing:0.06em;color:#999;border:1px solid #ddd;padding:2px 6px;border-radius:2px;">SIGN IN</div>
+                        </div>`).join('')}
+                </div>
             `;
-
         }
 
 
@@ -3730,106 +3747,134 @@
             }
 
             const content = document.getElementById('content');
-            const currentTab = appState.currentTab || 'account';
-            
+            // Default tab is now billing (highest priority — upgrade CTA)
+            const currentTab = appState.currentTab || 'billing';
+
             content.innerHTML = `
                 <div class="settings-header">Settings</div>
                 <div class="settings-tabs">
-                    <button class="tab ${currentTab === 'account' ? 'active' : ''}" onclick="switchTab('account', event)">Account</button>
-                    <button class="tab ${currentTab === 'billing' ? 'active' : ''}" onclick="switchTab('billing', event)">Billing & Subscription</button>
-                    <button class="tab ${currentTab === 'api' ? 'active' : ''}" onclick="switchTab('api', event)">API Keys</button>
+                    <button class="tab ${currentTab === 'billing'       ? 'active' : ''}" onclick="switchTab('billing', event)">Billing &amp; Subscriptions</button>
+                    <button class="tab ${currentTab === 'api'           ? 'active' : ''}" onclick="switchTab('api', event)">API Keys</button>
+                    <button class="tab ${currentTab === 'profile'       ? 'active' : ''}" onclick="switchTab('profile', event)">Profile</button>
+                    <button class="tab ${currentTab === 'notifications' ? 'active' : ''}" onclick="switchTab('notifications', event)">Notifications</button>
                 </div>
 
-                <div id="accountTab" class="tab-content ${currentTab === 'account' ? 'active' : ''}">
-                    ${renderAccountTab()}
-                </div>
-                <div id="billingTab" class="tab-content ${currentTab === 'billing' ? 'active' : ''}">
-                    ${renderBillingTab()}
-                </div>
-                <div id="apiTab" class="tab-content ${currentTab === 'api' ? 'active' : ''}">
-                    ${renderAPITab()}
-                </div>
+                <div id="billingTab"       class="tab-content ${currentTab === 'billing'       ? 'active' : ''}">${renderBillingTab()}</div>
+                <div id="apiTab"           class="tab-content ${currentTab === 'api'           ? 'active' : ''}">${renderAPITab()}</div>
+                <div id="profileTab"       class="tab-content ${currentTab === 'profile'       ? 'active' : ''}">${renderProfileTab()}</div>
+                <div id="notificationsTab" class="tab-content ${currentTab === 'notifications' ? 'active' : ''}">${renderNotificationsTab()}</div>
             `;
             appState.currentPage = 'settings';
         }
 
         function switchTab(tab, e) {
             appState.currentTab = tab;
-            
-            // Hide all tabs
+            appState._settingsTabSet = true;
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
-            
-            // Show selected tab
-            document.getElementById(tab + 'Tab').classList.add('active');
-            
-            if (e && e.currentTarget) {
-                e.currentTarget.classList.add('active');
-            } else if (e && e.target) {
-                e.target.classList.add('active');
-            }
+            const tabEl = document.getElementById(tab + 'Tab');
+            if (tabEl) tabEl.classList.add('active');
+            if (e && e.currentTarget) e.currentTarget.classList.add('active');
+            else if (e && e.target) e.target.classList.add('active');
         }
 
-        // ==================== ACCOUNT TAB ====================
+        // ==================== PROFILE TAB ====================
         // Design note: per Requirements Review (Apr 2026):
         //   - Username is editable with an explicit Save button.
-        //   - Email is immutable for Google SSO users (verified at sign-up,
-        //     backend keys records by user ID). Shown grayed out.
-        //   - Avatar shows a default image in this sprint; upload functionality
-        //     is deferred (backend ticket to be created by @marcus).
-        function renderAccountTab() {
+        //   - Email is immutable for Google SSO users (verified at sign-up).
+        //   - Upgrade / Downgrade button links directly to Billing tab.
+        //   - Connect / Disconnect Wallet is done here (not just top-bar).
+        //   - Log Out is surfaced here for discoverability.
+        function renderProfileTab() {
             const initial = (appState.user.username || appState.user.email || 'U')
                 .charAt(0).toUpperCase();
+            const tier = appState.user.tier;
+            const isWalletConnected = appState.authState === 'walletConnected';
+
             return `
-                <div class="card">
-                    <div class="card-title">Account Information</div>
-                    <div class="card-content">
-                        <!-- Avatar (default image only; upload pending backend ticket) -->
-                        <div class="form-group" style="display: flex; align-items: center; gap: 20px;">
-                            <div class="avatar" style="width: 64px; height: 64px; font-size: 24px;">${initial}</div>
+                <!-- Plan quick-action (top of profile for visibility) -->
+                <div class="card" style="border-left:3px solid #1a1a1a;">
+                    <div class="card-content" style="padding:16px;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
                             <div>
-                                <div class="card-label">Profile Picture</div>
-                                <div style="font-size: 12px; color: #666; margin-top: 4px;">
-                                    Using default avatar. Upload will be available in a future sprint.
+                                <div class="card-label">Current Plan</div>
+                                <div style="font-size:20px;font-weight:bold;margin-top:2px;">${tier}
+                                    ${tier === 'Pro' ? '<span style="font-size:10px;font-weight:600;background:#f5f5f5;border:1px solid #ddd;padding:2px 6px;border-radius:2px;margin-left:6px;">PRO</span>' : ''}
                                 </div>
-                                <button class="btn" disabled style="margin-top: 8px;" title="Coming soon">Upload Image</button>
+                                ${tier === 'Free' ? '<div style="font-size:12px;color:#666;margin-top:4px;">Upgrade to Pro for unlimited wallets, 90-day history, and priority signals.</div>' : ''}
                             </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Username</label>
-                            <div style="display: flex; gap: 10px; align-items: center;">
-                                <input type="text" class="form-input" value="${appState.user.username}" id="usernameInput" style="flex: 1;" oninput="onUsernameChange()">
-                                <button class="btn btn-primary" id="saveUsernameBtn" onclick="saveUsername()" disabled>Save</button>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Email Address</label>
-                            <input type="email" class="form-input" value="${appState.user.email}" id="emailInput" disabled>
-                            <div style="font-size: 12px; color: #666; margin-top: 4px;">
-                                🔒 Email is linked to your Google Single Sign-On account and cannot be changed.
+                            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                                ${tier === 'Free'
+                                    ? `<button class="btn btn-primary" onclick="switchTab('billing',null);showToast('Opening Billing…')">Upgrade to Pro →</button>`
+                                    : `<button class="btn" onclick="openModal('confirmDeleteModal');document.getElementById('confirmDeleteText').textContent='Downgrade to Free? You will lose Pro features at the end of the billing period.';document.getElementById('confirmDeleteBtn').textContent='Confirm Downgrade';document.getElementById('confirmDeleteBtn').onclick=()=>{downgradePlan('Free');closeModal('confirmDeleteModal');};">Downgrade to Free</button>`
+                                }
                             </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Linked Wallet -->
                 <div class="card">
                     <div class="card-title">Linked Wallet</div>
                     <div class="card-content">
                         <div class="card-row">
                             <div>
                                 <div class="card-label">Wallet Address</div>
-                                <div class="card-value truncated">${appState.user.walletAddress || 'No wallet connected'}</div>
+                                <div class="card-value truncated" style="font-family:monospace;font-size:12px;">${appState.user.walletAddress || 'No wallet connected'}</div>
+                                ${isWalletConnected ? `<div style="font-size:12px;color:#666;margin-top:4px;">Balance: <strong>${appState.user.balance} SOL</strong></div>` : ''}
                             </div>
-                            ${appState.user.walletAddress ? `
                             <div>
-                                <!-- TODO: Unlink behavior pending product owner confirmation
-                                     (action item: @marcus to confirm whether users may
-                                      unlink a previously connected wallet). -->
-                                <button class="btn btn-danger" onclick="disconnectWallet()">Unlink</button>
+                                ${isWalletConnected
+                                    ? `<button class="btn btn-danger" onclick="disconnectWallet()">Disconnect Wallet</button>`
+                                    : `<button class="btn btn-primary" onclick="connectWallet(event)">Connect Wallet</button>`
+                                }
                             </div>
-                            ` : ''}
+                        </div>
+                        <div style="font-size:12px;color:#888;margin-top:8px;">
+                            Connecting a wallet enables on-chain PnL tracking and smart money correlation.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Account Information -->
+                <div class="card">
+                    <div class="card-title">Account Information</div>
+                    <div class="card-content">
+                        <div class="form-group" style="display:flex;align-items:center;gap:20px;">
+                            <div class="avatar" style="width:64px;height:64px;font-size:24px;">${initial}</div>
+                            <div>
+                                <div class="card-label">Profile Picture</div>
+                                <div style="font-size:12px;color:#666;margin-top:4px;">Upload available in a future release.</div>
+                                <button class="btn" disabled style="margin-top:8px;">Upload Image</button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Username</label>
+                            <div style="display:flex;gap:10px;align-items:center;">
+                                <input type="text" class="form-input" value="${appState.user.username}" id="usernameInput" style="flex:1;" oninput="onUsernameChange()">
+                                <button class="btn btn-primary" id="saveUsernameBtn" onclick="saveUsername()" disabled>Save</button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" class="form-input" value="${appState.user.email}" disabled>
+                            <div style="font-size:12px;color:#666;margin-top:4px;">🔒 Linked to your Google SSO account — cannot be changed.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Danger Zone -->
+                <div class="card" style="border-color:#e0c0c0;">
+                    <div class="card-title" style="color:#b00020;">Danger Zone</div>
+                    <div class="card-content">
+                        <div class="card-row">
+                            <div>
+                                <div class="card-label">Sign Out</div>
+                                <div style="font-size:12px;color:#666;">End your current session. You can sign back in at any time.</div>
+                            </div>
+                            <button class="btn btn-danger" onclick="signOut()">Sign Out</button>
                         </div>
                     </div>
                 </div>
@@ -4372,89 +4417,146 @@
         }
 
         function navigateToUpgrade() {
-            switchTab('billing');
+            appState.currentTab = 'billing';
+            appState._settingsTabSet = true;
+            navigateTo('settings');
         }
 
         // ==================== NOTIFICATIONS TAB ====================
+        // Notification preferences state (persisted in appState)
+        function ensureNotifState() {
+            if (!appState.notifications) appState.notifications = {};
+            const n = appState.notifications;
+            // Alert types — free
+            if (n.eliteWalletMovements === undefined) n.eliteWalletMovements = true;
+            if (n.eliteWalletThreshold === undefined) n.eliteWalletThreshold = '50000';
+            if (n.smartMoneyConsensus === undefined) n.smartMoneyConsensus = true;
+            if (n.smartMoneyMinWallets === undefined) n.smartMoneyMinWallets = '3';
+            if (n.highImpactNews === undefined) n.highImpactNews = true;
+            if (n.newsImpactMin === undefined) n.newsImpactMin = '7';
+            if (n.tokenPriceMovement === undefined) n.tokenPriceMovement = false;
+            if (n.priceChangePct === undefined) n.priceChangePct = '10';
+            if (n.newTopToken === undefined) n.newTopToken = false;
+            // Alert types — Pro only
+            if (n.whaleAccumulation === undefined) n.whaleAccumulation = false;
+            if (n.customPriceAlerts === undefined) n.customPriceAlerts = false;
+            if (n.portfolioMilestones === undefined) n.portfolioMilestones = false;
+            if (n.portfolioMilestoneUsd === undefined) n.portfolioMilestoneUsd = '5000';
+            // Delivery channels
+            if (n.channelBrowser === undefined) n.channelBrowser = true;
+            if (n.channelEmail === undefined) n.channelEmail = 'daily';
+            if (n.channelTelegram === undefined) n.channelTelegram = false;
+            if (n.channelWebhook === undefined) n.channelWebhook = false;
+            if (n.webhookUrl === undefined) n.webhookUrl = '';
+            // Quiet hours
+            if (n.quietHours === undefined) n.quietHours = false;
+            if (n.quietFrom === undefined) n.quietFrom = '22:00';
+            if (n.quietTo === undefined) n.quietTo = '08:00';
+        }
+
         function renderNotificationsTab() {
+            ensureNotifState();
+            const n = appState.notifications;
+            const tier = appState.user.tier;
+            const isPro = tier === 'Pro' || tier === 'Enterprise';
+
+            const row = (key, label, desc, locked) => `
+                <div class="card-row" style="${locked?'opacity:0.55;':''}border-top:1px solid #f0f0f0;">
+                    <div>
+                        ${locked ? `<span style="font-size:10px;font-weight:700;background:#f5f5f5;border:1px solid #ddd;padding:1px 5px;border-radius:2px;color:#999;margin-right:6px;">PRO</span>` : ''}
+                        <span class="card-label">${label}</span>
+                        <div style="font-size:12px;color:#888;margin-top:2px;">${desc}</div>
+                    </div>
+                    <div class="toggle-switch ${!locked && n[key] ? 'active' : ''}" style="${locked?'cursor:not-allowed;':''}"
+                        onclick="${locked ? `showToast('Upgrade to Pro to unlock this alert')` : `toggleNotifKey('${key}',event)`}"></div>
+                </div>`;
+
             return `
+                <!-- Alert Types -->
                 <div class="card">
-                    <div class="card-title">Alert Configuration</div>
+                    <div class="card-title">Alert Types</div>
                     <div class="card-content">
                         <div class="card-row">
-                            <div>
-                                <div class="card-label">Whale Movements</div>
-                                <div style="font-size: 12px; color: #666;">Large transactions detected</div>
+                            <div><span class="card-label">Elite Wallet Movements</span>
+                                <div style="font-size:12px;color:#888;margin-top:2px;">Notify when a tracked elite wallet makes a significant trade.</div>
                             </div>
-                            <div class="toggle-switch" onclick="toggleNotification('whaleMovements', event)"></div>
+                            <div class="toggle-switch ${n.eliteWalletMovements?'active':''}" onclick="toggleNotifKey('eliteWalletMovements',event)"></div>
                         </div>
-                        <div class="card-row" style="border-top: 1px solid #2a2a2a;">
-                            <div>
-                                <div class="card-label">Alpha Insights</div>
-                                <div style="font-size: 12px; color: #666;">Early market analysis</div>
-                            </div>
-                            <div class="toggle-switch" onclick="toggleNotification('alphaInsights', event)"></div>
-                        </div>
-                        <div class="card-row" style="border-top: 1px solid #2a2a2a;">
-                            <div>
-                                <div class="card-label">
-                                    <span class="lock-icon">🔒</span>Market Alerts
-                                </div>
-                                <div style="font-size: 12px; color: #666;">Pro feature - Available on Pro plans</div>
-                            </div>
-                            <div class="toggle-switch" style="opacity: 0.5; cursor: not-allowed;"></div>
-                        </div>
-                        <div class="card-row" style="border-top: 1px solid #f0f0f0;">
-                            <div>
-                                <div class="card-label">
-                                    <span class="lock-icon">🔒</span>Portfolio Updates
-                                </div>
-                                <div style="font-size: 12px; color: #666;">Pro feature - Available on Pro plans</div>
-                            </div>
-                            <div class="toggle-switch" style="opacity: 0.5; cursor: not-allowed;"></div>
-                        </div>
+                        ${row('smartMoneyConsensus','Smart Money Consensus','Multiple elite wallets buy the same token within 1 hour.',false)}
+                        ${row('highImpactNews','High-Impact News','AI-scored news event with impact ≥ 7/10.',false)}
+                        ${row('tokenPriceMovement','Token Price Movement','A tracked token moves ± 10% within 24h.',false)}
+                        ${row('newTopToken','New Token in Top 100','A new Solana token enters the tracked top 100.',false)}
+                        ${row('whaleAccumulation','Whale Accumulation','Wallets with >$1M accumulate a single token over 48h.',!isPro)}
+                        ${row('customPriceAlerts','Custom Price Alerts','Set precise price targets for any tracked token.',!isPro)}
+                        ${!isPro ? `<div style="padding:10px 0 2px;font-size:12px;color:#888;">Pro alerts require an active Pro plan. <a style="color:#1a1a1a;font-weight:600;cursor:pointer;text-decoration:underline;" onclick="switchTab('billing',null)">Upgrade →</a></div>` : ''}
                     </div>
                 </div>
 
+                <!-- Delivery Channels -->
                 <div class="card">
                     <div class="card-title">Delivery Channels</div>
                     <div class="card-content">
                         <div class="card-row">
-                            <div>
-                                <div class="card-label">Browser Notifications</div>
-                                <div style="font-size: 12px; color: #666;">Real-time alerts</div>
+                            <div><span class="card-label">In-App</span>
+                                <div style="font-size:12px;color:#888;margin-top:2px;">Alerts always visible inside the app.</div>
                             </div>
-                            <div class="toggle-switch active" onclick="toggleChannel('browser', event)"></div>
+                            <div class="toggle-switch active" style="opacity:0.45;cursor:not-allowed;"></div>
                         </div>
-                        <div class="card-row" style="border-top: 1px solid #2a2a2a;">
-                            <div>
-                                <div class="card-label">Email Digest</div>
-                                <div style="font-size: 12px; color: #666;">Daily summary emails</div>
+                        <div class="card-row" style="border-top:1px solid #f0f0f0;">
+                            <div><span class="card-label">Browser Push</span>
+                                <div style="font-size:12px;color:#888;margin-top:2px;">Real-time system notifications in the background.</div>
                             </div>
-                            <div class="toggle-switch" onclick="toggleChannel('email', event)"></div>
+                            <div class="toggle-switch ${n.channelBrowser?'active':''}" onclick="toggleNotifKey('channelBrowser',event)"></div>
+                        </div>
+                        <div class="card-row" style="border-top:1px solid #f0f0f0;">
+                            <div><span class="card-label">Email</span>
+                                <div style="font-size:12px;color:#888;margin-top:4px;display:flex;gap:6px;flex-wrap:wrap;">
+                                    ${['off','immediate','hourly','daily'].map(v=>`<button style="font-size:11px;padding:3px 9px;border:1px solid ${n.channelEmail===v?'#1a1a1a':'#ddd'};background:${n.channelEmail===v?'#1a1a1a':'#fff'};color:${n.channelEmail===v?'#fff':'#555'};cursor:pointer;border-radius:2px;" onclick="setNotifPref('channelEmail','${v}');renderSettings();">${v.charAt(0).toUpperCase()+v.slice(1)}</button>`).join('')}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-row" style="border-top:1px solid #f0f0f0;${!isPro?'opacity:0.55;':''}">
+                            <div>
+                                <span style="font-size:10px;font-weight:700;background:#f5f5f5;border:1px solid #ddd;padding:1px 5px;border-radius:2px;color:#999;margin-right:6px;">PRO</span>
+                                <span class="card-label">Telegram</span>
+                                <div style="font-size:12px;color:#888;margin-top:2px;">Receive alerts via @UnlimitProBot.</div>
+                            </div>
+                            <div class="toggle-switch ${isPro&&n.channelTelegram?'active':''}" style="${!isPro?'cursor:not-allowed;':''}"
+                                onclick="${isPro?`toggleNotifKey('channelTelegram',event)`:`showToast('Upgrade to Pro to enable Telegram')`}"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quiet Hours -->
+                <div class="card">
+                    <div class="card-title">Quiet Hours</div>
+                    <div class="card-content">
+                        <div class="card-row">
+                            <div><span class="card-label">Enable Quiet Hours</span>
+                                <div style="font-size:12px;color:#888;margin-top:2px;">Suppress non-critical alerts during a set time window (local time).</div>
+                                ${n.quietHours ? `<div style="margin-top:10px;display:flex;align-items:center;gap:10px;font-size:12px;">
+                                    <span style="color:#666;">From</span>
+                                    <input type="time" value="${n.quietFrom}" onchange="setNotifPref('quietFrom',this.value)" style="font-size:12px;padding:3px 6px;border:1px solid #ddd;">
+                                    <span style="color:#666;">to</span>
+                                    <input type="time" value="${n.quietTo}" onchange="setNotifPref('quietTo',this.value)" style="font-size:12px;padding:3px 6px;border:1px solid #ddd;">
+                                </div>` : ''}
+                            </div>
+                            <div class="toggle-switch ${n.quietHours?'active':''}" onclick="toggleNotifKey('quietHours',event)"></div>
                         </div>
                     </div>
                 </div>
             `;
         }
 
-        function toggleNotification(key, e) {
-            if (key === 'marketAlerts' || key === 'portfolioUpdates') {
-                showToast('Upgrade to Pro unlock these notifications');
-                return;
-            }
+        function toggleNotifKey(key, e) {
+            ensureNotifState();
             appState.notifications[key] = !appState.notifications[key];
-            if (e && e.target) {
-                e.target.closest('.toggle-switch').classList.toggle('active');
-            }
-            showToast(key + ' ' + (appState.notifications[key] ? 'enabled' : 'disabled'));
+            // Re-render settings to reflect select boxes appearing/disappearing
+            renderSettings();
         }
-
-        function toggleChannel(channel, e) {
-            if (e && e.target) {
-                e.target.closest('.toggle-switch').classList.toggle('active');
-                showToast(channel + ' notifications ' + (e.target.closest('.toggle-switch').classList.contains('active') ? 'enabled' : 'disabled'));
-            }
+        function setNotifPref(key, value) {
+            ensureNotifState();
+            appState.notifications[key] = value;
         }
 
         // ==================== MODAL HELPERS ====================
