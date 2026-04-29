@@ -1,0 +1,1353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sprint 2: Core Wallet — Low-Fidelity Prototype</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #ffffff; color: #000000; line-height: 1.5; min-height: 100vh; }
+
+        /* ── App Header (MetaMask-style) ─────────────────────── */
+        .app-header {
+            background: #f0f0f0;
+            border-bottom: 2px solid #000000;
+            padding: 0 16px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 200;
+            gap: 12px;
+        }
+
+        /* Left: Wallet selector */
+        .wallet-zone { display: flex; align-items: center; gap: 0; position: relative; }
+        .wallet-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 10px;
+            background: #ffffff;
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 700;
+        }
+        .wallet-btn:hover { background: #f5f5f5; }
+        .wallet-avatar {
+            width: 26px; height: 26px;
+            background: #000000;
+            color: #ffffff;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 10px; font-weight: 700;
+            flex-shrink: 0;
+        }
+        .wallet-caret { font-size: 10px; color: #666; }
+
+        /* Wallet dropdown panel */
+        .wallet-dropdown {
+            display: none;
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            width: 260px;
+            background: #ffffff;
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            z-index: 300;
+        }
+        .wallet-dropdown.open { display: block; }
+        .wd-header { padding: 10px 14px; font-size: 10px; font-weight: 700; text-transform: uppercase; color: #999; border-bottom: 1px solid #eee; }
+        .wd-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 14px;
+            cursor: pointer;
+            border-bottom: 1px solid #f5f5f5;
+        }
+        .wd-item:hover { background: #fafafa; }
+        .wd-item.active { background: #f5f5f5; }
+        .wd-info { flex: 1; }
+        .wd-name { font-size: 12px; font-weight: 700; }
+        .wd-addr { font-size: 10px; color: #999; font-family: 'Courier New', monospace; }
+        .wd-check { font-size: 14px; }
+        .wd-footer { border-top: 1px solid #eee; }
+        .wd-footer a {
+            display: flex; align-items: center; gap: 8px;
+            padding: 10px 14px;
+            font-size: 12px; font-weight: 600;
+            color: #000; text-decoration: none;
+            border-bottom: 1px solid #f5f5f5;
+        }
+        .wd-footer a:hover { background: #fafafa; }
+
+        /* Center: Network pill */
+        .net-zone { position: relative; }
+        .net-pill {
+            display: flex; align-items: center; gap: 6px;
+            padding: 6px 12px;
+            background: #ffffff;
+            border: 1px solid #cccccc;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px; font-weight: 700;
+        }
+        .net-pill:hover { background: #f0f0f0; }
+        .net-dot { width: 8px; height: 8px; background: #000; border-radius: 50%; }
+        .net-caret { font-size: 10px; color: #666; }
+
+        /* Network switcher overlay */
+        .net-panel {
+            display: none;
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 50%;
+            transform: translateX(-50%);
+            width: 240px;
+            background: #ffffff;
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            z-index: 300;
+        }
+        .net-panel.open { display: block; }
+        .np-header { padding: 10px 14px; font-size: 10px; font-weight: 700; text-transform: uppercase; color: #999; border-bottom: 1px solid #eee; }
+        .np-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 11px 14px;
+            cursor: pointer;
+            border-bottom: 1px solid #f5f5f5;
+        }
+        .np-item:last-child { border-bottom: none; }
+        .np-item:hover { background: #fafafa; }
+        .np-item.active { background: #f5f5f5; }
+        .np-dot { width: 10px; height: 10px; border: 2px solid #000; border-radius: 50%; flex-shrink: 0; }
+        .np-dot.filled { background: #000; }
+        .np-info { flex: 1; }
+        .np-name { font-size: 12px; font-weight: 700; }
+        .np-id { font-size: 10px; color: #999; }
+        .np-check { font-size: 14px; }
+        .np-footer { border-top: 1px solid #eee; padding: 10px 14px; }
+        .np-footer a { font-size: 11px; font-weight: 600; color: #000; text-decoration: none; }
+        .np-footer a:hover { text-decoration: underline; }
+
+        /* Right: Icon buttons */
+        .header-actions { display: flex; align-items: center; gap: 8px; }
+        .icon-btn {
+            position: relative;
+            width: 36px; height: 36px;
+            background: #ffffff;
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .icon-btn:hover { background: #f0f0f0; }
+        .badge-count {
+            position: absolute;
+            top: -4px; right: -4px;
+            background: #000;
+            color: #fff;
+            font-size: 9px;
+            font-weight: 700;
+            padding: 1px 5px;
+            border-radius: 10px;
+            min-width: 16px;
+            text-align: center;
+        }
+        .proto-badge {
+            font-size: 10px;
+            font-weight: 700;
+            color: #999;
+            border: 1px solid #cccccc;
+            padding: 3px 8px;
+            border-radius: 3px;
+        }
+
+        /* ── Page layout ─────────────────────────────────────── */
+        .container { max-width: 860px; margin: 0 auto; padding: 24px 20px 48px; }
+        .page-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #555; margin-bottom: 20px; }
+
+        /* ── Balance card ────────────────────────────────────── */
+        .balance-card {
+            background: #ffffff;
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        .bal-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #999; margin-bottom: 4px; }
+        .bal-value { font-size: 32px; font-weight: 700; font-family: 'Courier New', monospace; margin-bottom: 4px; }
+        .bal-change { font-size: 12px; color: #333; margin-bottom: 12px; }
+        .bal-change .up { font-weight: 700; }
+        .addr-row {
+            display: flex; align-items: center; gap: 8px;
+            padding: 8px 10px;
+            background: #f5f5f5;
+            border: 1px solid #e0e0e0;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            margin-bottom: 16px;
+        }
+        .addr-row span { flex: 1; }
+        .copy-btn {
+            background: none; border: none; cursor: pointer; font-size: 14px; padding: 2px 4px;
+        }
+        .copy-btn:hover { background: #e0e0e0; border-radius: 3px; }
+
+        /* ── Quick actions ────────────────────────────────────── */
+        .action-row {
+            display: flex; gap: 8px; flex-wrap: wrap;
+        }
+        .action-btn {
+            flex: 1; min-width: 80px;
+            padding: 10px 8px;
+            background: #ffffff;
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px; font-weight: 700;
+            text-align: center;
+        }
+        .action-btn:hover:not(:disabled) { background: #f5f5f5; }
+        .action-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .action-btn .ab-icon { font-size: 18px; display: block; margin-bottom: 3px; }
+
+        /* ── Asset section ────────────────────────────────────── */
+        .section-card {
+            background: #ffffff;
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+        .section-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 12px 16px;
+            border-bottom: 1px solid #eeeeee;
+            background: #fafafa;
+        }
+        .section-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .section-actions { display: flex; gap: 8px; align-items: center; }
+        .asset-filter-input {
+            padding: 5px 8px;
+            border: 1px solid #cccccc;
+            border-radius: 3px;
+            font-size: 11px;
+            width: 140px;
+        }
+        .asset-filter-input:focus { outline: none; border-color: #000; }
+        .btn-small {
+            padding: 5px 10px;
+            background: #000;
+            color: #fff;
+            border: 1px solid #000;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .btn-small:hover { background: #333; }
+        .btn-small-outline {
+            padding: 5px 10px;
+            background: #fff;
+            color: #000;
+            border: 1px solid #cccccc;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .btn-small-outline:hover { background: #f5f5f5; }
+        .asset-tbl { width: 100%; border-collapse: collapse; font-size: 12px; }
+        .asset-tbl th {
+            background: #f5f5f5;
+            border-bottom: 1px solid #cccccc;
+            padding: 9px 14px;
+            text-align: left;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #666;
+            cursor: pointer;
+            user-select: none;
+            white-space: nowrap;
+        }
+        .asset-tbl th:hover { background: #eeeeee; }
+        .asset-tbl th .sort-arrow { margin-left: 4px; opacity: 0.4; }
+        .asset-tbl th.sorted .sort-arrow { opacity: 1; }
+        .asset-tbl td { padding: 11px 14px; border-bottom: 1px solid #f0f0f0; }
+        .asset-tbl tr:last-child td { border-bottom: none; }
+        .asset-tbl tr:hover td { background: #fafafa; }
+        .asset-name { font-weight: 700; }
+        .asset-ticker { font-size: 10px; color: #999; display: block; }
+        .asset-change { font-size: 11px; }
+        .asset-change.up { font-weight: 700; }
+        .asset-change.down { font-style: italic; }
+
+        /* ── Pending TX banner ───────────────────────────────── */
+        .pending-banner {
+            background: #f5f5f5;
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+            padding: 10px 14px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+        }
+        .pending-banner .pb-dot { width: 8px; height: 8px; background: #000; border-radius: 50%; animation: pulse 1.5s infinite; flex-shrink: 0; }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+        .pending-banner .pb-text { flex: 1; }
+        .pending-banner .pb-actions { display: flex; gap: 6px; }
+
+        /* ── TX list ─────────────────────────────────────────── */
+        .tx-list { }
+        .tx-item {
+            display: grid;
+            grid-template-columns: 36px 1fr auto auto;
+            gap: 10px;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+        }
+        .tx-item:last-child { border-bottom: none; }
+        .tx-item:hover { background: #fafafa; }
+        .tx-icon-wrap {
+            width: 36px; height: 36px;
+            border: 1px solid #cccccc;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+        .tx-details { }
+        .tx-type { font-size: 12px; font-weight: 700; }
+        .tx-sub { font-size: 10px; color: #999; font-family: 'Courier New', monospace; }
+        .tx-amount { font-size: 12px; font-weight: 700; font-family: 'Courier New', monospace; text-align: right; }
+        .tx-status-pill {
+            font-size: 10px; font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 12px;
+            border: 1px solid;
+            white-space: nowrap;
+        }
+        .status-confirmed { background: #f0f0f0; border-color: #666; color: #333; }
+        .status-pending { background: #fff; border-color: #000; color: #000; }
+        .status-failed { background: #f5f5f5; border-color: #999; color: #666; text-decoration: line-through; }
+
+        /* ── Scope note ──────────────────────────────────────── */
+        .scope-note {
+            background: #f8f8f8;
+            border: 1px solid #cccccc;
+            border-left: 4px solid #000;
+            border-radius: 4px;
+            padding: 10px 14px;
+            margin-top: 24px;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        /* ── Modals ──────────────────────────────────────────── */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); }
+        .modal.active { display: flex; align-items: center; justify-content: center; }
+        .modal-box {
+            background: #ffffff;
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+            width: 90%;
+            max-width: 440px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+        }
+        .modal-head {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 14px 18px;
+            border-bottom: 1px solid #eeeeee;
+        }
+        .modal-title { font-size: 15px; font-weight: 700; }
+        .modal-close { background: none; border: none; font-size: 22px; cursor: pointer; color: #999; line-height: 1; }
+        .modal-body { padding: 18px; }
+        .modal-foot {
+            padding: 14px 18px;
+            border-top: 1px solid #eeeeee;
+            display: flex; gap: 8px; justify-content: flex-end;
+        }
+        .modal-foot.full .btn-primary { flex: 1; }
+
+        /* Step indicator */
+        .step-indicator {
+            display: flex; gap: 6px; align-items: center; justify-content: center;
+            margin-bottom: 18px;
+        }
+        .step-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            border: 2px solid #cccccc;
+            background: #fff;
+        }
+        .step-dot.active { background: #000; border-color: #000; }
+        .step-dot.done { background: #555; border-color: #555; }
+        .step-label { font-size: 11px; color: #999; text-align: center; margin-bottom: 14px; }
+
+        /* Form elements */
+        .form-group { margin-bottom: 14px; }
+        .form-label { display: block; font-size: 10px; font-weight: 700; text-transform: uppercase; color: #555; margin-bottom: 5px; letter-spacing: 0.3px; }
+        .form-input {
+            width: 100%; padding: 9px 10px;
+            border: 1px solid #cccccc; border-radius: 3px;
+            font-size: 12px; font-family: inherit;
+        }
+        .form-input:focus { outline: none; border-color: #000; }
+        .form-input:disabled { background: #f5f5f5; color: #999; }
+        .form-row { display: flex; gap: 8px; align-items: flex-end; }
+        .form-row .form-group { flex: 1; }
+        .form-hint { font-size: 10px; color: #999; margin-top: 4px; }
+        .form-note {
+            background: #f5f5f5; border: 1px solid #e0e0e0;
+            border-radius: 3px; padding: 8px 10px;
+            font-size: 11px; color: #555; margin-bottom: 14px;
+        }
+
+        /* Gas tier cards */
+        .gas-tiers { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+        .gas-tier {
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+            padding: 12px 14px;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .gas-tier:hover { background: #fafafa; }
+        .gas-tier.selected { border: 2px solid #000; background: #fafafa; }
+        .gas-tier-left { }
+        .gas-tier-name { font-size: 13px; font-weight: 700; }
+        .gas-tier-time { font-size: 11px; color: #999; }
+        .gas-tier-cost { font-size: 13px; font-weight: 700; font-family: 'Courier New', monospace; }
+
+        /* Receive QR */
+        .qr-grid {
+            display: grid;
+            grid-template-columns: repeat(20, 1fr);
+            gap: 1px;
+            width: 160px; height: 160px;
+            margin: 0 auto 14px;
+            border: 2px solid #000;
+            padding: 8px;
+            background: #ffffff;
+        }
+        .qr-cell { background: #ffffff; }
+        .qr-cell.b { background: #000000; }
+
+        /* Confirm summary */
+        .confirm-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 12px;
+        }
+        .confirm-row:last-child { border-bottom: none; }
+        .confirm-label { color: #666; }
+        .confirm-value { font-weight: 700; font-family: 'Courier New', monospace; font-size: 11px; }
+        .confirm-total { font-size: 14px; font-weight: 700; }
+
+        /* TX detail */
+        .tx-detail-row {
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 12px;
+        }
+        .tx-detail-row:last-child { border-bottom: none; }
+        .tx-detail-label { font-size: 10px; font-weight: 700; text-transform: uppercase; color: #999; margin-bottom: 2px; }
+        .tx-detail-value { font-family: 'Courier New', monospace; font-size: 11px; word-break: break-all; }
+        .tx-detail-value.mono-lg { font-size: 16px; font-weight: 700; }
+
+        /* Broadcast states */
+        .broadcast-pending { text-align: center; padding: 24px 0; }
+        .broadcast-spinner { font-size: 32px; animation: spin 1s linear infinite; display: block; margin-bottom: 10px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .broadcast-success { text-align: center; padding: 20px 0; }
+        .broadcast-success .bs-icon { font-size: 40px; margin-bottom: 8px; }
+        .broadcast-success .bs-title { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+        .broadcast-success .bs-hash { font-family: 'Courier New', monospace; font-size: 10px; color: #666; }
+
+        /* Buttons */
+        .btn-primary {
+            padding: 9px 18px;
+            background: #000; color: #fff;
+            border: 1px solid #000; border-radius: 3px;
+            cursor: pointer; font-size: 12px; font-weight: 700;
+        }
+        .btn-primary:hover { background: #333; }
+        .btn-secondary {
+            padding: 9px 18px;
+            background: #fff; color: #000;
+            border: 1px solid #cccccc; border-radius: 3px;
+            cursor: pointer; font-size: 12px; font-weight: 600;
+        }
+        .btn-secondary:hover { background: #f5f5f5; }
+        .btn-link {
+            background: none; border: none;
+            font-size: 11px; color: #000;
+            cursor: pointer; text-decoration: underline; padding: 0;
+        }
+
+        /* Swap */
+        .swap-arrow-btn {
+            display: block; width: 32px; height: 32px;
+            margin: -4px auto;
+            background: #fff; border: 1px solid #cccccc;
+            border-radius: 50%;
+            font-size: 16px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 1; position: relative;
+        }
+        .swap-arrow-btn:hover { background: #f0f0f0; }
+        .rate-row {
+            background: #f5f5f5; border: 1px solid #e0e0e0;
+            border-radius: 3px; padding: 8px 10px;
+            font-size: 11px; display: flex; justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        /* Footer */
+        footer {
+            background: #f0f0f0; border-top: 1px solid #cccccc;
+            padding: 14px 20px; text-align: center;
+            font-size: 11px; color: #666;
+        }
+        .footer-links { margin-top: 8px; display: flex; justify-content: center; gap: 16px; }
+        .footer-links a { color: #000; text-decoration: none; font-size: 11px; font-weight: 600; }
+        .footer-links a:hover { text-decoration: underline; }
+
+        @media (max-width: 600px) {
+            .action-row .action-btn .ab-icon { display: none; }
+            .asset-tbl th:nth-child(4), .asset-tbl td:nth-child(4) { display: none; }
+            .tx-item { grid-template-columns: 36px 1fr auto; }
+            .tx-item .tx-status-pill { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ────────────────────────────────────────────────────── -->
+    <!-- APP HEADER (MetaMask-style)                           -->
+    <!-- ────────────────────────────────────────────────────── -->
+    <div class="app-header">
+
+        <!-- Left: Wallet selector -->
+        <div class="wallet-zone">
+            <button class="wallet-btn" onclick="togglePanel('walletDropdown')">
+                <div class="wallet-avatar">MW</div>
+                My Wallet
+                <span class="wallet-caret">▾</span>
+            </button>
+
+            <!-- Wallet dropdown panel -->
+            <div class="wallet-dropdown" id="walletDropdown">
+                <div class="wd-header">My Wallets</div>
+                <div class="wd-item active">
+                    <div class="wallet-avatar" style="width:28px;height:28px;font-size:9px;">MW</div>
+                    <div class="wd-info">
+                        <div class="wd-name">My Wallet</div>
+                        <div class="wd-addr">0x742d...8ae7</div>
+                    </div>
+                    <span class="wd-check">✓</span>
+                </div>
+                <div class="wd-item">
+                    <div class="wallet-avatar" style="width:28px;height:28px;font-size:9px;background:#555;">TW</div>
+                    <div class="wd-info">
+                        <div class="wd-name">Trading Wallet</div>
+                        <div class="wd-addr">0x1a2b...9c0d</div>
+                    </div>
+                </div>
+                <div class="wd-footer">
+                    <a href="sprint1.html">＋ Create New Wallet</a>
+                    <a href="sprint1.html">↓ Import Wallet</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Center: Network pill -->
+        <div class="net-zone">
+            <button class="net-pill" onclick="togglePanel('netPanel')">
+                <span class="net-dot"></span>
+                Ethereum
+                <span class="net-caret">▾</span>
+            </button>
+
+            <!-- Network switcher -->
+            <div class="net-panel" id="netPanel">
+                <div class="np-header">Select Network</div>
+                <div class="np-item active" onclick="switchNetwork(this,'Ethereum')">
+                    <div class="np-dot filled"></div>
+                    <div class="np-info"><div class="np-name">Ethereum Mainnet</div><div class="np-id">Chain ID: 1</div></div>
+                    <span class="np-check">✓</span>
+                </div>
+                <div class="np-item" onclick="switchNetwork(this,'Polygon')">
+                    <div class="np-dot"></div>
+                    <div class="np-info"><div class="np-name">Polygon</div><div class="np-id">Chain ID: 137</div></div>
+                </div>
+                <div class="np-item" onclick="switchNetwork(this,'Arbitrum')">
+                    <div class="np-dot"></div>
+                    <div class="np-info"><div class="np-name">Arbitrum One</div><div class="np-id">Chain ID: 42161</div></div>
+                </div>
+                <div class="np-item" onclick="switchNetwork(this,'Optimism')">
+                    <div class="np-dot"></div>
+                    <div class="np-info"><div class="np-name">Optimism</div><div class="np-id">Chain ID: 10</div></div>
+                </div>
+                <div class="np-item" onclick="switchNetwork(this,'BNB Chain')">
+                    <div class="np-dot"></div>
+                    <div class="np-info"><div class="np-name">BNB Chain</div><div class="np-id">Chain ID: 56</div></div>
+                </div>
+                <div class="np-footer"><a href="#">＋ Add Custom Network →</a></div>
+            </div>
+        </div>
+
+        <!-- Right: Icon buttons -->
+        <div class="header-actions">
+            <button class="icon-btn" onclick="openModal('pendingPanel')" title="Pending Transactions">
+                ⏳
+                <span class="badge-count">1</span>
+            </button>
+            <button class="icon-btn" title="Settings">⚙</button>
+            <span class="proto-badge">Sprint 2</span>
+            <a href="management.html" class="btn-secondary" style="font-size:11px;padding:6px 10px;border:1px solid #ccc;border-radius:4px;text-decoration:none;color:#000;background:#fff;font-weight:600;">← Dashboard</a>
+        </div>
+    </div>
+
+    <!-- ────────────────────────────────────────────────────── -->
+    <!-- MAIN CONTENT                                          -->
+    <!-- ────────────────────────────────────────────────────── -->
+    <div class="container">
+        <p class="page-title">Wallet Dashboard — Sprint 2: Core Wallet</p>
+
+        <!-- Pending TX banner -->
+        <div class="pending-banner">
+            <div class="pb-dot"></div>
+            <div class="pb-text">
+                <strong>1 Pending Transaction</strong> — Sending 0.25 ETH · 2 min ago
+            </div>
+            <div class="pb-actions">
+                <button class="btn-small-outline" onclick="openModal('pendingPanel')">View</button>
+                <button class="btn-small" onclick="openModal('sendModal')">Speed Up</button>
+            </div>
+        </div>
+
+        <!-- Balance card -->
+        <div class="balance-card">
+            <div class="bal-label">Total Portfolio Value</div>
+            <div class="bal-value">$12,547.32</div>
+            <div class="bal-change">▲ <span class="up">+$234.50 (+1.90%)</span> · past 24 hours</div>
+            <div class="addr-row">
+                <span id="walletAddr">0x742d35Cc6634C0532925a3b8…8ae7b</span>
+                <button class="copy-btn" onclick="copyAddr()" title="Copy address">⎘</button>
+            </div>
+            <div class="action-row">
+                <button class="action-btn" onclick="openModal('sendModal')">
+                    <span class="ab-icon">↑</span>Send
+                </button>
+                <button class="action-btn" onclick="openModal('receiveModal')">
+                    <span class="ab-icon">↓</span>Receive
+                </button>
+                <button class="action-btn" onclick="openModal('swapModal')">
+                    <span class="ab-icon">⇄</span>Swap
+                </button>
+                <button class="action-btn" disabled>
+                    <span class="ab-icon">⛓</span>Bridge
+                </button>
+                <button class="action-btn" disabled>
+                    <span class="ab-icon">$</span>Buy
+                </button>
+            </div>
+        </div>
+
+        <!-- Token list -->
+        <div class="section-card">
+            <div class="section-header">
+                <span class="section-title">Assets</span>
+                <div class="section-actions">
+                    <input class="asset-filter-input" type="text" placeholder="Filter assets…" oninput="filterAssets(this.value)">
+                    <button class="btn-small" onclick="openModal('addTokenModal')">＋ Add Token</button>
+                </div>
+            </div>
+            <table class="asset-tbl" id="assetTable">
+                <thead>
+                    <tr>
+                        <th onclick="sortAssets(0,this)">Asset <span class="sort-arrow">↕</span></th>
+                        <th onclick="sortAssets(1,this)">Balance <span class="sort-arrow">↕</span></th>
+                        <th onclick="sortAssets(2,this)">Value (USD) <span class="sort-arrow">↕</span></th>
+                        <th onclick="sortAssets(3,this)">24h Change <span class="sort-arrow">↕</span></th>
+                    </tr>
+                </thead>
+                <tbody id="assetTbody">
+                    <tr>
+                        <td><div class="asset-name">Ethereum</div><span class="asset-ticker">ETH</span></td>
+                        <td>2.500 ETH</td>
+                        <td>$4,250.00</td>
+                        <td><span class="asset-change up">▲ +2.4%</span></td>
+                    </tr>
+                    <tr>
+                        <td><div class="asset-name">USD Coin</div><span class="asset-ticker">USDC</span></td>
+                        <td>5,000.00 USDC</td>
+                        <td>$5,000.00</td>
+                        <td><span class="asset-change">▲ +0.0%</span></td>
+                    </tr>
+                    <tr>
+                        <td><div class="asset-name">Wrapped Bitcoin</div><span class="asset-ticker">WBTC</span></td>
+                        <td>0.1500 WBTC</td>
+                        <td>$6,150.00</td>
+                        <td><span class="asset-change up">▲ +1.8%</span></td>
+                    </tr>
+                    <tr>
+                        <td><div class="asset-name">Dai Stablecoin</div><span class="asset-ticker">DAI</span></td>
+                        <td>2,147.32 DAI</td>
+                        <td>$2,147.32</td>
+                        <td><span class="asset-change down">▼ -0.1%</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Recent Transactions (preview) -->
+        <div class="section-card">
+            <div class="section-header">
+                <span class="section-title">Recent Activity</span>
+                <a href="sprint3.html" style="font-size:11px;font-weight:600;color:#000;">View Full History →</a>
+            </div>
+            <div class="tx-list">
+                <div class="tx-item tx-sent" onclick="openModal('txDetailModal')">
+                    <div class="tx-icon-wrap">↑</div>
+                    <div class="tx-details">
+                        <div class="tx-type">Sent ETH</div>
+                        <div class="tx-sub">To: 0x8b2c...7a3f · Jan 15, 2:32 PM</div>
+                    </div>
+                    <div class="tx-amount">-0.500 ETH</div>
+                    <span class="tx-status-pill status-confirmed">Confirmed ✓</span>
+                </div>
+                <div class="tx-item tx-received" onclick="openModal('txDetailModal')">
+                    <div class="tx-icon-wrap">↓</div>
+                    <div class="tx-details">
+                        <div class="tx-type">Received ETH</div>
+                        <div class="tx-sub">From: 0x5d9b...4c8e · Jan 14, 9:15 AM</div>
+                    </div>
+                    <div class="tx-amount">+2.000 ETH</div>
+                    <span class="tx-status-pill status-confirmed">Confirmed ✓</span>
+                </div>
+                <div class="tx-item tx-pending" onclick="openModal('txDetailModal')">
+                    <div class="tx-icon-wrap" style="animation:pulse 1.5s infinite;">⋯</div>
+                    <div class="tx-details">
+                        <div class="tx-type">Sending ETH</div>
+                        <div class="tx-sub">To: 0x6a1f...2e5c · Jan 12, 11:20 AM</div>
+                    </div>
+                    <div class="tx-amount">-0.250 ETH</div>
+                    <span class="tx-status-pill status-pending">Pending ⏳</span>
+                </div>
+                <div class="tx-item tx-received" onclick="openModal('txDetailModal')">
+                    <div class="tx-icon-wrap">↓</div>
+                    <div class="tx-details">
+                        <div class="tx-type">Received USDC</div>
+                        <div class="tx-sub">From: 0x4b8a...1d7c · Jan 11, 8:00 AM</div>
+                    </div>
+                    <div class="tx-amount">+50.00 USDC</div>
+                    <span class="tx-status-pill status-confirmed">Confirmed ✓</span>
+                </div>
+                <div class="tx-item tx-failed" onclick="openModal('txDetailModal')">
+                    <div class="tx-icon-wrap" style="opacity:0.5;">✕</div>
+                    <div class="tx-details">
+                        <div class="tx-type">Failed Swap</div>
+                        <div class="tx-sub">DEX: Uniswap V3 · Jan 10, 6:30 PM</div>
+                    </div>
+                    <div class="tx-amount" style="opacity:0.5;">—</div>
+                    <span class="tx-status-pill status-failed">Failed ✗</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="scope-note">
+            <strong>Sprint 2 Scope (WLT-101 – WLT-112):</strong> MetaMask/Phantom-inspired app header with wallet selector dropdown, network pill + switcher overlay, notification bell with pending TX badge, enhanced balance card (24h change + address copy), sortable asset table with filter, 3-step Send modal (recipient → EIP-1559 gas tiers → confirm + broadcast), Receive modal with QR placeholder, Swap modal with asset selectors + quote. Sprint 3 adds full TX history, filters, analytics, and settings.
+        </div>
+    </div>
+
+
+    <!-- ════════════════════════════════════════════════════════ -->
+    <!-- MODALS                                                  -->
+    <!-- ════════════════════════════════════════════════════════ -->
+
+    <!-- ── SEND MODAL (3 steps) ─────────────────────────────── -->
+    <div id="sendModal" class="modal">
+        <div class="modal-box">
+            <div class="modal-head">
+                <span class="modal-title" id="sendTitle">Send</span>
+                <button class="modal-close" onclick="closeModal('sendModal'); resetSend()">×</button>
+            </div>
+            <div class="modal-body">
+
+                <!-- Step 1: Details -->
+                <div id="send-step1">
+                    <div class="step-indicator">
+                        <div class="step-dot active" id="sd1"></div>
+                        <div class="step-dot" id="sd2"></div>
+                        <div class="step-dot" id="sd3"></div>
+                    </div>
+                    <p class="step-label">Step 1 of 3 — Recipient &amp; Amount</p>
+                    <div class="form-group">
+                        <label class="form-label">Recipient Address or ENS Name</label>
+                        <input type="text" class="form-input" id="send-to" placeholder="0x… or alice.eth">
+                        <div class="form-hint">Tip: type an .eth name to resolve via ENS</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Asset</label>
+                        <select class="form-input" id="send-asset">
+                            <option value="ETH">ETH — Balance: 2.500 ETH</option>
+                            <option value="USDC">USDC — Balance: 5,000.00 USDC</option>
+                            <option value="WBTC">WBTC — Balance: 0.1500 WBTC</option>
+                            <option value="DAI">DAI — Balance: 2,147.32 DAI</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Amount</label>
+                        <div class="form-row">
+                            <div class="form-group" style="margin-bottom:0">
+                                <input type="number" class="form-input" id="send-amount" placeholder="0.0" step="0.0001" min="0">
+                            </div>
+                            <button class="btn-small-outline" onclick="document.getElementById('send-amount').value='2.4790'">Max</button>
+                        </div>
+                        <div class="form-hint">≈ $0.00 USD · Gas est. ~$12.50 (Standard)</div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Gas -->
+                <div id="send-step2" style="display:none">
+                    <div class="step-indicator">
+                        <div class="step-dot done"></div>
+                        <div class="step-dot active"></div>
+                        <div class="step-dot"></div>
+                    </div>
+                    <p class="step-label">Step 2 of 3 — Select Gas Speed (EIP-1559)</p>
+                    <div class="gas-tiers" id="gasTiers">
+                        <div class="gas-tier selected" onclick="selectGas(this,'Standard')">
+                            <div class="gas-tier-left">
+                                <div class="gas-tier-name">Standard</div>
+                                <div class="gas-tier-time">~2 minutes · baseFee + 1 gwei tip</div>
+                            </div>
+                            <div class="gas-tier-cost">~$12.50</div>
+                        </div>
+                        <div class="gas-tier" onclick="selectGas(this,'Fast')">
+                            <div class="gas-tier-left">
+                                <div class="gas-tier-name">Fast</div>
+                                <div class="gas-tier-time">~30 seconds · baseFee + 1.5 gwei tip</div>
+                            </div>
+                            <div class="gas-tier-cost">~$16.80</div>
+                        </div>
+                        <div class="gas-tier" onclick="selectGas(this,'Instant')">
+                            <div class="gas-tier-left">
+                                <div class="gas-tier-name">Instant</div>
+                                <div class="gas-tier-time">~15 seconds · baseFee + 2 gwei tip</div>
+                            </div>
+                            <div class="gas-tier-cost">~$21.20</div>
+                        </div>
+                    </div>
+                    <button class="btn-link">Advanced gas settings ▾</button>
+                </div>
+
+                <!-- Step 3: Confirm -->
+                <div id="send-step3" style="display:none">
+                    <div class="step-indicator">
+                        <div class="step-dot done"></div>
+                        <div class="step-dot done"></div>
+                        <div class="step-dot active"></div>
+                    </div>
+                    <p class="step-label">Step 3 of 3 — Review &amp; Confirm</p>
+                    <div class="confirm-row"><span class="confirm-label">To</span><span class="confirm-value">0x8b2c...7a3f</span></div>
+                    <div class="confirm-row"><span class="confirm-label">Asset</span><span class="confirm-value">ETH</span></div>
+                    <div class="confirm-row"><span class="confirm-label">Amount</span><span class="confirm-value">0.5000 ETH</span></div>
+                    <div class="confirm-row"><span class="confirm-label">Gas Speed</span><span class="confirm-value" id="confirm-gas-label">Standard</span></div>
+                    <div class="confirm-row"><span class="confirm-label">Gas Fee</span><span class="confirm-value" id="confirm-gas-cost">~$12.50</span></div>
+                    <div class="confirm-row" style="padding-top:10px;margin-top:4px;border-top:2px solid #000;border-bottom:none;"><span class="confirm-label confirm-total">Total Cost</span><span class="confirm-value confirm-total">0.5059 ETH + $12.50 gas</span></div>
+                </div>
+
+                <!-- Broadcasting state -->
+                <div id="send-broadcasting" style="display:none">
+                    <div class="broadcast-pending">
+                        <span class="broadcast-spinner">◌</span>
+                        <strong>Broadcasting transaction…</strong>
+                        <p style="font-size:11px;color:#999;margin-top:6px;">Please wait, submitting to Ethereum network</p>
+                    </div>
+                </div>
+
+                <!-- Success state -->
+                <div id="send-success" style="display:none">
+                    <div class="broadcast-success">
+                        <div class="bs-icon">✓</div>
+                        <div class="bs-title">Transaction Submitted!</div>
+                        <div class="bs-hash">TX: 0xf3a9…8c2b</div>
+                        <a href="#" style="display:block;margin-top:8px;font-size:11px;font-weight:600;color:#000;">View on Etherscan ↗</a>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-foot" id="sendFoot">
+                <button class="btn-secondary" id="sendBack" style="display:none" onclick="sendPrev()">← Back</button>
+                <button class="btn-primary" id="sendNext" onclick="sendNext()">Continue →</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── RECEIVE MODAL ─────────────────────────────────────── -->
+    <div id="receiveModal" class="modal">
+        <div class="modal-box">
+            <div class="modal-head">
+                <span class="modal-title">Receive</span>
+                <button class="modal-close" onclick="closeModal('receiveModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Network</label>
+                    <select class="form-input">
+                        <option>Ethereum Mainnet</option>
+                        <option>Polygon</option>
+                        <option>Arbitrum One</option>
+                    </select>
+                </div>
+                <!-- QR Code placeholder (20×20 CSS checkerboard) -->
+                <div class="qr-grid" id="qrGrid"></div>
+                <div class="form-group">
+                    <label class="form-label">Your Wallet Address</label>
+                    <div class="addr-row">
+                        <span style="font-size:9px;">0x742d35Cc6634C0532925a3b844Bc7e76fE13a51b</span>
+                        <button class="copy-btn" onclick="copyAddr()" title="Copy">⎘</button>
+                    </div>
+                </div>
+                <div class="form-note">⚠ Only send <strong>Ethereum</strong> assets to this address on the selected network. Sending from the wrong network may result in permanent loss.</div>
+                <div class="form-group" style="margin-bottom:0">
+                    <label class="form-label">ENS Name</label>
+                    <div class="addr-row" style="font-size:12px;font-weight:700;">alice.eth</div>
+                </div>
+            </div>
+            <div class="modal-foot modal-full" style="justify-content:stretch;">
+                <button class="btn-primary" style="flex:1;" onclick="copyAddr()">⎘ Copy Address</button>
+                <button class="btn-secondary" onclick="closeModal('receiveModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SWAP MODAL ────────────────────────────────────────── -->
+    <div id="swapModal" class="modal">
+        <div class="modal-box">
+            <div class="modal-head">
+                <span class="modal-title">Swap</span>
+                <button class="modal-close" onclick="closeModal('swapModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-note">Powered by 1inch aggregator · Best route across DEXes</div>
+                <div class="form-group">
+                    <label class="form-label">From</label>
+                    <select class="form-input" id="swap-from" onchange="updateSwapRate()">
+                        <option value="ETH">ETH — 2.500 ETH ($4,250.00)</option>
+                        <option value="USDC">USDC — 5,000.00 USDC ($5,000.00)</option>
+                        <option value="WBTC">WBTC — 0.150 WBTC ($6,150.00)</option>
+                        <option value="DAI">DAI — 2,147.32 DAI ($2,147.32)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Amount</label>
+                    <div class="form-row">
+                        <div class="form-group" style="margin-bottom:0">
+                            <input type="number" class="form-input" id="swap-amount" placeholder="0.0" oninput="updateSwapRate()">
+                        </div>
+                        <button class="btn-small-outline" onclick="document.getElementById('swap-amount').value='1'">Max</button>
+                    </div>
+                </div>
+                <button class="swap-arrow-btn" onclick="swapDirection()">⇄</button>
+                <div class="form-group" style="margin-top:4px;">
+                    <label class="form-label">To</label>
+                    <select class="form-input" id="swap-to" onchange="updateSwapRate()">
+                        <option value="USDC">USDC</option>
+                        <option value="ETH">ETH</option>
+                        <option value="DAI">DAI</option>
+                        <option value="WBTC">WBTC</option>
+                    </select>
+                </div>
+                <div class="rate-row">
+                    <span>Exchange Rate</span>
+                    <strong id="swap-rate">1 ETH ≈ 2,012.44 USDC</strong>
+                </div>
+                <div class="rate-row">
+                    <span>Max Slippage</span>
+                    <span>0.5% · <button class="btn-link">Edit</button></span>
+                </div>
+                <div class="rate-row">
+                    <span>Estimated Gas</span>
+                    <span>~$18.40 (Standard)</span>
+                </div>
+                <div class="form-group" style="margin-bottom:0">
+                    <label class="form-label">You Receive (estimated)</label>
+                    <input type="text" class="form-input" id="swap-receive" value="2,012.44 USDC" disabled>
+                </div>
+            </div>
+            <div class="modal-foot">
+                <button class="btn-secondary" onclick="getSwapQuote()">Get Quote ↻</button>
+                <button class="btn-primary" onclick="doSwap()">Swap →</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── PENDING TX PANEL ───────────────────────────────────── -->
+    <div id="pendingPanel" class="modal">
+        <div class="modal-box">
+            <div class="modal-head">
+                <span class="modal-title">Pending Transactions (1)</span>
+                <button class="modal-close" onclick="closeModal('pendingPanel')">×</button>
+            </div>
+            <div class="modal-body">
+                <div style="border:1px solid #cccccc;border-radius:4px;padding:14px;margin-bottom:10px;">
+                    <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+                        <strong style="font-size:13px;">Sending ETH</strong>
+                        <span style="font-size:11px;color:#999;">2 min ago</span>
+                    </div>
+                    <div style="font-size:11px;color:#666;margin-bottom:4px;">To: 0x6a1f...2e5c</div>
+                    <div style="font-size:12px;font-family:'Courier New',monospace;margin-bottom:12px;">-0.250 ETH · Gas: Standard ($12.50)</div>
+                    <div style="display:flex;gap:8px;">
+                        <button class="btn-small" onclick="openModal('sendModal');closeModal('pendingPanel')">⚡ Speed Up</button>
+                        <button class="btn-small-outline" onclick="closeModal('pendingPanel')">✕ Cancel TX</button>
+                    </div>
+                </div>
+                <div class="form-note">Speed Up sends a replacement transaction with a higher gas fee. Cancel sends a 0-value transaction to the same nonce.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── ADD TOKEN MODAL ────────────────────────────────────── -->
+    <div id="addTokenModal" class="modal">
+        <div class="modal-box">
+            <div class="modal-head">
+                <span class="modal-title">Add Custom Token</span>
+                <button class="modal-close" onclick="closeModal('addTokenModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-note">⚠ Anyone can create a token with any name. Always verify the contract address on Etherscan before importing.</div>
+                <div class="form-group">
+                    <label class="form-label">Contract Address</label>
+                    <input type="text" class="form-input" placeholder="0x…" id="token-addr">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Token Symbol</label>
+                    <input type="text" class="form-input" placeholder="e.g., USDT" id="token-symbol">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Decimals</label>
+                    <input type="number" class="form-input" value="18" id="token-decimals">
+                </div>
+                <div class="form-group" style="margin-bottom:0">
+                    <label class="form-label">Popular Tokens (quick add)</label>
+                    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;">
+                        <button class="btn-small-outline" onclick="quickAdd('USDT','0xdAC17F958D2ee523a2206206994597C13D831ec7')">USDT</button>
+                        <button class="btn-small-outline" onclick="quickAdd('LINK','0x514910771AF9Ca656af840dff83E8264EcF986CA')">LINK</button>
+                        <button class="btn-small-outline" onclick="quickAdd('UNI','0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984')">UNI</button>
+                        <button class="btn-small-outline" onclick="quickAdd('AAVE','0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9')">AAVE</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-foot">
+                <button class="btn-secondary" onclick="closeModal('addTokenModal')">Cancel</button>
+                <button class="btn-primary" onclick="importToken()">Import Token</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── TX DETAIL MODAL ───────────────────────────────────── -->
+    <div id="txDetailModal" class="modal">
+        <div class="modal-box">
+            <div class="modal-head">
+                <span class="modal-title">Transaction Details</span>
+                <button class="modal-close" onclick="closeModal('txDetailModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div style="background:#f5f5f5;border:1px solid #cccccc;border-radius:3px;padding:12px;text-align:center;margin-bottom:14px;">
+                    <div style="font-size:24px;margin-bottom:4px;">✓</div>
+                    <div style="font-size:13px;font-weight:700;">Confirmed</div>
+                    <div style="font-size:11px;color:#666;">Block 18,423,156 · 24 confirmations</div>
+                </div>
+                <div class="tx-detail-row">
+                    <div class="tx-detail-label">Type &amp; Amount</div>
+                    <div class="tx-detail-value mono-lg">↑ Sent 0.500 ETH</div>
+                    <div style="font-size:11px;color:#999;">≈ $850.00 at time of TX</div>
+                </div>
+                <div class="tx-detail-row">
+                    <div class="tx-detail-label">From</div>
+                    <div class="tx-detail-value">0x742d35Cc6634C0532925a3b844Bc7e76fE13a51b <button class="copy-btn">⎘</button></div>
+                </div>
+                <div class="tx-detail-row">
+                    <div class="tx-detail-label">To</div>
+                    <div class="tx-detail-value">0x8b2c4a7f2D9e3B1C5A8F7E4D3C2B1A0F9E8D7C6B <button class="copy-btn">⎘</button></div>
+                </div>
+                <div class="tx-detail-row">
+                    <div class="tx-detail-label">Transaction Hash</div>
+                    <div class="tx-detail-value">0xf3a9c2e1d8b7f4a3e2c1d0b9a8f7e6d5c4b3a2f1e0 <button class="copy-btn">⎘</button></div>
+                    <a href="#" style="font-size:10px;font-weight:600;color:#000;">View on Etherscan ↗</a>
+                </div>
+                <div class="tx-detail-row">
+                    <div class="tx-detail-label">Gas</div>
+                    <div class="tx-detail-value">21,000 used / 21,000 limit · 45.23 gwei</div>
+                    <div style="font-size:11px;color:#666;">Fee paid: 0.000950 ETH (~$12.50)</div>
+                </div>
+                <div class="tx-detail-row">
+                    <div class="tx-detail-label">Date &amp; Time</div>
+                    <div class="tx-detail-value" style="font-family:inherit;">Jan 15, 2025 · 2:32:07 PM UTC</div>
+                </div>
+            </div>
+            <div class="modal-foot">
+                <button class="btn-primary" style="flex:1;" onclick="closeModal('txDetailModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Sprint 2: Core Wallet · Low-Fidelity Prototype · WLT-101 – WLT-112</p>
+        <div class="footer-links">
+            <a href="management.html">← Dashboard</a>
+            <a href="sprint1.html">Sprint 1: Onboarding</a>
+            <a href="sprint3.html">Sprint 3/4: Advanced →</a>
+        </div>
+    </footer>
+
+
+    <!-- ════════════════════════════════════════════════════════ -->
+    <!-- JAVASCRIPT                                             -->
+    <!-- ════════════════════════════════════════════════════════ -->
+    <script>
+    // ── Panel toggles ──────────────────────────────────────────
+    function togglePanel(id) {
+        const el = document.getElementById(id);
+        el.classList.toggle('open');
+    }
+
+    // Close open panels on outside click
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.wallet-zone')) document.getElementById('walletDropdown').classList.remove('open');
+        if (!e.target.closest('.net-zone')) document.getElementById('netPanel').classList.remove('open');
+    });
+
+    // ── Network switcher ───────────────────────────────────────
+    function switchNetwork(item, name) {
+        document.querySelectorAll('.np-item').forEach(i => {
+            i.classList.remove('active');
+            i.querySelector('.np-dot').classList.remove('filled');
+            const ck = i.querySelector('.np-check');
+            if (ck) ck.remove();
+        });
+        item.classList.add('active');
+        item.querySelector('.np-dot').classList.add('filled');
+        if (!item.querySelector('.np-check')) {
+            const ck = document.createElement('span');
+            ck.className = 'np-check'; ck.textContent = '✓';
+            item.appendChild(ck);
+        }
+        document.querySelector('.net-pill').innerHTML = '<span class="net-dot"></span>' + name + ' <span class="net-caret">▾</span>';
+        document.getElementById('netPanel').classList.remove('open');
+        showToast('Switched to ' + name);
+    }
+
+    // ── Copy address ───────────────────────────────────────────
+    function copyAddr() {
+        navigator.clipboard.writeText('0x742d35Cc6634C0532925a3b844Bc7e76fE13a51b').catch(() => {});
+        showToast('Address copied!');
+    }
+
+    // ── Modal helpers ──────────────────────────────────────────
+    function openModal(id) { document.getElementById(id).classList.add('active'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+    window.addEventListener('click', e => {
+        if (e.target.classList.contains('modal')) e.target.classList.remove('active');
+    });
+
+    // ── Asset filter ───────────────────────────────────────────
+    function filterAssets(q) {
+        document.querySelectorAll('#assetTbody tr').forEach(row => {
+            row.style.display = row.textContent.toLowerCase().includes(q.toLowerCase()) ? '' : 'none';
+        });
+    }
+
+    // ── Asset sort ─────────────────────────────────────────────
+    let sortState = { col: -1, dir: 1 };
+    function sortAssets(col, th) {
+        document.querySelectorAll('.asset-tbl th').forEach(h => h.classList.remove('sorted'));
+        sortState.dir = (sortState.col === col) ? -sortState.dir : 1;
+        sortState.col = col;
+        th.classList.add('sorted');
+        th.querySelector('.sort-arrow').textContent = sortState.dir === 1 ? '↑' : '↓';
+        const tbody = document.getElementById('assetTbody');
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        rows.sort((a, b) => {
+            const av = a.cells[col].textContent.trim();
+            const bv = b.cells[col].textContent.trim();
+            return sortState.dir * av.localeCompare(bv, undefined, { numeric: true });
+        });
+        rows.forEach(r => tbody.appendChild(r));
+    }
+
+    // ── Send flow ──────────────────────────────────────────────
+    let sendStep = 1;
+    let selectedGas = 'Standard';
+    let selectedGasCost = '~$12.50';
+
+    function sendNext() {
+        if (sendStep === 1) {
+            showStep(2);
+        } else if (sendStep === 2) {
+            document.getElementById('confirm-gas-label').textContent = selectedGas;
+            document.getElementById('confirm-gas-cost').textContent = selectedGasCost;
+            showStep(3);
+        } else if (sendStep === 3) {
+            broadcast();
+        }
+    }
+
+    function sendPrev() {
+        if (sendStep === 2) showStep(1);
+        else if (sendStep === 3) showStep(2);
+    }
+
+    function showStep(n) {
+        sendStep = n;
+        document.getElementById('send-step1').style.display = n === 1 ? '' : 'none';
+        document.getElementById('send-step2').style.display = n === 2 ? '' : 'none';
+        document.getElementById('send-step3').style.display = n === 3 ? '' : 'none';
+        document.getElementById('send-broadcasting').style.display = 'none';
+        document.getElementById('send-success').style.display = 'none';
+        document.getElementById('sendFoot').style.display = '';
+        document.getElementById('sendBack').style.display = n > 1 ? '' : 'none';
+        document.getElementById('sendNext').textContent = n === 3 ? 'Confirm & Send' : 'Continue →';
+        document.getElementById('sendTitle').textContent = 'Send — Step ' + n + ' of 3';
+    }
+
+    function selectGas(card, tier) {
+        document.querySelectorAll('.gas-tier').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        selectedGas = tier;
+        selectedGasCost = card.querySelector('.gas-tier-cost').textContent;
+    }
+
+    function broadcast() {
+        document.getElementById('send-step3').style.display = 'none';
+        document.getElementById('sendFoot').style.display = 'none';
+        document.getElementById('send-broadcasting').style.display = '';
+        setTimeout(() => {
+            document.getElementById('send-broadcasting').style.display = 'none';
+            document.getElementById('send-success').style.display = '';
+            const foot = document.getElementById('sendFoot');
+            foot.style.display = '';
+            foot.innerHTML = '<button class="btn-primary" style="flex:1;" onclick="closeModal(\'sendModal\');resetSend()">Close</button>';
+        }, 2000);
+    }
+
+    function resetSend() {
+        sendStep = 1;
+        showStep(1);
+        document.getElementById('sendFoot').innerHTML =
+            '<button class="btn-secondary" id="sendBack" style="display:none" onclick="sendPrev()">← Back</button>' +
+            '<button class="btn-primary" id="sendNext" onclick="sendNext()">Continue →</button>';
+    }
+
+    // ── Swap ───────────────────────────────────────────────────
+    const rates = { ETH_USDC: 2012.44, ETH_DAI: 2011.99, ETH_WBTC: 0.0490, USDC_ETH: 0.000497, USDC_DAI: 0.9998, USDC_WBTC: 0.0000244, WBTC_ETH: 20.41, WBTC_USDC: 41200, WBTC_DAI: 41188 };
+    function updateSwapRate() {
+        const from = document.getElementById('swap-from').value;
+        const to = document.getElementById('swap-to').value;
+        const key = from + '_' + to;
+        const rate = rates[key] || '—';
+        document.getElementById('swap-rate').textContent = '1 ' + from + ' ≈ ' + rate + ' ' + to;
+        const amt = parseFloat(document.getElementById('swap-amount').value) || 0;
+        document.getElementById('swap-receive').value = amt ? (amt * rate).toFixed(2) + ' ' + to : '';
+    }
+    function swapDirection() {
+        const fromEl = document.getElementById('swap-from');
+        const toEl = document.getElementById('swap-to');
+        const tmp = fromEl.value;
+        for (let i = 0; i < fromEl.options.length; i++) {
+            if (fromEl.options[i].value === toEl.value) { fromEl.selectedIndex = i; break; }
+        }
+        for (let i = 0; i < toEl.options.length; i++) {
+            if (toEl.options[i].value === tmp) { toEl.selectedIndex = i; break; }
+        }
+        updateSwapRate();
+    }
+    function getSwapQuote() {
+        document.getElementById('swap-receive').value = 'Getting quote…';
+        setTimeout(updateSwapRate, 800);
+    }
+    function doSwap() {
+        showToast('Swap submitted! Check activity for status.');
+        closeModal('swapModal');
+    }
+
+    // ── Add Token ──────────────────────────────────────────────
+    function quickAdd(symbol, addr) {
+        document.getElementById('token-addr').value = addr;
+        document.getElementById('token-symbol').value = symbol;
+    }
+    function importToken() {
+        const sym = document.getElementById('token-symbol').value.trim();
+        if (!sym) { showToast('Enter a token symbol'); return; }
+        showToast(sym + ' added to your token list');
+        closeModal('addTokenModal');
+    }
+
+    // ── QR code placeholder generator ─────────────────────────
+    (function buildQR() {
+        const grid = document.getElementById('qrGrid');
+        if (!grid) return;
+        const seed = [1,0,1,1,0,1,0,1,1,0,1,0,0,1,1,0,1,0,1,1,0,1,0,0,1,0,1,1,0,1,0,0,1,1,0,1,0,1,0,1,1,0,0,1,0,1,1,0,1,0,1,1,0,1,0,0,1,1,0,1,0,1,0,0,1,0,1,0,1,1,0,1,1,0,0,1,0,1,0,1,1,0,1,0,1,1,0,0,1,0,0,1,1,0,1,0,1,1,0,1,1,0,0,1,0,1,1,0,1,0,0,1,1,0,1,0,1,1,0,0,1,0,1,1,0,1,0,0,1,1,0,1,0,1,0,1,1,0,0,1,1,0,1,0,0,1,1,0,1,0,1,1,0,0,1,0,1,1,0,1,0,0,1,1,0,1,0,1,0,1,1,0,0,1,0,1,1,0,1,0,1,1,0,0,1,0,0,1,1,0,1,0,1,1,0,1,1,0,0,1,0,1,1,0,1,0,0,1,1,0,1,0,1,1,0,0,1,0,1,1,0,1,0,0,1,1,0,1,0,1,0,1,1,0,0,1,1,0,1,0,0,1,1,0,1,0,1,1,0,0,1,0,1,1,0,1,0,0,1,1,0,1,0,1,0,1,1,0,0,1,0,1,1,0,1,0,1,1,0,0,1,0,0,1,1,0,1,0,1,1,0,1,1,0,0,1,0,1,1,0,1,0,0,1,1,0,1,0,1,1,0,0,1,0,1,1,0,1,0,0,1,1,0,1,0,1,0,1,1,0,0,1,1,0,1,0,0,1,1,0,1,0,1,1,0,0,1,0,1,1,0,1,0,0,1,1,0,1,0,1,0,1,1,0,0,1,0,1,1,0,1,0,1,1,0,0,1,0,0,1,1,0,1,0,1,1,0,1,1,0,0,1,0,1,1,0,1,0,0,1];
+        seed.forEach((v, i) => {
+            const cell = document.createElement('div');
+            cell.className = 'qr-cell' + (v ? ' b' : '');
+            grid.appendChild(cell);
+        });
+    })();
+
+    // ── Toast ──────────────────────────────────────────────────
+    function showToast(msg) {
+        let t = document.getElementById('toast');
+        if (!t) {
+            t = document.createElement('div');
+            t.id = 'toast';
+            Object.assign(t.style, { position:'fixed', bottom:'24px', left:'50%', transform:'translateX(-50%)', background:'#000', color:'#fff', padding:'8px 16px', borderRadius:'4px', fontSize:'12px', fontWeight:'700', zIndex:'9999', transition:'opacity 0.3s', pointerEvents:'none' });
+            document.body.appendChild(t);
+        }
+        t.textContent = msg;
+        t.style.opacity = '1';
+        clearTimeout(t._timer);
+        t._timer = setTimeout(() => { t.style.opacity = '0'; }, 2500);
+    }
+
+    // ── Populate wallet name from localStorage ─────────────────
+    (function initFromStorage() {
+        try {
+            const n = localStorage.getItem('wallet_name');
+            const net = localStorage.getItem('wallet_network');
+            if (n) {
+                document.querySelectorAll('.wd-name').forEach((el, i) => { if(i===0) el.textContent = n; });
+                const walletBtns = document.querySelectorAll('.wallet-btn');
+                walletBtns.forEach(btn => {
+                    const nameSpan = btn.querySelector('span:not(.wallet-caret):not(.wallet-avatar)');
+                    if (!nameSpan) {
+                        const txt = btn.childNodes;
+                        txt.forEach(node => { if(node.nodeType === 3 && node.textContent.trim()) node.textContent = ' ' + n + ' '; });
+                    }
+                });
+            }
+        } catch(e) {}
+    })();
+    </script>
+</body>
+</html>

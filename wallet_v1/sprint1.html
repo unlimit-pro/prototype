@@ -1,0 +1,1551 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sprint 1: Onboarding &amp; Account Setup — Low-Fidelity Prototype</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #ffffff;
+      color: #000000;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ── Screen System ─────────────────────────────────────────── */
+    .screen { display: none; min-height: 100vh; }
+    .screen.active { display: flex; flex-direction: column; }
+
+    /* ── Layout wrappers ───────────────────────────────────────── */
+    .card-shell {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 40px 20px 60px;
+    }
+    .card {
+      width: 100%;
+      max-width: 480px;
+      border: 1px solid #cccccc;
+      border-radius: 6px;
+      padding: 32px 28px;
+      background: #ffffff;
+    }
+
+    /* ── Topbar ────────────────────────────────────────────────── */
+    .topbar {
+      border-bottom: 1px solid #eeeeee;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 12px;
+    }
+    .topbar a { color: #000; text-decoration: none; font-weight: 600; }
+    .topbar a:hover { text-decoration: underline; }
+    .topbar-title { font-size: 13px; font-weight: 700; }
+
+    /* ── Progress Dots ─────────────────────────────────────────── */
+    .step-dots {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 28px;
+    }
+    .step-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 1.5px solid #000000;
+      background: #ffffff;
+      transition: background 0.2s;
+    }
+    .step-dot.active { background: #000000; }
+    .step-dot.done { background: #000000; opacity: 0.35; }
+
+    /* ── Typography helpers ────────────────────────────────────── */
+    .section-tag {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #888888;
+      margin-bottom: 6px;
+    }
+    .card-title { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+    .card-sub { font-size: 13px; color: #555555; margin-bottom: 24px; }
+
+    /* ── Form elements ─────────────────────────────────────────── */
+    .form-group { margin-bottom: 18px; }
+    .form-label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #444444;
+      margin-bottom: 6px;
+    }
+    .form-input, .form-select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #cccccc;
+      border-radius: 4px;
+      font-size: 13px;
+      font-family: inherit;
+      background: #ffffff;
+      color: #000000;
+      transition: border-color 0.15s;
+    }
+    .form-input:focus, .form-select:focus { outline: none; border-color: #000000; }
+    .form-input.error { border-color: #cc0000; }
+    .form-input.ok { border-color: #008800; }
+    .form-error { font-size: 11px; color: #cc0000; margin-top: 4px; display: none; }
+    .form-error.show { display: block; }
+    .input-hint { font-size: 11px; color: #888888; margin-top: 4px; }
+
+    /* ── Password strength bar ─────────────────────────────────── */
+    .str-bar { display: flex; gap: 4px; margin-top: 8px; margin-bottom: 4px; }
+    .str-seg {
+      flex: 1;
+      height: 4px;
+      border-radius: 2px;
+      background: #e0e0e0;
+      transition: background 0.2s;
+    }
+    .str-seg.on { background: #000000; }
+    .str-lbl { font-size: 11px; color: #666666; margin-bottom: 12px; min-height: 16px; }
+
+    /* ── Checkbox rows ─────────────────────────────────────────── */
+    .check-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .check-row input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      margin-top: 2px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .check-row label { font-size: 12px; color: #333333; cursor: pointer; line-height: 1.5; }
+
+    /* ── Buttons ───────────────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 11px 20px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid #cccccc;
+      background: #ffffff;
+      color: #000000;
+      transition: background 0.15s;
+      text-decoration: none;
+    }
+    .btn:hover { background: #f2f2f2; }
+    .btn-primary { background: #000000; color: #ffffff; border-color: #000000; }
+    .btn-primary:hover { background: #2a2a2a; }
+    .btn:disabled, .btn-primary:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+    .btn-full { width: 100%; }
+    .btn-row { display: flex; gap: 10px; margin-top: 20px; }
+    .btn-row .btn { flex: 1; }
+
+    /* ── Info / Warning boxes ──────────────────────────────────── */
+    .info-box {
+      border: 1px solid #cccccc;
+      border-left: 4px solid #000000;
+      border-radius: 4px;
+      padding: 12px 14px;
+      font-size: 12px;
+      color: #333333;
+      margin-bottom: 18px;
+      line-height: 1.55;
+    }
+    .warn-box {
+      border: 1px solid #aaaaaa;
+      border-left: 4px solid #555555;
+      border-radius: 4px;
+      padding: 12px 14px;
+      font-size: 12px;
+      color: #333333;
+      margin-bottom: 18px;
+      background: #fafafa;
+      line-height: 1.55;
+    }
+
+    /* ── Terms scrollbox ───────────────────────────────────────── */
+    .terms-box {
+      border: 1px solid #cccccc;
+      border-radius: 4px;
+      height: 160px;
+      overflow-y: auto;
+      padding: 12px 14px;
+      font-size: 11px;
+      color: #444444;
+      margin-bottom: 18px;
+      line-height: 1.7;
+      background: #fafafa;
+    }
+    .terms-box p { margin-bottom: 10px; }
+
+    /* ── Path selection cards ──────────────────────────────────── */
+    .path-cards { display: flex; flex-direction: column; gap: 14px; margin-bottom: 24px; }
+    .path-card {
+      border: 1.5px solid #cccccc;
+      border-radius: 6px;
+      padding: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      transition: border-color 0.15s, background 0.15s;
+      user-select: none;
+    }
+    .path-card:hover { border-color: #000000; background: #fafafa; }
+    .path-icon {
+      width: 40px;
+      height: 40px;
+      border: 1.5px solid #cccccc;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+      background: #ffffff;
+      font-weight: 700;
+    }
+    .path-body { flex: 1; }
+    .path-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+    .path-desc { font-size: 12px; color: #666666; line-height: 1.45; }
+    .path-arrow { font-size: 18px; color: #aaaaaa; align-self: center; flex-shrink: 0; }
+
+    /* ── Seed phrase grid ──────────────────────────────────────── */
+    .seed-wrap { position: relative; margin-bottom: 10px; }
+    .seed-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      padding: 16px;
+      border: 1px solid #cccccc;
+      border-radius: 4px;
+      background: #f8f8f8;
+      transition: filter 0.25s;
+    }
+    .seed-grid.blur { filter: blur(6px); pointer-events: none; user-select: none; }
+    .seed-cell {
+      border: 1px solid #dddddd;
+      border-radius: 4px;
+      padding: 8px 10px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .seed-num { font-size: 10px; color: #aaaaaa; font-weight: 700; width: 16px; flex-shrink: 0; }
+    .seed-word { font-weight: 600; }
+    .seed-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      z-index: 2;
+    }
+    .reveal-btn {
+      padding: 9px 18px;
+      background: #ffffff;
+      border: 1.5px solid #000000;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+    .reveal-btn:hover { background: #f0f0f0; }
+    .reveal-note { font-size: 11px; color: #888888; }
+    .seed-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 8px;
+      margin-bottom: 4px;
+    }
+    .copy-btn {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 5px 12px;
+      border: 1px solid #cccccc;
+      border-radius: 3px;
+      background: #ffffff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .copy-btn:hover { background: #f0f0f0; }
+    .copy-btn:disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
+
+    /* ── Toast ─────────────────────────────────────────────────── */
+    #toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #000000;
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 8px 18px;
+      border-radius: 20px;
+      opacity: 0;
+      transition: opacity 0.2s, transform 0.2s;
+      pointer-events: none;
+      z-index: 9999;
+      white-space: nowrap;
+    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ── Word picker ───────────────────────────────────────────── */
+    .wp-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #888888;
+      margin-bottom: 8px;
+    }
+    .wp-slots {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 7px;
+      margin-bottom: 18px;
+      padding: 14px;
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+      background: #f8f8f8;
+    }
+    .wp-slot {
+      border: 1.5px dashed #cccccc;
+      border-radius: 4px;
+      padding: 8px;
+      font-size: 12px;
+      min-height: 36px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: #ffffff;
+      transition: border-color 0.15s;
+    }
+    .wp-slot:hover { border-color: #888888; }
+    .wp-slot.filled { border-style: solid; border-color: #000000; background: #f0f0f0; }
+    .wp-slot-num { font-size: 10px; color: #aaaaaa; font-weight: 700; width: 14px; flex-shrink: 0; }
+    .wp-slot-word { font-family: 'Courier New', monospace; font-weight: 700; font-size: 11px; }
+    .wp-pool {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 14px;
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+      background: #fafafa;
+      margin-bottom: 16px;
+      min-height: 56px;
+    }
+    .wp-chip {
+      padding: 6px 12px;
+      border: 1.5px solid #cccccc;
+      border-radius: 20px;
+      font-size: 12px;
+      font-family: 'Courier New', monospace;
+      font-weight: 600;
+      background: #ffffff;
+      cursor: pointer;
+      transition: background 0.12s, border-color 0.12s, opacity 0.12s;
+      user-select: none;
+    }
+    .wp-chip:hover { background: #f0f0f0; border-color: #000000; }
+    .wp-chip.used { opacity: 0.25; pointer-events: none; }
+    .wp-hint { font-size: 11px; color: #888888; margin-bottom: 14px; line-height: 1.5; }
+
+    /* ── Import word grid ──────────────────────────────────────── */
+    .import-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .iword-wrap { display: flex; flex-direction: column; gap: 3px; }
+    .iword-wrap label { font-size: 10px; color: #999999; font-weight: 700; }
+    .iword-input {
+      width: 100%;
+      padding: 7px 8px;
+      border: 1px solid #cccccc;
+      border-radius: 3px;
+      font-size: 11px;
+      font-family: 'Courier New', monospace;
+      transition: border-color 0.15s;
+    }
+    .iword-input:focus { outline: none; border-color: #000000; }
+
+    /* ── Success screen ────────────────────────────────────────── */
+    .success-shell {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      text-align: center;
+    }
+    .success-icon {
+      width: 72px;
+      height: 72px;
+      border: 2.5px solid #000000;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      margin: 0 auto 24px;
+    }
+    .success-title { font-size: 26px; font-weight: 700; margin-bottom: 8px; }
+    .success-sub { font-size: 14px; color: #555555; margin-bottom: 28px; max-width: 360px; }
+    .summary-card {
+      border: 1px solid #cccccc;
+      border-radius: 6px;
+      padding: 18px 22px;
+      text-align: left;
+      width: 100%;
+      max-width: 360px;
+      margin-bottom: 28px;
+    }
+    .sum-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 13px;
+    }
+    .sum-row:last-child { border-bottom: none; }
+    .sum-key { color: #888888; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+    .sum-val { font-weight: 600; font-family: 'Courier New', monospace; font-size: 12px; }
+    .success-ctas { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 360px; }
+
+    /* ── Dashboard destination ─────────────────────────────────── */
+    .dash-header {
+      background: #f0f0f0;
+      border-bottom: 1px solid #cccccc;
+      padding: 14px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .dash-logo { font-size: 20px; font-weight: 700; }
+    .dash-net {
+      font-size: 12px;
+      padding: 4px 12px;
+      border: 1px solid #cccccc;
+      border-radius: 20px;
+      background: #ffffff;
+    }
+    .dash-body { max-width: 900px; margin: 0 auto; padding: 28px 20px; }
+    .scope-note {
+      border: 1px solid #cccccc;
+      border-left: 4px solid #000000;
+      border-radius: 4px;
+      padding: 12px 14px;
+      font-size: 12px;
+      color: #444444;
+      margin-bottom: 20px;
+      line-height: 1.55;
+    }
+    .balance-card {
+      border: 1px solid #cccccc;
+      border-radius: 6px;
+      padding: 24px;
+      margin-bottom: 22px;
+    }
+    .balance-lbl { font-size: 11px; color: #888888; text-transform: uppercase; font-weight: 700; margin-bottom: 6px; }
+    .balance-amt { font-size: 34px; font-weight: 700; font-family: 'Courier New', monospace; margin-bottom: 14px; }
+    .balance-meta {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      border-top: 1px solid #eeeeee;
+      padding-top: 14px;
+    }
+    .meta-item { display: flex; flex-direction: column; gap: 3px; }
+    .meta-key { font-size: 10px; color: #aaaaaa; text-transform: uppercase; font-weight: 700; }
+    .meta-val { font-size: 12px; font-weight: 600; font-family: 'Courier New', monospace; }
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+    .qa-btn {
+      padding: 11px;
+      border: 1px solid #cccccc;
+      border-radius: 4px;
+      background: #ffffff;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+    }
+    .qa-btn:hover { background: #f5f5f5; }
+    .qa-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .asset-section { border: 1px solid #cccccc; border-radius: 6px; padding: 16px; }
+    .sec-title {
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .asset-tbl { width: 100%; border-collapse: collapse; }
+    .asset-tbl th {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #888888;
+      text-align: left;
+      padding: 10px 12px;
+      border-bottom: 1px solid #eeeeee;
+      background: #f8f8f8;
+    }
+    .asset-tbl td { padding: 10px 12px; font-size: 13px; border-bottom: 1px solid #f5f5f5; }
+    .asset-tbl tr:last-child td { border-bottom: none; }
+    .asset-tbl tr:hover td { background: #fafafa; }
+    .dash-footer {
+      background: #f0f0f0;
+      border-top: 1px solid #cccccc;
+      padding: 18px 24px;
+      text-align: center;
+      font-size: 12px;
+      color: #666666;
+      margin-top: 40px;
+    }
+    .footer-links { margin-top: 10px; display: flex; justify-content: center; gap: 20px; }
+    .footer-links a { color: #000000; font-weight: 700; text-decoration: none; }
+    .footer-links a:hover { text-decoration: underline; }
+
+    /* ── Splash ────────────────────────────────────────────────── */
+    .splash-shell {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      text-align: center;
+    }
+    .app-mark {
+      width: 80px;
+      height: 80px;
+      border: 2.5px solid #000000;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      font-weight: 900;
+      margin: 0 auto 24px;
+    }
+    .splash-name { font-size: 36px; font-weight: 700; margin-bottom: 10px; }
+    .splash-tag { font-size: 15px; color: #666666; margin-bottom: 40px; }
+    .splash-ver { font-size: 11px; color: #bbbbbb; margin-top: 32px; }
+
+    /* ── Responsive ────────────────────────────────────────────── */
+    @media (max-width: 560px) {
+      .card { padding: 24px 18px; }
+      .seed-grid { grid-template-columns: repeat(2, 1fr); }
+      .wp-slots { grid-template-columns: repeat(2, 1fr); }
+      .import-grid { grid-template-columns: repeat(2, 1fr); }
+      .quick-actions { grid-template-columns: repeat(2, 1fr); }
+      .balance-meta { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════
+     SCREEN 1 — Splash
+════════════════════════════════════════════ -->
+<div id="scr-splash" class="screen active">
+  <div class="splash-shell">
+    <div class="app-mark">W</div>
+    <div class="splash-name">Wallet</div>
+    <div class="splash-tag">Your keys. Your assets.</div>
+    <button class="btn btn-primary" style="min-width:200px;" onclick="go('scr-choose')">
+      Get Started →
+    </button>
+    <div class="splash-ver">Sprint 1 · Onboarding &amp; Account Setup · v4.0</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SCREEN 2 — Path Selection
+     Inspired by MetaMask "New to MetaMask?" card layout
+════════════════════════════════════════════ -->
+<div id="scr-choose" class="screen">
+  <div class="topbar">
+    <a href="#" onclick="go('scr-splash'); return false;">← Back</a>
+    <span class="topbar-title">Set Up Your Wallet</span>
+  </div>
+  <div class="card-shell">
+    <div class="card" style="max-width:520px;">
+      <div class="section-tag">Choose a path</div>
+      <div class="card-title">New to Wallet?</div>
+      <div class="card-sub">Select how you'd like to get started. Both options keep your private key on this device only.</div>
+
+      <div class="path-cards">
+        <!-- Create -->
+        <div class="path-card" role="button" tabindex="0"
+          onclick="setPurpose('create'); go('scr-terms')"
+          onkeydown="if(event.key==='Enter'){ setPurpose('create'); go('scr-terms'); }">
+          <div class="path-icon">+</div>
+          <div class="path-body">
+            <div class="path-title">Create a new wallet</div>
+            <div class="path-desc">Generate a new wallet and 12-word Secret Recovery Phrase. Recommended for first-time users.</div>
+          </div>
+          <div class="path-arrow">›</div>
+        </div>
+
+        <!-- Import -->
+        <div class="path-card" role="button" tabindex="0"
+          onclick="setPurpose('import'); go('scr-terms')"
+          onkeydown="if(event.key==='Enter'){ setPurpose('import'); go('scr-terms'); }">
+          <div class="path-icon">↓</div>
+          <div class="path-body">
+            <div class="path-title">Import an existing wallet</div>
+            <div class="path-desc">Enter a 12 or 24-word Secret Recovery Phrase from another wallet to restore your funds.</div>
+          </div>
+          <div class="path-arrow">›</div>
+        </div>
+      </div>
+
+      <p style="font-size:11px;color:#aaaaaa;text-align:center;">
+        Wallet staff will never ask for your Secret Recovery Phrase.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SCREEN 3 — Terms of Use (shared, mandatory)
+     Inspired by MetaMask's Terms gate before password creation
+════════════════════════════════════════════ -->
+<div id="scr-terms" class="screen">
+  <div class="topbar">
+    <a href="#" onclick="go('scr-choose'); return false;">← Back</a>
+    <span class="topbar-title">Terms of Use</span>
+  </div>
+  <div class="card-shell">
+    <div class="card">
+      <div class="section-tag">Before You Continue</div>
+      <div class="card-title">Terms of Use</div>
+      <div class="card-sub">Read and accept our terms to continue setting up your wallet.</div>
+
+      <div class="terms-box">
+        <p><strong>1. Self-Custody Wallet.</strong> Wallet is a non-custodial application. You are solely responsible for securing your Secret Recovery Phrase and private keys. We do not store, transmit, or have access to your keys at any time.</p>
+        <p><strong>2. No Warranty.</strong> This software is provided "as is" without warranty. Cryptocurrency transactions are irreversible. Verify all recipient addresses before sending funds.</p>
+        <p><strong>3. Seed Phrase Security.</strong> Your Secret Recovery Phrase is the master key to your funds. Anyone who obtains it can take your funds permanently. Write it on paper, store it physically secure, and never share it — not even with Wallet support.</p>
+        <p><strong>4. Regulatory Compliance.</strong> You are responsible for complying with applicable laws in your jurisdiction, including tax and AML obligations.</p>
+        <p><strong>5. No Financial Advice.</strong> Nothing here constitutes financial, investment, legal, or tax advice. Token values are volatile. Conduct your own research.</p>
+        <p><strong>6. Updates.</strong> These terms may be updated. Continued use constitutes acceptance of revised terms.</p>
+      </div>
+
+      <div class="check-row">
+        <input type="checkbox" id="terms-check"
+          onchange="document.getElementById('btn-terms').disabled = !this.checked">
+        <label for="terms-check">I have read and agree to the Terms of Use</label>
+      </div>
+
+      <button id="btn-terms" class="btn btn-primary btn-full" disabled
+        onclick="routeAfterTerms()">
+        I Agree — Continue
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SCREEN 4-CREATE — Wallet Setup  [Step 1/5]
+════════════════════════════════════════════ -->
+<div id="scr-c-setup" class="screen">
+  <div class="topbar">
+    <a href="#" onclick="go('scr-choose'); return false;">← Back</a>
+    <span class="topbar-title">Create Wallet</span>
+  </div>
+  <div class="card-shell">
+    <div class="card">
+      <div class="step-dots">
+        <span class="step-dot active"></span><span class="step-dot"></span>
+        <span class="step-dot"></span><span class="step-dot"></span><span class="step-dot"></span>
+      </div>
+      <div class="section-tag">Step 1 of 5 · Setup</div>
+      <div class="card-title">Name Your Wallet</div>
+      <div class="card-sub">Choose a name and primary network for your new wallet.</div>
+
+      <div class="form-group">
+        <label class="form-label" for="wallet-name">Wallet Name</label>
+        <input type="text" id="wallet-name" class="form-input"
+          placeholder="e.g. My Main Wallet" maxlength="30" value="My Wallet"
+          oninput="validateWalletName()">
+        <div id="wallet-name-err" class="form-error">Name must be 3–30 characters.</div>
+        <div class="input-hint">3 – 30 characters</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="wallet-net">Primary Network</label>
+        <select id="wallet-net" class="form-select">
+          <option value="ethereum">Ethereum Mainnet</option>
+          <option value="polygon">Polygon (MATIC)</option>
+          <option value="arbitrum">Arbitrum One</option>
+          <option value="optimism">Optimism</option>
+          <option value="base">Base</option>
+        </select>
+        <div class="input-hint">You can add more networks later in Settings.</div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn" onclick="go('scr-choose')">Back</button>
+        <button class="btn btn-primary" onclick="goToPassword()">Continue →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SCREEN 5-CREATE — Password  [Step 2/5]
+     Pattern: MetaMask v10+ password BEFORE seed phrase
+     UI: 4-segment live strength bar, show/hide toggle, consent checkbox
+════════════════════════════════════════════ -->
+<div id="scr-c-password" class="screen">
+  <div class="topbar">
+    <a href="#" onclick="go('scr-c-setup'); return false;">← Back</a>
+    <span class="topbar-title">Create Wallet</span>
+  </div>
+  <div class="card-shell">
+    <div class="card">
+      <div class="step-dots">
+        <span class="step-dot done"></span><span class="step-dot active"></span>
+        <span class="step-dot"></span><span class="step-dot"></span><span class="step-dot"></span>
+      </div>
+      <div class="section-tag">Step 2 of 5 · Password</div>
+      <div class="card-title">Create a Password</div>
+      <div class="card-sub">This password encrypts your wallet locally. It is required every time you unlock the app.</div>
+
+      <div class="info-box">
+        <strong>Important:</strong> Your password encrypts your Secret Recovery Phrase on this device. If you forget it, Wallet cannot recover it for you — make sure to store it securely.
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="pw1">New Password</label>
+        <input type="password" id="pw1" class="form-input" placeholder="At least 8 characters"
+          oninput="evalPw()">
+        <!-- Strength bar: 4 segments (8+chars / uppercase / number / special) -->
+        <div class="str-bar">
+          <div class="str-seg" id="s1"></div>
+          <div class="str-seg" id="s2"></div>
+          <div class="str-seg" id="s3"></div>
+          <div class="str-seg" id="s4"></div>
+        </div>
+        <div class="str-lbl" id="str-lbl">Enter a password above</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="pw2">Confirm Password</label>
+        <input type="password" id="pw2" class="form-input" placeholder="Re-enter your password"
+          oninput="evalPw()">
+        <div id="pw-err" class="form-error">Passwords do not match.</div>
+      </div>
+
+      <div class="check-row">
+        <input type="checkbox" id="show-pw" onchange="togglePwVisibility('pw1','pw2','show-pw')">
+        <label for="show-pw">Show password</label>
+      </div>
+
+      <div class="check-row">
+        <input type="checkbox" id="pw-consent" onchange="evalPw()">
+        <label for="pw-consent">I understand that Wallet cannot recover this password for me.</label>
+      </div>
+
+      <!-- Strength requirements cheatsheet -->
+      <div style="font-size:11px;color:#888888;margin-bottom:16px;line-height:1.8;">
+        Strength requirements:
+        &nbsp;✓ 8+ characters
+        &nbsp;✓ Uppercase letter
+        &nbsp;✓ Number
+        &nbsp;✓ Special character
+      </div>
+
+      <div class="btn-row">
+        <button class="btn" onclick="go('scr-c-setup')">Back</button>
+        <button id="btn-pw" class="btn btn-primary" disabled
+          onclick="go('scr-c-seed')">Continue →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SCREEN 6-CREATE — Seed Phrase Reveal  [Step 3/5]
+     Pattern: MetaMask/Phantom blur-to-reveal
+     Words blurred by default; explicit click to reveal; copy button
+════════════════════════════════════════════ -->
+<div id="scr-c-seed" class="screen">
+  <div class="topbar">
+    <a href="#" onclick="go('scr-c-password'); return false;">← Back</a>
+    <span class="topbar-title">Create Wallet</span>
+  </div>
+  <div class="card-shell">
+    <div class="card" style="max-width:520px;">
+      <div class="step-dots">
+        <span class="step-dot done"></span><span class="step-dot done"></span>
+        <span class="step-dot active"></span><span class="step-dot"></span><span class="step-dot"></span>
+      </div>
+      <div class="section-tag">Step 3 of 5 · Recovery Phrase</div>
+      <div class="card-title">Save Your Secret Recovery Phrase</div>
+
+      <div class="warn-box">
+        ⚠ <strong>Write this down and keep it somewhere safe.</strong> Your Secret Recovery Phrase is the only way to recover your wallet if you lose access. Never share it with anyone — not even Wallet support. <em>Do not screenshot or store it digitally.</em>
+      </div>
+
+      <!-- Blurred seed grid + reveal overlay -->
+      <div class="seed-wrap" id="seed-wrap">
+        <div class="seed-grid blur" id="seed-grid">
+          <!-- Rendered by JS init() -->
+        </div>
+        <div class="seed-overlay" id="seed-overlay">
+          <button class="reveal-btn" onclick="toggleReveal()">
+            <span>👁</span> Click to reveal
+          </button>
+          <span class="reveal-note">Make sure no one is looking</span>
+        </div>
+      </div>
+
+      <div class="seed-actions">
+        <button class="copy-btn" id="btn-copy-seed" onclick="copySeed()" disabled>
+          ⎘ Copy phrase
+        </button>
+      </div>
+
+      <div class="check-row">
+        <input type="checkbox" id="seed-saved"
+          onchange="document.getElementById('btn-seed-cont').disabled = !this.checked">
+        <label for="seed-saved">I have written down my Secret Recovery Phrase in the correct order and stored it in a safe place.</label>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn" onclick="go('scr-c-password')">Back</button>
+        <button id="btn-seed-cont" class="btn btn-primary" disabled
+          onclick="initWordPicker(); go('scr-c-confirm')">Continue →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SCREEN 7-CREATE — Seed Phrase Confirm  [Step 4/5]
+     Pattern: MetaMask word-picker — shuffled chip buttons → numbered target slots
+     Clicking a filled slot returns the word to the chip pool
+════════════════════════════════════════════ -->
+<div id="scr-c-confirm" class="screen">
+  <div class="topbar">
+    <a href="#" onclick="go('scr-c-seed'); return false;">← Back</a>
+    <span class="topbar-title">Create Wallet</span>
+  </div>
+  <div class="card-shell">
+    <div class="card" style="max-width:520px;">
+      <div class="step-dots">
+        <span class="step-dot done"></span><span class="step-dot done"></span>
+        <span class="step-dot done"></span><span class="step-dot active"></span><span class="step-dot"></span>
+      </div>
+      <div class="section-tag">Step 4 of 5 · Confirmation</div>
+      <div class="card-title">Confirm Your Recovery Phrase</div>
+      <div class="card-sub">Select the words in the correct order by clicking the chips below.</div>
+
+      <!-- Target slots: numbered 1–12 -->
+      <div class="wp-label">Your phrase (click a slot to remove a word)</div>
+      <div class="wp-slots" id="wp-slots"><!-- JS --></div>
+
+      <div class="wp-hint">
+        Click a word chip to fill the next empty slot. Click a filled slot to return the word to the pool. Use Reset to start over.
+      </div>
+
+      <!-- Shuffled chip pool -->
+      <div class="wp-label">Word chips (click to place)</div>
+      <div class="wp-pool" id="wp-pool"><!-- JS --></div>
+
+      <!-- Counter + Reset -->
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+        <button class="btn" style="padding:6px 14px;font-size:12px;" onclick="resetPicker()">↺ Reset</button>
+        <span id="wp-count" style="font-size:12px;color:#888888;">0 / 12 words placed</span>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn" onclick="go('scr-c-seed')">Back</button>
+        <button id="btn-verify" class="btn btn-primary" disabled
+          onclick="go('scr-c-success')">Verify →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SCREEN 8-CREATE — Success  [Step 5/5]
+     Pattern: Phantom "You're all set" + summary card
+════════════════════════════════════════════ -->
+<div id="scr-c-success" class="screen">
+  <div class="topbar">
+    <span class="topbar-title">Wallet Ready</span>
+  </div>
+  <div class="success-shell">
+    <div class="success-icon">✓</div>
+    <div class="success-title">Wallet Created!</div>
+    <div class="success-sub">You're all set — your wallet is ready to use. Keep your recovery phrase somewhere safe.</div>
+
+    <div class="summary-card">
+      <div class="sum-row">
+        <span class="sum-key">Wallet Name</span>
+        <span class="sum-val" id="cs-name">My Wallet</span>
+      </div>
+      <div class="sum-row">
+        <span class="sum-key">Network</span>
+        <span class="sum-val" id="cs-net">Ethereum Mainnet</span>
+      </div>
+      <div class="sum-row">
+        <span class="sum-key">Address</span>
+        <span class="sum-val" style="font-size:11px;">
+          0x742d…a51b
+          <button class="copy-btn" style="display:inline-flex;margin-left:6px;padding:2px 8px;font-size:10px;"
+            onclick="showToast('Address copied!')">⎘</button>
+        </span>
+      </div>
+      <div class="sum-row">
+        <span class="sum-key">Recovery Phrase</span>
+        <span class="sum-val" style="color:#888888;font-size:11px;">Encrypted on device ✓</span>
+      </div>
+    </div>
+
+    <div class="success-ctas">
+      <button class="btn btn-primary btn-full" onclick="completeOnboarding('create')">
+        Go to Wallet Dashboard →
+      </button>
+      <button class="btn btn-full" onclick="go('scr-c-seed')">
+        View Recovery Phrase Again
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SCREEN 4-IMPORT — Phrase Entry  [Step 1/3]
+     Pattern: Phantom/MetaMask 12-word individual input grid
+     Feature: "Switch to 24 words"; paste auto-distributes
+════════════════════════════════════════════ -->
+<div id="scr-i-phrase" class="screen">
+  <div class="topbar">
+    <a href="#" onclick="go('scr-choose'); return false;">← Back</a>
+    <span class="topbar-title">Import Wallet</span>
+  </div>
+  <div class="card-shell">
+    <div class="card" style="max-width:560px;">
+      <div class="step-dots">
+        <span class="step-dot active"></span>
+        <span class="step-dot"></span><span class="step-dot"></span>
+      </div>
+      <div class="section-tag">Step 1 of 3 · Recovery Phrase</div>
+      <div class="card-title">Enter Your Recovery Phrase</div>
+      <div class="card-sub">Type or paste your 12 or 24-word Secret Recovery Phrase to restore your wallet.</div>
+
+      <div class="warn-box">
+        ⚠ Only enter your phrase here on your device. Wallet staff will never ask for your recovery phrase.
+      </div>
+
+      <!-- Word count toggle -->
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <label class="form-label" style="margin-bottom:0;">Recovery Phrase</label>
+        <button id="toggle-wc" class="btn" style="padding:5px 12px;font-size:11px;"
+          onclick="toggleWordCount()">Switch to 24 words</button>
+      </div>
+
+      <div id="ig-12" class="import-grid"><!-- 12 inputs: JS --></div>
+      <div id="ig-24" class="import-grid" style="display:none;"><!-- 24 inputs: JS --></div>
+
+      <div class="input-hint" style="margin-bottom:16px;">
+        💡 Tip: Paste your full phrase into Word 1 — all fields will auto-fill.
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="i-net">Primary Network</label>
+        <select id="i-net" class="form-select">
+          <option>Ethereum Mainnet</option>
+          <option>Polygon (MATIC)</option>
+          <option>Arbitrum One</option>
+          <option>Optimism</option>
+          <option>Base</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="i-name">Wallet Name</label>
+        <input type="text" id="i-name" class="form-input"
+          placeholder="e.g. My Imported Wallet" value="My Imported Wallet">
+      </div>
+
+      <div class="btn-row">
+        <button class="btn" onclick="go('scr-choose')">Back</button>
+        <button class="btn btn-primary" onclick="go('scr-i-password')">Continue →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SCREEN 5-IMPORT — Password  [Step 2/3]
+════════════════════════════════════════════ -->
+<div id="scr-i-password" class="screen">
+  <div class="topbar">
+    <a href="#" onclick="go('scr-i-phrase'); return false;">← Back</a>
+    <span class="topbar-title">Import Wallet</span>
+  </div>
+  <div class="card-shell">
+    <div class="card">
+      <div class="step-dots">
+        <span class="step-dot done"></span>
+        <span class="step-dot active"></span><span class="step-dot"></span>
+      </div>
+      <div class="section-tag">Step 2 of 3 · Password</div>
+      <div class="card-title">Create a Password</div>
+      <div class="card-sub">Set a password to encrypt your imported wallet on this device.</div>
+
+      <div class="form-group">
+        <label class="form-label" for="ipw1">New Password</label>
+        <input type="password" id="ipw1" class="form-input" placeholder="At least 8 characters"
+          oninput="evalIPw()">
+        <div class="str-bar">
+          <div class="str-seg" id="is1"></div>
+          <div class="str-seg" id="is2"></div>
+          <div class="str-seg" id="is3"></div>
+          <div class="str-seg" id="is4"></div>
+        </div>
+        <div class="str-lbl" id="istr-lbl">Enter a password above</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="ipw2">Confirm Password</label>
+        <input type="password" id="ipw2" class="form-input" placeholder="Re-enter your password"
+          oninput="evalIPw()">
+        <div id="ipw-err" class="form-error">Passwords do not match.</div>
+      </div>
+
+      <div class="check-row">
+        <input type="checkbox" id="ishow-pw"
+          onchange="togglePwVisibility('ipw1','ipw2','ishow-pw')">
+        <label for="ishow-pw">Show password</label>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn" onclick="go('scr-i-phrase')">Back</button>
+        <button id="btn-ipw" class="btn btn-primary" disabled
+          onclick="go('scr-i-success')">Import Wallet →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SCREEN 6-IMPORT — Success  [Step 3/3]
+════════════════════════════════════════════ -->
+<div id="scr-i-success" class="screen">
+  <div class="topbar">
+    <span class="topbar-title">Wallet Imported</span>
+  </div>
+  <div class="success-shell">
+    <div class="success-icon">✓</div>
+    <div class="success-title">Wallet Imported!</div>
+    <div class="success-sub">Your wallet has been restored successfully. Your assets are ready to access.</div>
+
+    <div class="summary-card">
+      <div class="sum-row">
+        <span class="sum-key">Wallet Name</span>
+        <span class="sum-val" id="is-name">My Imported Wallet</span>
+      </div>
+      <div class="sum-row">
+        <span class="sum-key">Network</span>
+        <span class="sum-val" id="is-net">Ethereum Mainnet</span>
+      </div>
+      <div class="sum-row">
+        <span class="sum-key">Address</span>
+        <span class="sum-val" style="font-size:11px;">0x1a3c…f9d2</span>
+      </div>
+      <div class="sum-row">
+        <span class="sum-key">Recovery Phrase</span>
+        <span class="sum-val" style="color:#888888;font-size:11px;">Encrypted on device ✓</span>
+      </div>
+    </div>
+
+    <div class="success-ctas">
+      <button class="btn btn-primary btn-full" onclick="completeOnboarding('import')">
+        Go to Wallet Dashboard →
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SCREEN FINAL — Dashboard (destination stub)
+════════════════════════════════════════════ -->
+<div id="scr-dashboard" class="screen">
+  <div class="dash-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div class="dash-logo">Wallet</div>
+      <select style="font-size:12px;padding:4px 8px;border:1px solid #ccc;border-radius:4px;background:#fff;">
+        <option id="dash-wallet-name">My Wallet</option>
+      </select>
+    </div>
+    <div class="dash-net" id="dash-network">Ethereum Mainnet</div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn" style="padding:6px 12px;font-size:12px;" onclick="showToast('Notifications — Sprint 4 feature')">🔔</button>
+      <button class="btn" style="padding:6px 12px;font-size:12px;" onclick="showToast('Settings — Sprint 4 feature')">⚙</button>
+      <a href="management.html" class="btn" style="padding:6px 12px;font-size:12px;">← Board</a>
+    </div>
+  </div>
+
+  <div class="dash-body">
+    <div class="scope-note">
+      ✅ <strong>Onboarding complete.</strong>
+      This is the Sprint 1 destination stub — full interactive dashboard is in
+      <a href="sprint2.html" style="color:#000;font-weight:700;">sprint2.html</a>.
+      Sprint 1 scope is onboarding only (WLT-001 to WLT-012).
+      &nbsp;<a href="#" style="color:#555;" onclick="restartOnboarding(); return false;">[ Reset Onboarding ]</a>
+    </div>
+
+    <div class="balance-card">
+      <div class="balance-lbl">Total Balance (USD)</div>
+      <div class="balance-amt">$12,547.32</div>
+      <div class="balance-meta">
+        <div class="meta-item">
+          <div class="meta-key">Network</div>
+          <div class="meta-val" id="dash-net-card">Ethereum Mainnet</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-key">Address</div>
+          <div class="meta-val" style="font-size:11px;">0x742d…a51b</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-key">Last Synced</div>
+          <div class="meta-val">Just now</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="quick-actions">
+      <button class="qa-btn" onclick="showToast('Full Send modal — see sprint2.html')">📤 Send</button>
+      <button class="qa-btn" onclick="showToast('Full Receive modal — see sprint2.html')">📥 Receive</button>
+      <button class="qa-btn" onclick="showToast('Full Swap modal — see sprint2.html')">🔄 Swap</button>
+      <button class="qa-btn" disabled>🌉 Bridge</button>
+    </div>
+
+    <div class="asset-section">
+      <div class="sec-title">Assets</div>
+      <table class="asset-tbl">
+        <thead>
+          <tr>
+            <th>Asset</th><th>Balance</th><th>USD Value</th><th>24h Change</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Ethereum (ETH)</strong></td><td>2.50 ETH</td><td>$4,250.00</td><td>▲ +2.5%</td></tr>
+          <tr><td><strong>USDC</strong></td><td>5,000 USDC</td><td>$5,000.00</td><td>▲ +0.1%</td></tr>
+          <tr><td><strong>Wrapped Bitcoin (WBTC)</strong></td><td>0.15 WBTC</td><td>$6,150.00</td><td>▼ −1.2%</td></tr>
+          <tr><td><strong>DAI</strong></td><td>2,147 DAI</td><td>$2,147.32</td><td>▼ −0.05%</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="scope-note" style="margin-top:20px;">
+      <strong>Sprint 1 Task Coverage:</strong>
+      WLT-001 Splash · WLT-002 Path Selection · WLT-003 Terms · WLT-004 Wallet Setup ·
+      WLT-005 Password (strength bar) · WLT-006 Seed Reveal (blur/reveal) ·
+      WLT-007 Seed Confirm (word picker) · WLT-008 Create Success ·
+      WLT-009 Import Phrase Grid · WLT-010 Import Password + Success ·
+      WLT-011 Seed Encryption (client-side stub) · WLT-012 Onboarding State (localStorage)
+    </div>
+  </div>
+
+  <div class="dash-footer">
+    Sprint 1: Onboarding &amp; Account Setup · Low-Fidelity Prototype · v4.0
+    <div class="footer-links">
+      <a href="management.html">← Project Board</a>
+      <a href="sprint2.html">Sprint 2: Core Wallet →</a>
+      <a href="sprint3.html">Sprint 3+4: Advanced →</a>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+  /* ── Navigation ───────────────────────────────────────────── */
+  function go(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    const el = document.getElementById(id);
+    if (el) { el.classList.add('active'); window.scrollTo(0, 0); }
+  }
+
+  /* ── State ────────────────────────────────────────────────── */
+  let purpose = 'create';
+  let importWC = 12;
+  let seedVisible = false;
+
+  const WORDS = [
+    'abandon','ability','able','about',
+    'above','absent','absorb','abstract',
+    'access','accident','account','accuse'
+  ];
+
+  function setPurpose(p) { purpose = p; }
+
+  function routeAfterTerms() {
+    document.getElementById('terms-check').checked = false;
+    document.getElementById('btn-terms').disabled = true;
+    go(purpose === 'create' ? 'scr-c-setup' : 'scr-i-phrase');
+  }
+
+  /* ── Toast ────────────────────────────────────────────────── */
+  let toastT = null;
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastT);
+    toastT = setTimeout(() => t.classList.remove('show'), 2300);
+  }
+
+  /* ── Wallet name validation ───────────────────────────────── */
+  function validateWalletName() {
+    const v = document.getElementById('wallet-name').value.trim();
+    const err = document.getElementById('wallet-name-err');
+    const inp = document.getElementById('wallet-name');
+    if (v.length < 3 || v.length > 30) {
+      inp.classList.add('error'); err.classList.add('show');
+    } else {
+      inp.classList.remove('error'); err.classList.remove('show');
+    }
+  }
+
+  function goToPassword() {
+    if (document.getElementById('wallet-name').value.trim().length < 3) {
+      validateWalletName(); return;
+    }
+    go('scr-c-password');
+  }
+
+  /* ── Password strength (shared) ──────────────────────────── */
+  const SLBLS = ['', 'Weak', 'Fair', 'Good', 'Strong'];
+
+  function strength(pw) {
+    let s = 0;
+    if (pw.length >= 8)           s++;
+    if (/[A-Z]/.test(pw))         s++;
+    if (/[0-9]/.test(pw))         s++;
+    if (/[^A-Za-z0-9]/.test(pw))  s++;
+    return s;
+  }
+
+  function setStrUI(score, pre, lblId) {
+    for (let i = 1; i <= 4; i++) {
+      const el = document.getElementById(pre + i);
+      if (el) el.classList.toggle('on', i <= score);
+    }
+    const l = document.getElementById(lblId);
+    if (l) l.textContent = score ? 'Strength: ' + SLBLS[score] : 'Enter a password above';
+  }
+
+  /* Create-path password */
+  function evalPw() {
+    const p1 = document.getElementById('pw1').value;
+    const p2 = document.getElementById('pw2').value;
+    const sc = strength(p1);
+    setStrUI(sc, 's', 'str-lbl');
+    const inp2 = document.getElementById('pw2');
+    const err  = document.getElementById('pw-err');
+    let matchOk = false;
+    if (p2.length > 0) {
+      if (p1 === p2) {
+        err.classList.remove('show'); inp2.classList.remove('error'); inp2.classList.add('ok'); matchOk = true;
+      } else {
+        err.classList.add('show'); inp2.classList.add('error'); inp2.classList.remove('ok');
+      }
+    } else {
+      err.classList.remove('show'); inp2.classList.remove('error','ok');
+    }
+    const consent = document.getElementById('pw-consent').checked;
+    document.getElementById('btn-pw').disabled = !(sc >= 3 && matchOk && consent);
+  }
+
+  /* Import-path password */
+  function evalIPw() {
+    const p1 = document.getElementById('ipw1').value;
+    const p2 = document.getElementById('ipw2').value;
+    const sc = strength(p1);
+    setStrUI(sc, 'is', 'istr-lbl');
+    const inp2 = document.getElementById('ipw2');
+    const err  = document.getElementById('ipw-err');
+    let matchOk = false;
+    if (p2.length > 0) {
+      if (p1 === p2) {
+        err.classList.remove('show'); inp2.classList.remove('error'); inp2.classList.add('ok'); matchOk = true;
+      } else {
+        err.classList.add('show'); inp2.classList.add('error'); inp2.classList.remove('ok');
+      }
+    } else {
+      err.classList.remove('show'); inp2.classList.remove('error','ok');
+    }
+    document.getElementById('btn-ipw').disabled = !(sc >= 3 && matchOk);
+  }
+
+  function togglePwVisibility(id1, id2, cbId) {
+    const t = document.getElementById(cbId).checked ? 'text' : 'password';
+    document.getElementById(id1).type = t;
+    document.getElementById(id2).type = t;
+  }
+
+  /* ── Seed grid render ─────────────────────────────────────── */
+  function renderSeedGrid() {
+    document.getElementById('seed-grid').innerHTML =
+      WORDS.map((w, i) =>
+        `<div class="seed-cell">
+          <span class="seed-num">${i+1}.</span>
+          <span class="seed-word">${w}</span>
+         </div>`
+      ).join('');
+  }
+
+  function toggleReveal() {
+    seedVisible = !seedVisible;
+    const grid = document.getElementById('seed-grid');
+    const ov   = document.getElementById('seed-overlay');
+    const cb   = document.getElementById('btn-copy-seed');
+    grid.classList.toggle('blur', !seedVisible);
+    cb.disabled = !seedVisible;
+    if (seedVisible) {
+      ov.innerHTML = `<button class="reveal-btn" onclick="toggleReveal()">🙈 Hide phrase</button>`;
+    } else {
+      ov.innerHTML = `
+        <button class="reveal-btn" onclick="toggleReveal()"><span>👁</span> Click to reveal</button>
+        <span class="reveal-note">Make sure no one is looking</span>`;
+    }
+  }
+
+  function copySeed() {
+    navigator.clipboard.writeText(WORDS.join(' ')).catch(() => {});
+    showToast('Recovery phrase copied!');
+  }
+
+  /* ── Word picker ──────────────────────────────────────────── */
+  let placed = new Array(12).fill(null);
+  let pool   = [];
+
+  function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function initWordPicker() {
+    placed = new Array(12).fill(null);
+    pool   = shuffle(WORDS);
+    renderPicker();
+  }
+
+  function renderPicker() {
+    // Slots
+    document.getElementById('wp-slots').innerHTML =
+      placed.map((w, i) =>
+        w
+          ? `<div class="wp-slot filled" onclick="returnWord(${i})">
+              <span class="wp-slot-num">${i+1}.</span>
+              <span class="wp-slot-word">${w}</span>
+             </div>`
+          : `<div class="wp-slot">
+              <span class="wp-slot-num">${i+1}.</span>
+              <span class="wp-slot-word" style="color:#cccccc">——</span>
+             </div>`
+      ).join('');
+
+    // Chips — preserve pool order, mark used ones
+    document.getElementById('wp-pool').innerHTML =
+      pool.map(w => {
+        const used = placed.includes(w);
+        return `<button class="wp-chip ${used ? 'used' : ''}"
+          onclick="placeWord('${w}')">${w}</button>`;
+      }).join('');
+
+    // Counter + verify
+    const n = placed.filter(Boolean).length;
+    document.getElementById('wp-count').textContent = `${n} / 12 words placed`;
+    document.getElementById('btn-verify').disabled = n < 12;
+  }
+
+  function placeWord(w) {
+    const idx = placed.indexOf(null);
+    if (idx === -1) return;
+    placed[idx] = w;
+    renderPicker();
+  }
+
+  function returnWord(i) {
+    placed[i] = null;
+    renderPicker();
+  }
+
+  function resetPicker() {
+    placed = new Array(12).fill(null);
+    renderPicker();
+  }
+
+  /* ── Import word grid ─────────────────────────────────────── */
+  function renderImportGrids() {
+    const mkGrid = (count, prefix, firstPaste) =>
+      Array.from({length: count}, (_, i) =>
+        `<div class="iword-wrap">
+          <label>Word ${i+1}</label>
+          <input type="text" class="iword-input" id="${prefix}${i+1}"
+            placeholder="word ${i+1}"
+            ${i === 0 && firstPaste
+              ? `oninput="handlePaste(this, ${count}, '${prefix}')"` : ''}>
+         </div>`
+      ).join('');
+
+    document.getElementById('ig-12').innerHTML = mkGrid(12, 'iw',  true);
+    document.getElementById('ig-24').innerHTML = mkGrid(24, 'iw24', true);
+  }
+
+  function handlePaste(inp, count, prefix) {
+    const words = inp.value.trim().split(/\s+/);
+    if (words.length >= count) {
+      for (let i = 1; i <= count; i++) {
+        const el = document.getElementById(prefix + i);
+        if (el) el.value = words[i-1] || '';
+      }
+      inp.value = words[0];
+      showToast(`Phrase distributed across ${count} fields`);
+    }
+  }
+
+  function toggleWordCount() {
+    const g12 = document.getElementById('ig-12');
+    const g24 = document.getElementById('ig-24');
+    const btn = document.getElementById('toggle-wc');
+    if (importWC === 12) {
+      importWC = 24;
+      g12.style.display = 'none'; g24.style.display = '';
+      btn.textContent = 'Switch to 12 words';
+    } else {
+      importWC = 12;
+      g12.style.display = ''; g24.style.display = 'none';
+      btn.textContent = 'Switch to 24 words';
+    }
+  }
+
+  /* ── Populate success summary ─────────────────────────────── */
+  function populateCreateSummary() {
+    const nameEl = document.getElementById('wallet-name');
+    const netEl  = document.getElementById('wallet-net');
+    const n = document.getElementById('cs-name');
+    const k = document.getElementById('cs-net');
+    if (n && nameEl) n.textContent = nameEl.value || 'My Wallet';
+    if (k && netEl)  k.textContent = netEl.options[netEl.selectedIndex]?.text || 'Ethereum Mainnet';
+  }
+
+  function populateImportSummary() {
+    const nameEl = document.getElementById('i-name');
+    const netEl  = document.getElementById('i-net');
+    const n = document.getElementById('is-name');
+    const k = document.getElementById('is-net');
+    if (n && nameEl) n.textContent = nameEl.value || 'My Imported Wallet';
+    if (k && netEl)  k.textContent = netEl.options[netEl.selectedIndex]?.text || 'Ethereum Mainnet';
+  }
+
+  /* ── Onboarding completion ────────────────────────────────── */
+  function completeOnboarding(type) {
+    try {
+      localStorage.setItem('onboarding_complete', 'true');
+      localStorage.setItem('wallet_type', type);
+      const name = document.getElementById(type === 'create' ? 'wallet-name' : 'i-name')?.value || 'My Wallet';
+      const net  = document.getElementById(type === 'create' ? 'wallet-net' : 'i-net');
+      localStorage.setItem('wallet_name', name);
+      localStorage.setItem('wallet_network', net ? net.options[net.selectedIndex]?.text : 'Ethereum Mainnet');
+    } catch(e) {}
+    /* Redirect to full interactive dashboard (Sprint 2) */
+    window.location.href = 'sprint2.html';
+  }
+
+  function restartOnboarding() {
+    try { localStorage.removeItem('onboarding_complete'); } catch(e) {}
+    seedVisible = false;
+    go('scr-splash');
+  }
+
+  /* ── MutationObserver to populate summaries on screen show ── */
+  function observeScreen(id, fn) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    new MutationObserver(() => {
+      if (el.classList.contains('active')) fn();
+    }).observe(el, { attributes: true, attributeFilter: ['class'] });
+  }
+
+  /* ── Init ─────────────────────────────────────────────────── */
+  renderSeedGrid();
+  renderImportGrids();
+  observeScreen('scr-c-success', populateCreateSummary);
+  observeScreen('scr-i-success', populateImportSummary);
+
+  /* Auto-redirect if already onboarded */
+  try {
+    if (localStorage.getItem('onboarding_complete') === 'true') {
+      window.location.href = 'sprint2.html';
+    }
+  } catch(e) {}
+</script>
+
+</body>
+</html>
