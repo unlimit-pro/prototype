@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sprint 1: Onboarding &amp; Account Setup — Low-Fidelity Prototype</title>
+  <title>Sprint 1: Onboarding &amp; Account Setup — Solana Wallet Low-Fidelity Prototype</title>
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -728,13 +728,11 @@
       <div class="form-group">
         <label class="form-label" for="wallet-net">Primary Network</label>
         <select id="wallet-net" class="form-select">
-          <option value="ethereum">Ethereum Mainnet</option>
-          <option value="polygon">Polygon (MATIC)</option>
-          <option value="arbitrum">Arbitrum One</option>
-          <option value="optimism">Optimism</option>
-          <option value="base">Base</option>
+          <option value="mainnet">Solana Mainnet</option>
+          <option value="devnet">Solana Devnet</option>
+          <option value="testnet">Solana Testnet</option>
         </select>
-        <div class="input-hint">You can add more networks later in Settings.</div>
+        <div class="input-hint">You can switch clusters later in Settings → Networks.</div>
       </div>
 
       <div class="btn-row">
@@ -820,7 +818,8 @@
 
 <!-- ════════════════════════════════════════════
      SCREEN 6-CREATE — Seed Phrase Reveal  [Step 3/5]
-     Pattern: MetaMask/Phantom blur-to-reveal
+     Pattern: Phantom/Solflare blur-to-reveal
+     Ed25519 keypair via BIP-44 m/44'/501'/0'/0'
      Words blurred by default; explicit click to reveal; copy button
 ════════════════════════════════════════════ -->
 <div id="scr-c-seed" class="screen">
@@ -942,12 +941,12 @@
       </div>
       <div class="sum-row">
         <span class="sum-key">Network</span>
-        <span class="sum-val" id="cs-net">Ethereum Mainnet</span>
+        <span class="sum-val" id="cs-net">Solana Mainnet</span>
       </div>
       <div class="sum-row">
         <span class="sum-key">Address</span>
         <span class="sum-val" style="font-size:11px;">
-          0x742d…a51b
+          7xKX…Bb3q
           <button class="copy-btn" style="display:inline-flex;margin-left:6px;padding:2px 8px;font-size:10px;"
             onclick="showToast('Address copied!')">⎘</button>
         </span>
@@ -971,8 +970,9 @@
 
 <!-- ════════════════════════════════════════════
      SCREEN 4-IMPORT — Phrase Entry  [Step 1/3]
-     Pattern: Phantom/MetaMask 12-word individual input grid
+     Pattern: Phantom/Solflare 12-word individual input grid
      Feature: "Switch to 24 words"; paste auto-distributes
+     Feature: Tab to import by base58 Secret Key instead
 ════════════════════════════════════════════ -->
 <div id="scr-i-phrase" class="screen">
   <div class="topbar">
@@ -986,35 +986,51 @@
         <span class="step-dot"></span><span class="step-dot"></span>
       </div>
       <div class="section-tag">Step 1 of 3 · Recovery Phrase</div>
-      <div class="card-title">Enter Your Recovery Phrase</div>
-      <div class="card-sub">Type or paste your 12 or 24-word Secret Recovery Phrase to restore your wallet.</div>
+      <div class="card-title">Restore Your Wallet</div>
+      <div class="card-sub">Import using your 12 or 24-word Secret Recovery Phrase, or paste a base58 Secret Key.</div>
 
       <div class="warn-box">
-        ⚠ Only enter your phrase here on your device. Wallet staff will never ask for your recovery phrase.
+        ⚠ Only enter your phrase or secret key here on your device. Wallet staff will never ask for it.
       </div>
 
-      <!-- Word count toggle -->
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-        <label class="form-label" style="margin-bottom:0;">Recovery Phrase</label>
-        <button id="toggle-wc" class="btn" style="padding:5px 12px;font-size:11px;"
-          onclick="toggleWordCount()">Switch to 24 words</button>
+      <!-- Import mode tabs -->
+      <div style="display:flex;gap:0;border:1px solid #ccc;border-radius:4px;overflow:hidden;margin-bottom:16px;">
+        <button id="tab-phrase" style="flex:1;padding:8px;font-size:11px;font-weight:700;background:#000;color:#fff;border:none;cursor:pointer;">Recovery Phrase</button>
+        <button id="tab-secretkey" style="flex:1;padding:8px;font-size:11px;font-weight:700;background:#fff;color:#000;border:none;cursor:pointer;" onclick="document.getElementById('tab-phrase').style.background='#fff';document.getElementById('tab-phrase').style.color='#000';this.style.background='#000';this.style.color='#fff';document.getElementById('phrase-section').style.display='none';document.getElementById('secretkey-section').style.display='block';">Secret Key</button>
       </div>
 
-      <div id="ig-12" class="import-grid"><!-- 12 inputs: JS --></div>
-      <div id="ig-24" class="import-grid" style="display:none;"><!-- 24 inputs: JS --></div>
+      <!-- Phrase section -->
+      <div id="phrase-section">
+        <!-- Word count toggle -->
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+          <label class="form-label" style="margin-bottom:0;">Recovery Phrase</label>
+          <button id="toggle-wc" class="btn" style="padding:5px 12px;font-size:11px;"
+            onclick="toggleWordCount()">Switch to 24 words</button>
+        </div>
 
-      <div class="input-hint" style="margin-bottom:16px;">
-        💡 Tip: Paste your full phrase into Word 1 — all fields will auto-fill.
+        <div id="ig-12" class="import-grid"><!-- 12 inputs: JS --></div>
+        <div id="ig-24" class="import-grid" style="display:none;"><!-- 24 inputs: JS --></div>
+
+        <div class="input-hint" style="margin-bottom:16px;">
+          💡 Tip: Paste your full phrase into Word 1 — all fields will auto-fill.
+        </div>
+      </div>
+
+      <!-- Secret Key section (Solana base58 private key, 88 chars) -->
+      <div id="secretkey-section" style="display:none;">
+        <div class="form-group">
+          <label class="form-label">Base58 Secret Key</label>
+          <textarea class="form-input" rows="3" placeholder="Paste your base58 secret key (88 characters)…" style="font-family:'Courier New',monospace;font-size:11px;resize:none;"></textarea>
+          <div class="input-hint">Found in Phantom → Settings → Show Secret Key, or exported as a JSON keystore array.</div>
+        </div>
       </div>
 
       <div class="form-group">
-        <label class="form-label" for="i-net">Primary Network</label>
+        <label class="form-label" for="i-net">Cluster</label>
         <select id="i-net" class="form-select">
-          <option>Ethereum Mainnet</option>
-          <option>Polygon (MATIC)</option>
-          <option>Arbitrum One</option>
-          <option>Optimism</option>
-          <option>Base</option>
+          <option>Solana Mainnet</option>
+          <option>Solana Devnet</option>
+          <option>Solana Testnet</option>
         </select>
       </div>
 
@@ -1104,11 +1120,11 @@
       </div>
       <div class="sum-row">
         <span class="sum-key">Network</span>
-        <span class="sum-val" id="is-net">Ethereum Mainnet</span>
+        <span class="sum-val" id="is-net">Solana Mainnet</span>
       </div>
       <div class="sum-row">
         <span class="sum-key">Address</span>
-        <span class="sum-val" style="font-size:11px;">0x1a3c…f9d2</span>
+        <span class="sum-val" style="font-size:11px;">FMi7…9cXq</span>
       </div>
       <div class="sum-row">
         <span class="sum-key">Recovery Phrase</span>
@@ -1135,7 +1151,7 @@
         <option id="dash-wallet-name">My Wallet</option>
       </select>
     </div>
-    <div class="dash-net" id="dash-network">Ethereum Mainnet</div>
+    <div class="dash-net" id="dash-network">Solana Mainnet</div>
     <div style="display:flex;gap:8px;">
       <button class="btn" style="padding:6px 12px;font-size:12px;" onclick="showToast('Notifications — Sprint 4 feature')">🔔</button>
       <button class="btn" style="padding:6px 12px;font-size:12px;" onclick="showToast('Settings — Sprint 4 feature')">⚙</button>
@@ -1158,11 +1174,11 @@
       <div class="balance-meta">
         <div class="meta-item">
           <div class="meta-key">Network</div>
-          <div class="meta-val" id="dash-net-card">Ethereum Mainnet</div>
+          <div class="meta-val" id="dash-net-card">Solana Mainnet</div>
         </div>
         <div class="meta-item">
           <div class="meta-key">Address</div>
-          <div class="meta-val" style="font-size:11px;">0x742d…a51b</div>
+          <div class="meta-val" style="font-size:11px;">7xKX…Bb3q</div>
         </div>
         <div class="meta-item">
           <div class="meta-key">Last Synced</div>
@@ -1187,10 +1203,10 @@
           </tr>
         </thead>
         <tbody>
-          <tr><td><strong>Ethereum (ETH)</strong></td><td>2.50 ETH</td><td>$4,250.00</td><td>▲ +2.5%</td></tr>
-          <tr><td><strong>USDC</strong></td><td>5,000 USDC</td><td>$5,000.00</td><td>▲ +0.1%</td></tr>
-          <tr><td><strong>Wrapped Bitcoin (WBTC)</strong></td><td>0.15 WBTC</td><td>$6,150.00</td><td>▼ −1.2%</td></tr>
-          <tr><td><strong>DAI</strong></td><td>2,147 DAI</td><td>$2,147.32</td><td>▼ −0.05%</td></tr>
+          <tr><td><strong>Solana (SOL)</strong></td><td>45.20 SOL</td><td>$7,651.80</td><td>▲ +3.1%</td></tr>
+          <tr><td><strong>USD Coin (USDC)</strong></td><td>2,500 USDC</td><td>$2,500.00</td><td>▲ +0.0%</td></tr>
+          <tr><td><strong>Tether (USDT)</strong></td><td>1,200 USDT</td><td>$1,200.00</td><td>▲ +0.1%</td></tr>
+          <tr><td><strong>BONK</strong></td><td>12,000,000 BONK</td><td>$360.00</td><td>▼ −4.2%</td></tr>
         </tbody>
       </table>
     </div>

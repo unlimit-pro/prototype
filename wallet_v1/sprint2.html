@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sprint 2: Core Wallet — Low-Fidelity Prototype</title>
+    <title>Sprint 2: Core Solana Wallet — Low-Fidelity Prototype</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #ffffff; color: #000000; line-height: 1.5; min-height: 100vh; }
@@ -560,7 +560,7 @@
                     <div class="wallet-avatar" style="width:28px;height:28px;font-size:9px;">MW</div>
                     <div class="wd-info">
                         <div class="wd-name">My Wallet</div>
-                        <div class="wd-addr">0x742d...8ae7</div>
+                        <div class="wd-addr">7xKX...Bb3q</div>
                     </div>
                     <span class="wd-check">✓</span>
                 </div>
@@ -568,12 +568,13 @@
                     <div class="wallet-avatar" style="width:28px;height:28px;font-size:9px;background:#555;">TW</div>
                     <div class="wd-info">
                         <div class="wd-name">Trading Wallet</div>
-                        <div class="wd-addr">0x1a2b...9c0d</div>
+                        <div class="wd-addr">FMi7...9cXq</div>
                     </div>
                 </div>
                 <div class="wd-footer">
                     <a href="sprint1.html">＋ Create New Wallet</a>
                     <a href="sprint1.html">↓ Import Wallet</a>
+                    <a href="sprint1.html">👁 Watch an Address</a>
                 </div>
             </div>
         </div>
@@ -582,35 +583,27 @@
         <div class="net-zone">
             <button class="net-pill" onclick="togglePanel('netPanel')">
                 <span class="net-dot"></span>
-                Ethereum
+                Solana
                 <span class="net-caret">▾</span>
             </button>
 
             <!-- Network switcher -->
             <div class="net-panel" id="netPanel">
-                <div class="np-header">Select Network</div>
-                <div class="np-item active" onclick="switchNetwork(this,'Ethereum')">
+                <div class="np-header">Select Cluster</div>
+                <div class="np-item active" onclick="switchNetwork(this,'Solana Mainnet')">
                     <div class="np-dot filled"></div>
-                    <div class="np-info"><div class="np-name">Ethereum Mainnet</div><div class="np-id">Chain ID: 1</div></div>
+                    <div class="np-info"><div class="np-name">Solana Mainnet</div><div class="np-id">mainnet-beta</div></div>
                     <span class="np-check">✓</span>
                 </div>
-                <div class="np-item" onclick="switchNetwork(this,'Polygon')">
+                <div class="np-item" onclick="switchNetwork(this,'Solana Devnet')">
                     <div class="np-dot"></div>
-                    <div class="np-info"><div class="np-name">Polygon</div><div class="np-id">Chain ID: 137</div></div>
+                    <div class="np-info"><div class="np-name">Solana Devnet</div><div class="np-id">devnet</div></div>
                 </div>
-                <div class="np-item" onclick="switchNetwork(this,'Arbitrum')">
+                <div class="np-item" onclick="switchNetwork(this,'Solana Testnet')">
                     <div class="np-dot"></div>
-                    <div class="np-info"><div class="np-name">Arbitrum One</div><div class="np-id">Chain ID: 42161</div></div>
+                    <div class="np-info"><div class="np-name">Solana Testnet</div><div class="np-id">testnet</div></div>
                 </div>
-                <div class="np-item" onclick="switchNetwork(this,'Optimism')">
-                    <div class="np-dot"></div>
-                    <div class="np-info"><div class="np-name">Optimism</div><div class="np-id">Chain ID: 10</div></div>
-                </div>
-                <div class="np-item" onclick="switchNetwork(this,'BNB Chain')">
-                    <div class="np-dot"></div>
-                    <div class="np-info"><div class="np-name">BNB Chain</div><div class="np-id">Chain ID: 56</div></div>
-                </div>
-                <div class="np-footer"><a href="#">＋ Add Custom Network →</a></div>
+                <div class="np-footer"><a href="#">＋ Add Custom RPC Endpoint →</a></div>
             </div>
         </div>
 
@@ -630,13 +623,13 @@
     <!-- MAIN CONTENT                                          -->
     <!-- ────────────────────────────────────────────────────── -->
     <div class="container">
-        <p class="page-title">Wallet Dashboard — Sprint 2: Core Wallet</p>
+        <p class="page-title">Wallet Dashboard — Sprint 2: Core Solana Wallet</p>
 
         <!-- Pending TX banner -->
         <div class="pending-banner">
             <div class="pb-dot"></div>
             <div class="pb-text">
-                <strong>1 Pending Transaction</strong> — Sending 0.25 ETH · 2 min ago
+                <strong>1 Pending Transaction</strong> — Sending 2.50 SOL · 2 min ago
             </div>
             <div class="pb-actions">
                 <button class="btn-small-outline" onclick="openModal('pendingPanel')">View</button>
@@ -650,7 +643,7 @@
             <div class="bal-value">$12,547.32</div>
             <div class="bal-change">▲ <span class="up">+$234.50 (+1.90%)</span> · past 24 hours</div>
             <div class="addr-row">
-                <span id="walletAddr">0x742d35Cc6634C0532925a3b8…8ae7b</span>
+                <span id="walletAddr">7xKX7PmFdRxGLXsP9aQ5dBkN3sYbFe4Wc…Bb3q</span>
                 <button class="copy-btn" onclick="copyAddr()" title="Copy address">⎘</button>
             </div>
             <div class="action-row">
@@ -663,8 +656,8 @@
                 <button class="action-btn" onclick="openModal('swapModal')">
                     <span class="ab-icon">⇄</span>Swap
                 </button>
-                <button class="action-btn" disabled>
-                    <span class="ab-icon">⛓</span>Bridge
+                <button class="action-btn" onclick="showToast('Staking — Sprint 4 feature')">
+                    <span class="ab-icon">◎</span>Stake
                 </button>
                 <button class="action-btn" disabled>
                     <span class="ab-icon">$</span>Buy
@@ -692,28 +685,28 @@
                 </thead>
                 <tbody id="assetTbody">
                     <tr>
-                        <td><div class="asset-name">Ethereum</div><span class="asset-ticker">ETH</span></td>
-                        <td>2.500 ETH</td>
-                        <td>$4,250.00</td>
-                        <td><span class="asset-change up">▲ +2.4%</span></td>
+                        <td><div class="asset-name">Solana</div><span class="asset-ticker">SOL</span></td>
+                        <td>45.200 SOL</td>
+                        <td>$7,651.80</td>
+                        <td><span class="asset-change up">▲ +3.1%</span></td>
                     </tr>
                     <tr>
                         <td><div class="asset-name">USD Coin</div><span class="asset-ticker">USDC</span></td>
-                        <td>5,000.00 USDC</td>
-                        <td>$5,000.00</td>
+                        <td>2,500.00 USDC</td>
+                        <td>$2,500.00</td>
                         <td><span class="asset-change">▲ +0.0%</span></td>
                     </tr>
                     <tr>
-                        <td><div class="asset-name">Wrapped Bitcoin</div><span class="asset-ticker">WBTC</span></td>
-                        <td>0.1500 WBTC</td>
-                        <td>$6,150.00</td>
-                        <td><span class="asset-change up">▲ +1.8%</span></td>
+                        <td><div class="asset-name">Tether</div><span class="asset-ticker">USDT</span></td>
+                        <td>1,200.00 USDT</td>
+                        <td>$1,200.00</td>
+                        <td><span class="asset-change up">▲ +0.1%</span></td>
                     </tr>
                     <tr>
-                        <td><div class="asset-name">Dai Stablecoin</div><span class="asset-ticker">DAI</span></td>
-                        <td>2,147.32 DAI</td>
-                        <td>$2,147.32</td>
-                        <td><span class="asset-change down">▼ -0.1%</span></td>
+                        <td><div class="asset-name">Bonk</div><span class="asset-ticker">BONK</span></td>
+                        <td>12,000,000 BONK</td>
+                        <td>$360.00</td>
+                        <td><span class="asset-change down">▼ -4.2%</span></td>
                     </tr>
                 </tbody>
             </table>
@@ -729,44 +722,44 @@
                 <div class="tx-item tx-sent" onclick="openModal('txDetailModal')">
                     <div class="tx-icon-wrap">↑</div>
                     <div class="tx-details">
-                        <div class="tx-type">Sent ETH</div>
-                        <div class="tx-sub">To: 0x8b2c...7a3f · Jan 15, 2:32 PM</div>
+                        <div class="tx-type">Sent SOL</div>
+                        <div class="tx-sub">To: FMi7…9cXq · Jan 15, 2:32 PM</div>
                     </div>
-                    <div class="tx-amount">-0.500 ETH</div>
+                    <div class="tx-amount">-5.000 SOL</div>
                     <span class="tx-status-pill status-confirmed">Confirmed ✓</span>
                 </div>
                 <div class="tx-item tx-received" onclick="openModal('txDetailModal')">
                     <div class="tx-icon-wrap">↓</div>
                     <div class="tx-details">
-                        <div class="tx-type">Received ETH</div>
-                        <div class="tx-sub">From: 0x5d9b...4c8e · Jan 14, 9:15 AM</div>
+                        <div class="tx-type">Received SOL</div>
+                        <div class="tx-sub">From: 3Yqx…7bPm · Jan 14, 9:15 AM</div>
                     </div>
-                    <div class="tx-amount">+2.000 ETH</div>
+                    <div class="tx-amount">+20.000 SOL</div>
                     <span class="tx-status-pill status-confirmed">Confirmed ✓</span>
                 </div>
                 <div class="tx-item tx-pending" onclick="openModal('txDetailModal')">
                     <div class="tx-icon-wrap" style="animation:pulse 1.5s infinite;">⋯</div>
                     <div class="tx-details">
-                        <div class="tx-type">Sending ETH</div>
-                        <div class="tx-sub">To: 0x6a1f...2e5c · Jan 12, 11:20 AM</div>
+                        <div class="tx-type">Sending SOL</div>
+                        <div class="tx-sub">To: 8nPq…4rZs · Jan 12, 11:20 AM</div>
                     </div>
-                    <div class="tx-amount">-0.250 ETH</div>
+                    <div class="tx-amount">-2.500 SOL</div>
                     <span class="tx-status-pill status-pending">Pending ⏳</span>
                 </div>
                 <div class="tx-item tx-received" onclick="openModal('txDetailModal')">
                     <div class="tx-icon-wrap">↓</div>
                     <div class="tx-details">
                         <div class="tx-type">Received USDC</div>
-                        <div class="tx-sub">From: 0x4b8a...1d7c · Jan 11, 8:00 AM</div>
+                        <div class="tx-sub">From: Kj9L…2mQv · Jan 11, 8:00 AM</div>
                     </div>
-                    <div class="tx-amount">+50.00 USDC</div>
+                    <div class="tx-amount">+500.00 USDC</div>
                     <span class="tx-status-pill status-confirmed">Confirmed ✓</span>
                 </div>
                 <div class="tx-item tx-failed" onclick="openModal('txDetailModal')">
                     <div class="tx-icon-wrap" style="opacity:0.5;">✕</div>
                     <div class="tx-details">
                         <div class="tx-type">Failed Swap</div>
-                        <div class="tx-sub">DEX: Uniswap V3 · Jan 10, 6:30 PM</div>
+                        <div class="tx-sub">DEX: Jupiter V6 · Jan 10, 6:30 PM</div>
                     </div>
                     <div class="tx-amount" style="opacity:0.5;">—</div>
                     <span class="tx-status-pill status-failed">Failed ✗</span>
@@ -775,7 +768,7 @@
         </div>
 
         <div class="scope-note">
-            <strong>Sprint 2 Scope (WLT-101 – WLT-112):</strong> MetaMask/Phantom-inspired app header with wallet selector dropdown, network pill + switcher overlay, notification bell with pending TX badge, enhanced balance card (24h change + address copy), sortable asset table with filter, 3-step Send modal (recipient → EIP-1559 gas tiers → confirm + broadcast), Receive modal with QR placeholder, Swap modal with asset selectors + quote. Sprint 3 adds full TX history, filters, analytics, and settings.
+            <strong>Sprint 2 Scope (WLT-101 – WLT-115):</strong> Phantom/Solflare-inspired app header with wallet selector dropdown, Solana cluster switcher (Mainnet/Devnet/Testnet), notification bell with pending signature badge, balance card (SOL + USD, 24h change, address copy), sortable SPL token list with filter, 3-step Send modal (recipient → Solana priority fee tiers → confirm + broadcast), Receive modal with QR placeholder, Jupiter Swap modal. Sprint 3 adds full TX history, filters, analytics, and settings.
         </div>
     </div>
 
@@ -802,28 +795,28 @@
                     </div>
                     <p class="step-label">Step 1 of 3 — Recipient &amp; Amount</p>
                     <div class="form-group">
-                        <label class="form-label">Recipient Address or ENS Name</label>
-                        <input type="text" class="form-input" id="send-to" placeholder="0x… or alice.eth">
-                        <div class="form-hint">Tip: type an .eth name to resolve via ENS</div>
+                        <label class="form-label">Recipient Address or .sol Domain</label>
+                        <input type="text" class="form-input" id="send-to" placeholder="Base58 address or alice.sol">
+                        <div class="form-hint">Tip: type a .sol name to resolve via Solana Name Service (SNS)</div>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Asset</label>
                         <select class="form-input" id="send-asset">
-                            <option value="ETH">ETH — Balance: 2.500 ETH</option>
-                            <option value="USDC">USDC — Balance: 5,000.00 USDC</option>
-                            <option value="WBTC">WBTC — Balance: 0.1500 WBTC</option>
-                            <option value="DAI">DAI — Balance: 2,147.32 DAI</option>
+                            <option value="SOL">SOL — Balance: 45.200 SOL</option>
+                            <option value="USDC">USDC — Balance: 2,500.00 USDC</option>
+                            <option value="USDT">USDT — Balance: 1,200.00 USDT</option>
+                            <option value="BONK">BONK — Balance: 12,000,000 BONK</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Amount</label>
                         <div class="form-row">
                             <div class="form-group" style="margin-bottom:0">
-                                <input type="number" class="form-input" id="send-amount" placeholder="0.0" step="0.0001" min="0">
+                                <input type="number" class="form-input" id="send-amount" placeholder="0.0" step="0.000001" min="0">
                             </div>
-                            <button class="btn-small-outline" onclick="document.getElementById('send-amount').value='2.4790'">Max</button>
+                            <button class="btn-small-outline" onclick="document.getElementById('send-amount').value='44.9950'">Max</button>
                         </div>
-                        <div class="form-hint">≈ $0.00 USD · Gas est. ~$12.50 (Standard)</div>
+                        <div class="form-hint">≈ $0.00 USD · Est. fee ~0.000005 SOL (base) + priority</div>
                     </div>
                 </div>
 
@@ -834,31 +827,31 @@
                         <div class="step-dot active"></div>
                         <div class="step-dot"></div>
                     </div>
-                    <p class="step-label">Step 2 of 3 — Select Gas Speed (EIP-1559)</p>
+                    <p class="step-label">Step 2 of 3 — Select Priority Fee (Solana ComputeBudget)</p>
                     <div class="gas-tiers" id="gasTiers">
-                        <div class="gas-tier selected" onclick="selectGas(this,'Standard')">
+                        <div class="gas-tier selected" onclick="selectGas(this,'Normal')">
                             <div class="gas-tier-left">
-                                <div class="gas-tier-name">Standard</div>
-                                <div class="gas-tier-time">~2 minutes · baseFee + 1 gwei tip</div>
+                                <div class="gas-tier-name">Normal</div>
+                                <div class="gas-tier-time">~confirmed next slot · 0 microlamports/CU</div>
                             </div>
-                            <div class="gas-tier-cost">~$12.50</div>
+                            <div class="gas-tier-cost">~$0.0001</div>
                         </div>
-                        <div class="gas-tier" onclick="selectGas(this,'Fast')">
+                        <div class="gas-tier" onclick="selectGas(this,'High')">
                             <div class="gas-tier-left">
-                                <div class="gas-tier-name">Fast</div>
-                                <div class="gas-tier-time">~30 seconds · baseFee + 1.5 gwei tip</div>
+                                <div class="gas-tier-name">High</div>
+                                <div class="gas-tier-time">~priority slot · 10,000 microlamports/CU</div>
                             </div>
-                            <div class="gas-tier-cost">~$16.80</div>
+                            <div class="gas-tier-cost">~$0.0012</div>
                         </div>
-                        <div class="gas-tier" onclick="selectGas(this,'Instant')">
+                        <div class="gas-tier" onclick="selectGas(this,'Turbo')">
                             <div class="gas-tier-left">
-                                <div class="gas-tier-name">Instant</div>
-                                <div class="gas-tier-time">~15 seconds · baseFee + 2 gwei tip</div>
+                                <div class="gas-tier-name">Turbo</div>
+                                <div class="gas-tier-time">~immediate · 50,000 microlamports/CU</div>
                             </div>
-                            <div class="gas-tier-cost">~$21.20</div>
+                            <div class="gas-tier-cost">~$0.0060</div>
                         </div>
                     </div>
-                    <button class="btn-link">Advanced gas settings ▾</button>
+                    <button class="btn-link">Advanced: set custom microlamports/CU ▾</button>
                 </div>
 
                 <!-- Step 3: Confirm -->
@@ -869,12 +862,12 @@
                         <div class="step-dot active"></div>
                     </div>
                     <p class="step-label">Step 3 of 3 — Review &amp; Confirm</p>
-                    <div class="confirm-row"><span class="confirm-label">To</span><span class="confirm-value">0x8b2c...7a3f</span></div>
-                    <div class="confirm-row"><span class="confirm-label">Asset</span><span class="confirm-value">ETH</span></div>
-                    <div class="confirm-row"><span class="confirm-label">Amount</span><span class="confirm-value">0.5000 ETH</span></div>
-                    <div class="confirm-row"><span class="confirm-label">Gas Speed</span><span class="confirm-value" id="confirm-gas-label">Standard</span></div>
-                    <div class="confirm-row"><span class="confirm-label">Gas Fee</span><span class="confirm-value" id="confirm-gas-cost">~$12.50</span></div>
-                    <div class="confirm-row" style="padding-top:10px;margin-top:4px;border-top:2px solid #000;border-bottom:none;"><span class="confirm-label confirm-total">Total Cost</span><span class="confirm-value confirm-total">0.5059 ETH + $12.50 gas</span></div>
+                    <div class="confirm-row"><span class="confirm-label">To</span><span class="confirm-value">FMi7…9cXq</span></div>
+                    <div class="confirm-row"><span class="confirm-label">Asset</span><span class="confirm-value">SOL</span></div>
+                    <div class="confirm-row"><span class="confirm-label">Amount</span><span class="confirm-value">5.0000 SOL</span></div>
+                    <div class="confirm-row"><span class="confirm-label">Priority</span><span class="confirm-value" id="confirm-gas-label">Normal</span></div>
+                    <div class="confirm-row"><span class="confirm-label">Network Fee</span><span class="confirm-value" id="confirm-gas-cost">~$0.0001</span></div>
+                    <div class="confirm-row" style="padding-top:10px;margin-top:4px;border-top:2px solid #000;border-bottom:none;"><span class="confirm-label confirm-total">Total Cost</span><span class="confirm-value confirm-total">5.0001 SOL</span></div>
                 </div>
 
                 <!-- Broadcasting state -->
@@ -882,7 +875,7 @@
                     <div class="broadcast-pending">
                         <span class="broadcast-spinner">◌</span>
                         <strong>Broadcasting transaction…</strong>
-                        <p style="font-size:11px;color:#999;margin-top:6px;">Please wait, submitting to Ethereum network</p>
+                        <p style="font-size:11px;color:#999;margin-top:6px;">Please wait, submitting to Solana network</p>
                     </div>
                 </div>
 
@@ -891,8 +884,8 @@
                     <div class="broadcast-success">
                         <div class="bs-icon">✓</div>
                         <div class="bs-title">Transaction Submitted!</div>
-                        <div class="bs-hash">TX: 0xf3a9…8c2b</div>
-                        <a href="#" style="display:block;margin-top:8px;font-size:11px;font-weight:600;color:#000;">View on Etherscan ↗</a>
+                        <div class="bs-hash">Sig: 4tHmQ…6wKr</div>
+                        <a href="#" style="display:block;margin-top:8px;font-size:11px;font-weight:600;color:#000;">View on Solscan ↗</a>
                     </div>
                 </div>
             </div>
@@ -912,26 +905,26 @@
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label class="form-label">Network</label>
+                    <label class="form-label">Cluster</label>
                     <select class="form-input">
-                        <option>Ethereum Mainnet</option>
-                        <option>Polygon</option>
-                        <option>Arbitrum One</option>
+                        <option>Solana Mainnet</option>
+                        <option>Solana Devnet</option>
+                        <option>Solana Testnet</option>
                     </select>
                 </div>
                 <!-- QR Code placeholder (20×20 CSS checkerboard) -->
                 <div class="qr-grid" id="qrGrid"></div>
                 <div class="form-group">
-                    <label class="form-label">Your Wallet Address</label>
+                    <label class="form-label">Your Solana Address</label>
                     <div class="addr-row">
-                        <span style="font-size:9px;">0x742d35Cc6634C0532925a3b844Bc7e76fE13a51b</span>
+                        <span style="font-size:9px;">7xKX7PmFdRxGLXsP9aQ5dBkN3sYbFe4WcBb3qHnJm5</span>
                         <button class="copy-btn" onclick="copyAddr()" title="Copy">⎘</button>
                     </div>
                 </div>
-                <div class="form-note">⚠ Only send <strong>Ethereum</strong> assets to this address on the selected network. Sending from the wrong network may result in permanent loss.</div>
+                <div class="form-note">⚠ Only send <strong>Solana (SOL)</strong> and SPL tokens to this address. This address does not accept tokens from other blockchains.</div>
                 <div class="form-group" style="margin-bottom:0">
-                    <label class="form-label">ENS Name</label>
-                    <div class="addr-row" style="font-size:12px;font-weight:700;">alice.eth</div>
+                    <label class="form-label">.sol Domain</label>
+                    <div class="addr-row" style="font-size:12px;font-weight:700;">alice.sol <span style="font-size:10px;color:#999;margin-left:4px;">· Solana Name Service</span></div>
                 </div>
             </div>
             <div class="modal-foot modal-full" style="justify-content:stretch;">
@@ -949,14 +942,14 @@
                 <button class="modal-close" onclick="closeModal('swapModal')">×</button>
             </div>
             <div class="modal-body">
-                <div class="form-note">Powered by 1inch aggregator · Best route across DEXes</div>
+                <div class="form-note">Powered by <strong>Jupiter Aggregator</strong> · Best route across Solana DEXes</div>
                 <div class="form-group">
                     <label class="form-label">From</label>
                     <select class="form-input" id="swap-from" onchange="updateSwapRate()">
-                        <option value="ETH">ETH — 2.500 ETH ($4,250.00)</option>
-                        <option value="USDC">USDC — 5,000.00 USDC ($5,000.00)</option>
-                        <option value="WBTC">WBTC — 0.150 WBTC ($6,150.00)</option>
-                        <option value="DAI">DAI — 2,147.32 DAI ($2,147.32)</option>
+                        <option value="SOL">SOL — 45.200 SOL ($7,651.80)</option>
+                        <option value="USDC">USDC — 2,500.00 USDC ($2,500.00)</option>
+                        <option value="USDT">USDT — 1,200.00 USDT ($1,200.00)</option>
+                        <option value="BONK">BONK — 12,000,000 BONK ($360.00)</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -973,26 +966,30 @@
                     <label class="form-label">To</label>
                     <select class="form-input" id="swap-to" onchange="updateSwapRate()">
                         <option value="USDC">USDC</option>
-                        <option value="ETH">ETH</option>
-                        <option value="DAI">DAI</option>
-                        <option value="WBTC">WBTC</option>
+                        <option value="SOL">SOL</option>
+                        <option value="USDT">USDT</option>
+                        <option value="BONK">BONK</option>
                     </select>
                 </div>
                 <div class="rate-row">
                     <span>Exchange Rate</span>
-                    <strong id="swap-rate">1 ETH ≈ 2,012.44 USDC</strong>
+                    <strong id="swap-rate">1 SOL ≈ 169.44 USDC</strong>
                 </div>
                 <div class="rate-row">
                     <span>Max Slippage</span>
                     <span>0.5% · <button class="btn-link">Edit</button></span>
                 </div>
                 <div class="rate-row">
-                    <span>Estimated Gas</span>
-                    <span>~$18.40 (Standard)</span>
+                    <span>Estimated Fee</span>
+                    <span>~0.000005 SOL (Normal priority)</span>
+                </div>
+                <div class="rate-row">
+                    <span>Route</span>
+                    <span style="font-size:10px;color:#666;">SOL → USDC via Raydium (Jupiter V6)</span>
                 </div>
                 <div class="form-group" style="margin-bottom:0">
                     <label class="form-label">You Receive (estimated)</label>
-                    <input type="text" class="form-input" id="swap-receive" value="2,012.44 USDC" disabled>
+                    <input type="text" class="form-input" id="swap-receive" value="169.44 USDC" disabled>
                 </div>
             </div>
             <div class="modal-foot">
@@ -1015,14 +1012,14 @@
                         <strong style="font-size:13px;">Sending ETH</strong>
                         <span style="font-size:11px;color:#999;">2 min ago</span>
                     </div>
-                    <div style="font-size:11px;color:#666;margin-bottom:4px;">To: 0x6a1f...2e5c</div>
-                    <div style="font-size:12px;font-family:'Courier New',monospace;margin-bottom:12px;">-0.250 ETH · Gas: Standard ($12.50)</div>
+                    <div style="font-size:11px;color:#666;margin-bottom:4px;">To: 8nPq...4rZs</div>
+                    <div style="font-size:12px;font-family:'Courier New',monospace;margin-bottom:12px;">-2.500 SOL · Priority: Normal (~$0.0001)</div>
                     <div style="display:flex;gap:8px;">
                         <button class="btn-small" onclick="openModal('sendModal');closeModal('pendingPanel')">⚡ Speed Up</button>
                         <button class="btn-small-outline" onclick="closeModal('pendingPanel')">✕ Cancel TX</button>
                     </div>
                 </div>
-                <div class="form-note">Speed Up sends a replacement transaction with a higher gas fee. Cancel sends a 0-value transaction to the same nonce.</div>
+                <div class="form-note">Speed Up resubmits the transaction with a higher priority fee (more microlamports/CU). Drop cancels and frees the compute units.</div>
             </div>
         </div>
     </div>
@@ -1035,26 +1032,26 @@
                 <button class="modal-close" onclick="closeModal('addTokenModal')">×</button>
             </div>
             <div class="modal-body">
-                <div class="form-note">⚠ Anyone can create a token with any name. Always verify the contract address on Etherscan before importing.</div>
+                <div class="form-note">⚠ Anyone can create an SPL token with any name. Always verify the mint address on Solscan before importing.</div>
                 <div class="form-group">
-                    <label class="form-label">Contract Address</label>
-                    <input type="text" class="form-input" placeholder="0x…" id="token-addr">
+                    <label class="form-label">Mint Address</label>
+                    <input type="text" class="form-input" placeholder="Base58 mint address…" id="token-addr">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Token Symbol</label>
-                    <input type="text" class="form-input" placeholder="e.g., USDT" id="token-symbol">
+                    <input type="text" class="form-input" placeholder="e.g., JUP" id="token-symbol">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Decimals</label>
-                    <input type="number" class="form-input" value="18" id="token-decimals">
+                    <input type="number" class="form-input" value="6" id="token-decimals">
                 </div>
                 <div class="form-group" style="margin-bottom:0">
-                    <label class="form-label">Popular Tokens (quick add)</label>
+                    <label class="form-label">Popular SPL Tokens (quick add)</label>
                     <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;">
-                        <button class="btn-small-outline" onclick="quickAdd('USDT','0xdAC17F958D2ee523a2206206994597C13D831ec7')">USDT</button>
-                        <button class="btn-small-outline" onclick="quickAdd('LINK','0x514910771AF9Ca656af840dff83E8264EcF986CA')">LINK</button>
-                        <button class="btn-small-outline" onclick="quickAdd('UNI','0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984')">UNI</button>
-                        <button class="btn-small-outline" onclick="quickAdd('AAVE','0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9')">AAVE</button>
+                        <button class="btn-small-outline" onclick="quickAdd('JUP','JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN')">JUP</button>
+                        <button class="btn-small-outline" onclick="quickAdd('PYTH','HZ1JovNiVvGqswkfKaKfLkCB62fHNhMT4vLsqzJ5Rhs1')">PYTH</button>
+                        <button class="btn-small-outline" onclick="quickAdd('RAY','4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R')">RAY</button>
+                        <button class="btn-small-outline" onclick="quickAdd('MNGO','MangoCzJ36AjZyKwVj3VnYU4GTonjfVEnJmvvWaxLac')">MNGO</button>
                     </div>
                 </div>
             </div>
@@ -1076,30 +1073,30 @@
                 <div style="background:#f5f5f5;border:1px solid #cccccc;border-radius:3px;padding:12px;text-align:center;margin-bottom:14px;">
                     <div style="font-size:24px;margin-bottom:4px;">✓</div>
                     <div style="font-size:13px;font-weight:700;">Confirmed</div>
-                    <div style="font-size:11px;color:#666;">Block 18,423,156 · 24 confirmations</div>
+                    <div style="font-size:11px;color:#666;">Slot 312,456,789 · 32 confirmations</div>
                 </div>
                 <div class="tx-detail-row">
                     <div class="tx-detail-label">Type &amp; Amount</div>
-                    <div class="tx-detail-value mono-lg">↑ Sent 0.500 ETH</div>
-                    <div style="font-size:11px;color:#999;">≈ $850.00 at time of TX</div>
+                    <div class="tx-detail-value mono-lg">↑ Sent 5.000 SOL</div>
+                    <div style="font-size:11px;color:#999;">≈ $847.00 at time of TX</div>
                 </div>
                 <div class="tx-detail-row">
                     <div class="tx-detail-label">From</div>
-                    <div class="tx-detail-value">0x742d35Cc6634C0532925a3b844Bc7e76fE13a51b <button class="copy-btn">⎘</button></div>
+                    <div class="tx-detail-value">7xKX7PmFdRxGLXsP9aQ5dBkN3sYbFe4WcBb3qHnJm5 <button class="copy-btn">⎘</button></div>
                 </div>
                 <div class="tx-detail-row">
                     <div class="tx-detail-label">To</div>
-                    <div class="tx-detail-value">0x8b2c4a7f2D9e3B1C5A8F7E4D3C2B1A0F9E8D7C6B <button class="copy-btn">⎘</button></div>
+                    <div class="tx-detail-value">FMi7LqXPmFdRxGLXsP9aQ5dBkN3sYbFe4Wc9cXqAb2 <button class="copy-btn">⎘</button></div>
                 </div>
                 <div class="tx-detail-row">
-                    <div class="tx-detail-label">Transaction Hash</div>
-                    <div class="tx-detail-value">0xf3a9c2e1d8b7f4a3e2c1d0b9a8f7e6d5c4b3a2f1e0 <button class="copy-btn">⎘</button></div>
-                    <a href="#" style="font-size:10px;font-weight:600;color:#000;">View on Etherscan ↗</a>
+                    <div class="tx-detail-label">Signature</div>
+                    <div class="tx-detail-value">4tHmQj9Pk3sYbLqR7xKX7PmFdRx6wKrGLXsP9aQ5dB <button class="copy-btn">⎘</button></div>
+                    <a href="#" style="font-size:10px;font-weight:600;color:#000;">View on Solscan ↗</a>
                 </div>
                 <div class="tx-detail-row">
-                    <div class="tx-detail-label">Gas</div>
-                    <div class="tx-detail-value">21,000 used / 21,000 limit · 45.23 gwei</div>
-                    <div style="font-size:11px;color:#666;">Fee paid: 0.000950 ETH (~$12.50)</div>
+                    <div class="tx-detail-label">Fee</div>
+                    <div class="tx-detail-value">0.000005 SOL base + 0.000012 SOL priority fee</div>
+                    <div style="font-size:11px;color:#666;">Total fee: 0.000017 SOL (~$0.0029)</div>
                 </div>
                 <div class="tx-detail-row">
                     <div class="tx-detail-label">Date &amp; Time</div>
@@ -1113,7 +1110,7 @@
     </div>
 
     <footer>
-        <p>Sprint 2: Core Wallet · Low-Fidelity Prototype · WLT-101 – WLT-112</p>
+        <p>Sprint 2: Core Solana Wallet · Low-Fidelity Prototype · WLT-101 – WLT-115</p>
         <div class="footer-links">
             <a href="management.html">← Dashboard</a>
             <a href="sprint1.html">Sprint 1: Onboarding</a>
@@ -1160,7 +1157,7 @@
 
     // ── Copy address ───────────────────────────────────────────
     function copyAddr() {
-        navigator.clipboard.writeText('0x742d35Cc6634C0532925a3b844Bc7e76fE13a51b').catch(() => {});
+        navigator.clipboard.writeText('7xKX7PmFdRxGLXsP9aQ5dBkN3sYbFe4WcBb3qHnJm5').catch(() => {});
         showToast('Address copied!');
     }
 
@@ -1260,7 +1257,7 @@
     }
 
     // ── Swap ───────────────────────────────────────────────────
-    const rates = { ETH_USDC: 2012.44, ETH_DAI: 2011.99, ETH_WBTC: 0.0490, USDC_ETH: 0.000497, USDC_DAI: 0.9998, USDC_WBTC: 0.0000244, WBTC_ETH: 20.41, WBTC_USDC: 41200, WBTC_DAI: 41188 };
+    const rates = { SOL_USDC: 169.44, SOL_USDT: 169.31, SOL_BONK: 4720000, USDC_SOL: 0.00590, USDC_USDT: 0.9998, USDC_BONK: 27800, USDT_SOL: 0.00591, USDT_USDC: 1.0002, BONK_SOL: 0.0000002118, BONK_USDC: 0.0000360 };
     function updateSwapRate() {
         const from = document.getElementById('swap-from').value;
         const to = document.getElementById('swap-to').value;

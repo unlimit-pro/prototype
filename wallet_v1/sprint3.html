@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sprint 3/4: Advanced Features — Low-Fidelity Prototype</title>
+    <title>Sprint 3/4: Advanced Solana Features — Low-Fidelity Prototype</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #ffffff; color: #000000; line-height: 1.5; min-height: 100vh; }
@@ -265,14 +265,14 @@
                 </div>
                 <div class="wd-item">
                     <div class="wallet-avatar" style="width:28px;height:28px;font-size:9px;background:#555;">TW</div>
-                    <div class="wd-info"><div class="wd-name">Trading Wallet</div><div class="wd-addr">0x1a2b...9c0d</div></div>
+                    <div class="wd-info"><div class="wd-name">Trading Wallet</div><div class="wd-addr">FMi7...9cXq</div></div>
                 </div>
-                <div class="wd-footer"><a href="sprint1.html">＋ Create New Wallet</a><a href="sprint1.html">↓ Import Wallet</a></div>
+                <div class="wd-footer"><a href="sprint1.html">＋ Create New Wallet</a><a href="sprint1.html">↓ Import Wallet</a><a href="sprint1.html">👁 Watch an Address</a></div>
             </div>
         </div>
         <div class="net-zone">
             <button class="net-pill">
-                <span class="net-dot"></span>Ethereum<span class="net-caret">▾</span>
+                <span class="net-dot"></span>Solana Mainnet<span class="net-caret">▾</span>
             </button>
         </div>
         <div class="header-actions">
@@ -304,14 +304,14 @@
                 <div class="bal-value">$12,547.32</div>
                 <div class="bal-change">▲ +$234.50 (+1.90%) · past 24 hours</div>
                 <div class="addr-row">
-                    <span>0x742d35Cc6634C0532925a3b8…8ae7b</span>
+                    <span>7xKX7PmFdRxGLXsP9aQ5dBkN3sYbFe4Wc…Bb3q</span>
                     <button class="copy-btn" onclick="showToast('Address copied!')">⎘</button>
                 </div>
                 <div class="action-row">
                     <button class="action-btn" onclick="openModal('sendModal')"><span class="ab-icon">↑</span>Send</button>
                     <button class="action-btn" onclick="openModal('receiveModal')"><span class="ab-icon">↓</span>Receive</button>
                     <button class="action-btn" onclick="openModal('swapModal')"><span class="ab-icon">⇄</span>Swap</button>
-                    <button class="action-btn" disabled><span class="ab-icon">⛓</span>Bridge</button>
+                    <button class="action-btn" onclick="showToast('Staking — see Settings → Staking')"><span class="ab-icon">◎</span>Stake</button>
                     <button class="action-btn" disabled><span class="ab-icon">$</span>Buy</button>
                 </div>
             </div>
@@ -367,32 +367,32 @@
                         <thead><tr><th>Protocol</th><th>Type</th><th>Deposited (USD)</th><th>APY</th><th>Health Factor</th><th></th></tr></thead>
                         <tbody>
                             <tr>
-                                <td><strong>Aave v3</strong></td>
-                                <td>Lending</td>
+                                <td><strong>Jupiter Perps</strong></td>
+                                <td>Liquidity</td>
                                 <td>$2,500.00</td>
                                 <td>3.24%</td>
-                                <td>2.48</td>
-                                <td><a href="#" style="font-size:10px;font-weight:600;color:#000;" onclick="showToast('Opening Aave app…');return false;">View ↗</a></td>
+                                <td>—</td>
+                                <td><a href="#" style="font-size:10px;font-weight:600;color:#000;" onclick="showToast('Opening Jupiter app…');return false;">View ↗</a></td>
                             </tr>
                             <tr>
-                                <td><strong>Uniswap v3</strong></td>
+                                <td><strong>Raydium</strong></td>
                                 <td>LP</td>
                                 <td>$1,200.00</td>
                                 <td>18.7%</td>
                                 <td>—</td>
-                                <td><a href="#" style="font-size:10px;font-weight:600;color:#000;" onclick="showToast('Opening Uniswap app…');return false;">View ↗</a></td>
+                                <td><a href="#" style="font-size:10px;font-weight:600;color:#000;" onclick="showToast('Opening Raydium app…');return false;">View ↗</a></td>
                             </tr>
                             <tr>
-                                <td><strong>Compound III</strong></td>
-                                <td>Borrowing</td>
+                                <td><strong>Marinade</strong></td>
+                                <td>Staking</td>
                                 <td>$500.00</td>
-                                <td>2.10%</td>
-                                <td class="health-warn">⚠ 1.32</td>
-                                <td><a href="#" style="font-size:10px;font-weight:600;color:#000;" onclick="showToast('Opening Compound app…');return false;">View ↗</a></td>
+                                <td>6.5%</td>
+                                <td>—</td>
+                                <td><a href="#" style="font-size:10px;font-weight:600;color:#000;" onclick="showToast('Opening Marinade app…');return false;">View ↗</a></td>
                             </tr>
                         </tbody>
                     </table>
-                    <div style="padding:10px 14px;font-size:10px;color:#999;">⚠ Compound health factor below 1.5 — consider adding collateral to avoid liquidation.</div>
+                    <div style="padding:10px 14px;font-size:10px;color:#999;">DeFi positions powered by Jupiter, Raydium, and Marinade. Staking rewards are distributed per epoch (~2 days).</div>
                 </div>
             </div>
 
@@ -425,9 +425,10 @@
                         <input type="date" class="filter-input" id="f-to">
                         <select class="filter-input form-select" id="f-asset" style="width:auto;">
                             <option value="">All Assets</option>
-                            <option value="ETH">ETH</option>
+                            <option value="SOL">SOL</option>
                             <option value="USDC">USDC</option>
-                            <option value="WBTC">WBTC</option>
+                            <option value="USDT">USDT</option>
+                            <option value="BONK">BONK</option>
                             <option value="DAI">DAI</option>
                         </select>
                         <input type="text" class="filter-input" id="f-search" placeholder="Search hash / address…" style="min-width:180px;">
@@ -453,18 +454,18 @@
                             <tr class="tx-row tx-sent" onclick="openModal('txDetailModal')">
                                 <td>Jan 15 2:32 PM</td>
                                 <td><span class="tx-type-badge badge-sent">Sent</span></td>
-                                <td>-0.500 ETH</td>
-                                <td>$850.00</td>
+                                <td>-5.000 SOL</td>
+                                <td>$847.00</td>
                                 <td><span class="status-pill pill-confirmed">✓ Confirmed</span></td>
-                                <td class="tx-hash-cell"><a href="#">0xf3a9…8c2b ↗</a></td>
+                                <td class="tx-hash-cell"><a href="#">4tHmQ…6wKr ↗</a></td>
                             </tr>
                             <tr class="tx-row tx-received" onclick="openModal('txDetailModal')">
                                 <td>Jan 14 9:15 AM</td>
                                 <td><span class="tx-type-badge badge-received">Received</span></td>
-                                <td>+2.000 ETH</td>
-                                <td>$3,400.00</td>
+                                <td>+20.000 SOL</td>
+                                <td>$3,388.00</td>
                                 <td><span class="status-pill pill-confirmed">✓ Confirmed</span></td>
-                                <td class="tx-hash-cell"><a href="#">0x4d7e…2a1f ↗</a></td>
+                                <td class="tx-hash-cell"><a href="#">2xKPm…9jBv ↗</a></td>
                             </tr>
                             <tr class="tx-row tx-sent" onclick="openModal('txDetailModal')">
                                 <td>Jan 13 4:45 PM</td>
@@ -472,31 +473,31 @@
                                 <td>-100.00 USDC</td>
                                 <td>$100.00</td>
                                 <td><span class="status-pill pill-confirmed">✓ Confirmed</span></td>
-                                <td class="tx-hash-cell"><a href="#">0x9b2c…7d4e ↗</a></td>
+                                <td class="tx-hash-cell"><a href="#">5nRqs…3cWx ↗</a></td>
                             </tr>
                             <tr class="tx-row tx-swap" onclick="openModal('txDetailModal')">
                                 <td>Jan 13 1:20 PM</td>
                                 <td><span class="tx-type-badge badge-swap">Swap</span></td>
-                                <td>0.1 ETH → 201.24 USDC</td>
-                                <td>$201.24</td>
+                                <td>1.0 SOL → 169.44 USDC</td>
+                                <td>$169.44</td>
                                 <td><span class="status-pill pill-confirmed">✓ Confirmed</span></td>
-                                <td class="tx-hash-cell"><a href="#">0x1e5a…9b3c ↗</a></td>
+                                <td class="tx-hash-cell"><a href="#">7pLqm…8dNt ↗</a></td>
                             </tr>
                             <tr class="tx-row tx-pending" onclick="openModal('txDetailModal')">
                                 <td>Jan 12 11:20 AM</td>
                                 <td><span class="tx-type-badge badge-pending">Pending</span></td>
-                                <td>-0.250 ETH</td>
-                                <td>$425.00</td>
+                                <td>-2.500 SOL</td>
+                                <td>$422.50</td>
                                 <td><span class="status-pill pill-pending">⏳ Pending</span></td>
-                                <td class="tx-hash-cell"><a href="#">0x7f1d…4c8a ↗</a></td>
+                                <td class="tx-hash-cell"><a href="#">3mWvr…1bXk ↗</a></td>
                             </tr>
                             <tr class="tx-row tx-received" onclick="openModal('txDetailModal')">
                                 <td>Jan 11 8:00 AM</td>
                                 <td><span class="tx-type-badge badge-received">Received</span></td>
-                                <td>+50.00 USDC</td>
-                                <td>$50.00</td>
+                                <td>+500.00 USDC</td>
+                                <td>$500.00</td>
                                 <td><span class="status-pill pill-confirmed">✓ Confirmed</span></td>
-                                <td class="tx-hash-cell"><a href="#">0x3a8e…6f2d ↗</a></td>
+                                <td class="tx-hash-cell"><a href="#">6qNbf…4cYj ↗</a></td>
                             </tr>
                             <tr class="tx-row tx-failed" onclick="openModal('txDetailModal')">
                                 <td>Jan 10 6:30 PM</td>
@@ -504,15 +505,15 @@
                                 <td>—</td>
                                 <td>—</td>
                                 <td><span class="status-pill pill-failed">✗ Failed</span></td>
-                                <td class="tx-hash-cell"><a href="#">0x5c2b…1e7f ↗</a></td>
+                                <td class="tx-hash-cell"><a href="#">8kRts…2vPq ↗</a></td>
                             </tr>
                             <tr class="tx-row tx-sent" onclick="openModal('txDetailModal')">
                                 <td>Jan 9 3:15 PM</td>
                                 <td><span class="tx-type-badge badge-sent">Sent</span></td>
-                                <td>-0.025 WBTC</td>
-                                <td>$1,030.00</td>
+                                <td>-2,500,000 BONK</td>
+                                <td>$75.00</td>
                                 <td><span class="status-pill pill-confirmed">✓ Confirmed</span></td>
-                                <td class="tx-hash-cell"><a href="#">0x8d4f…0b9e ↗</a></td>
+                                <td class="tx-hash-cell"><a href="#">1jMnp…5wHe ↗</a></td>
                             </tr>
                         </tbody>
                     </table>
@@ -538,15 +539,15 @@
                 </div>
                 <div style="padding:16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;">
                     <div style="border:1px solid #eee;border-radius:4px;padding:14px;">
-                        <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:#999;margin-bottom:8px;">Current Gas (Ethereum)</div>
-                        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;"><span>🐢 Safe</span><strong>12 gwei · ~4 min</strong></div>
-                        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;"><span>◈ Standard</span><strong>15 gwei · ~2 min</strong></div>
-                        <div style="display:flex;justify-content:space-between;font-size:12px;"><span>⚡ Fast</span><strong>21 gwei · ~30 sec</strong></div>
+                        <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:#999;margin-bottom:8px;">Transaction Fees (Solana)</div>
+                        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;"><span>Base Fee</span><strong>5,000 lamports · always fixed</strong></div>
+                        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;"><span>Normal</span><strong>0 µlamports/CU</strong></div>
+                        <div style="display:flex;justify-content:space-between;font-size:12px;"><span>⚡ Turbo</span><strong>50,000 µlamports/CU</strong></div>
                     </div>
                     <div style="border:1px solid #eee;border-radius:4px;padding:14px;">
-                        <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:#999;margin-bottom:8px;">My Gas Spend</div>
-                        <div style="font-size:24px;font-weight:700;font-family:'Courier New',monospace;">0.00382 ETH</div>
-                        <div style="font-size:12px;color:#666;">≈ $64.94 · last 30 days</div>
+                        <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:#999;margin-bottom:8px;">My Fee Spend</div>
+                        <div style="font-size:24px;font-weight:700;font-family:'Courier New',monospace;">0.00182 SOL</div>
+                        <div style="font-size:12px;color:#666;">≈ $0.31 · last 30 days</div>
                         <div style="display:flex;gap:6px;margin-top:8px;">
                             <button class="filter-pill active" style="border-radius:3px;padding:3px 8px;">30d</button>
                             <button class="filter-pill" style="border-radius:3px;padding:3px 8px;">90d</button>
@@ -554,7 +555,7 @@
                         </div>
                     </div>
                     <div style="border:1px solid #eee;border-radius:4px;padding:14px;">
-                        <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:#999;margin-bottom:8px;">7-Day Avg Base Fee</div>
+                        <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:#999;margin-bottom:8px;">7-Day Avg Priority Fee (µlam/CU)</div>
                         <svg viewBox="0 0 200 50" style="width:100%;height:50px;" xmlns="http://www.w3.org/2000/svg">
                             <polyline points="0,40 30,35 60,30 90,38 120,25 150,20 200,15" fill="none" stroke="#000" stroke-width="1.5"/>
                         </svg>
@@ -576,16 +577,16 @@
         <div class="container">
             <div class="section-card">
                 <div class="section-header">
-                    <span class="section-title">My NFTs <span style="font-size:11px;font-weight:400;color:#555;">· 4 items</span></span>
+                    <span class="section-title">My NFTs <span style="font-size:11px;font-weight:400;color:#555;">· 4 items · Metaplex / Token-2022</span></span>
                     <div style="display:flex;gap:6px;">
-                        <button class="btn-small-outline" onclick="showToast('Opening OpenSea…')">OpenSea ↗</button>
-                        <button class="btn-small-outline" onclick="showToast('Opening Blur…')">Blur ↗</button>
+                        <button class="btn-small-outline" onclick="showToast('Opening Magic Eden…')">Magic Eden ↗</button>
+                        <button class="btn-small-outline" onclick="showToast('Opening Tensor…')">Tensor ↗</button>
                     </div>
                 </div>
                 <div class="nft-grid" id="nftGrid"></div>
             </div>
             <div class="scope-note">
-                <strong>NFT Gallery (Sprint 3 — WLT-206):</strong> Grid of owned NFTs with CSS-generated pixel art, collection name, token ID, floor price. Click any card for detail modal with full metadata + trait table + Transfer NFT action. In production: powered by Alchemy NFT API.
+                <strong>NFT Gallery (Sprint 3 — WLT-206):</strong> Grid of owned Solana NFTs (Metaplex / Token-2022 standard) with CSS-generated pixel art, collection name, token ID, floor price. Click any card for detail modal with full metadata + trait table + Transfer NFT action. In production: powered by Helius DAS API or Metaplex Read API.
             </div>
         </div>
     </div>
@@ -609,6 +610,9 @@
                     </div>
                     <div class="settings-nav-item" onclick="switchSettings('prefs',this)">
                         <span class="settings-nav-icon">✦</span> Preferences
+                    </div>
+                    <div class="settings-nav-item" onclick="switchSettings('staking',this)">
+                        <span class="settings-nav-icon">◎</span> Staking
                     </div>
                     <div class="settings-nav-item" onclick="switchSettings('apikeys',this)">
                         <span class="settings-nav-icon">🔑</span> API Keys
@@ -636,9 +640,9 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="form-label">ENS Name</label>
-                                <input type="text" class="form-input" value="alice.eth" disabled>
-                                <div style="font-size:10px;color:#999;margin-top:3px;">Linked from ENS registry · alice.eth → 0x742d...8ae7</div>
+                                <label class="form-label">.sol Domain (SNS)</label>
+                                <input type="text" class="form-input" value="alice.sol" disabled>
+                                <div style="font-size:10px;color:#999;margin-top:3px;">Linked via Solana Name Service (Bonfida) · alice.sol → 7xKX...Bb3q</div>
                             </div>
                         </div>
                         <div class="settings-section">
@@ -646,8 +650,8 @@
                             <div class="form-group">
                                 <label class="form-label">Active Wallet for New Sessions</label>
                                 <select class="form-input">
-                                    <option>My Wallet — 0x742d...8ae7 (current)</option>
-                                    <option>Trading Wallet — 0x1a2b...9c0d</option>
+                                    <option>My Wallet — 7xKX...Bb3q (current)</option>
+                                    <option>Trading Wallet — FMi7...9cXq</option>
                                 </select>
                             </div>
                         </div>
@@ -735,29 +739,29 @@
                     <!-- NETWORKS -->
                     <div id="st-networks" class="settings-tab" style="display:none">
                         <div class="settings-section">
-                            <div class="settings-section-title">Configured Networks</div>
+                            <div class="settings-section-title">Configured RPC Endpoints</div>
                             <table class="net-table">
-                                <thead><tr><th>Network</th><th>Chain ID</th><th>RPC</th><th>Type</th><th>Actions</th></tr></thead>
+                                <thead><tr><th>Cluster</th><th>Endpoint</th><th>RPC URL</th><th>Type</th><th>Actions</th></tr></thead>
                                 <tbody>
                                     <tr>
-                                        <td><strong>Ethereum Mainnet</strong></td><td>1</td><td style="font-family:'Courier New',monospace;font-size:10px;">mainnet.infura.io…</td><td><span style="font-size:10px;color:#666;">Built-in</span></td>
-                                        <td><button class="btn-ghost" disabled title="Cannot delete built-in">Edit</button></td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Polygon</strong></td><td>137</td><td style="font-family:'Courier New',monospace;font-size:10px;">polygon-rpc.com</td><td><span style="font-size:10px;color:#666;">Built-in</span></td>
+                                        <td><strong>Solana Mainnet</strong></td><td>mainnet-beta</td><td style="font-family:'Courier New',monospace;font-size:10px;">api.mainnet-beta.solana.com</td><td><span style="font-size:10px;color:#666;">Built-in</span></td>
                                         <td><button class="btn-ghost" disabled>Edit</button></td>
                                     </tr>
                                     <tr>
-                                        <td><strong>Arbitrum One</strong></td><td>42161</td><td style="font-family:'Courier New',monospace;font-size:10px;">arb1.arbitrum.io…</td><td><span style="font-size:10px;color:#666;">Built-in</span></td>
+                                        <td><strong>Solana Devnet</strong></td><td>devnet</td><td style="font-family:'Courier New',monospace;font-size:10px;">api.devnet.solana.com</td><td><span style="font-size:10px;color:#666;">Built-in</span></td>
                                         <td><button class="btn-ghost" disabled>Edit</button></td>
                                     </tr>
                                     <tr>
-                                        <td><strong>My Test Network</strong></td><td>31337</td><td style="font-family:'Courier New',monospace;font-size:10px;">localhost:8545</td><td><span style="font-size:10px;font-weight:700;">Custom</span></td>
-                                        <td style="display:flex;gap:4px;"><button class="btn-ghost">Edit</button> <button class="btn-ghost" style="color:#cc0000" onclick="showToast('Network removed')">Delete</button></td>
+                                        <td><strong>Solana Testnet</strong></td><td>testnet</td><td style="font-family:'Courier New',monospace;font-size:10px;">api.testnet.solana.com</td><td><span style="font-size:10px;color:#666;">Built-in</span></td>
+                                        <td><button class="btn-ghost" disabled>Edit</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Helius (Custom)</strong></td><td>mainnet-beta</td><td style="font-family:'Courier New',monospace;font-size:10px;">mainnet.helius-rpc.com/…</td><td><span style="font-size:10px;font-weight:700;">Custom</span></td>
+                                        <td style="display:flex;gap:4px;"><button class="btn-ghost">Edit</button> <button class="btn-ghost" style="color:#cc0000" onclick="showToast('Endpoint removed')">Delete</button></td>
                                     </tr>
                                 </tbody>
                             </table>
-                            <button class="btn-small" onclick="openModal('addRpcModal')">＋ Add Network</button>
+                            <button class="btn-small" onclick="openModal('addRpcModal')">＋ Add RPC Endpoint</button>
                         </div>
                     </div>
 
@@ -783,13 +787,43 @@
                             <div class="setting-row"><div class="setting-label"><div class="setting-name">Transaction Confirmed</div><div class="setting-desc">Notify when outgoing TX is mined</div></div><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
                             <div class="setting-row"><div class="setting-label"><div class="setting-name">Incoming Transfer</div><div class="setting-desc">Notify on funds received</div></div><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
                             <div class="setting-row"><div class="setting-label"><div class="setting-name">Price Alerts</div><div class="setting-desc">Notify when token hits target price</div></div><button class="toggle" onclick="this.classList.toggle('on')"></button></div>
-                            <div class="setting-row"><div class="setting-label"><div class="setting-name">Low Balance Alert</div><div class="setting-desc">Notify when ETH &lt; 0.1 ETH</div></div><button class="toggle" onclick="this.classList.toggle('on')"></button></div>
+                            <div class="setting-row"><div class="setting-label"><div class="setting-name">Low Balance Alert</div><div class="setting-desc">Notify when SOL &lt; 0.05 SOL</div></div><button class="toggle" onclick="this.classList.toggle('on')"></button></div>
                             <div class="setting-row"><div class="setting-label"><div class="setting-name">Security Alerts</div><div class="setting-desc">Always on — cannot be disabled</div></div><button class="toggle on" disabled style="opacity:.5;cursor:not-allowed;"></button></div>
                         </div>
                         <div class="settings-section">
                             <div class="settings-section-title">Accessibility</div>
                             <div class="setting-row"><div class="setting-label"><div class="setting-name">High Contrast Mode</div><div class="setting-desc">Remove grey tones, bold all borders</div></div><button class="toggle" onclick="this.classList.toggle('on')"></button></div>
                             <div class="setting-row"><div class="setting-label"><div class="setting-name">Reduced Motion</div><div class="setting-desc">Disable animations for vestibular disorders</div></div><button class="toggle" onclick="this.classList.toggle('on')"></button></div>
+                        </div>
+                    </div>
+
+                    <!-- STAKING (Solana-specific) -->
+                    <div id="st-staking" class="settings-tab" style="display:none">
+                        <div class="settings-section">
+                            <div class="settings-section-title">SOL Native Staking</div>
+                            <div class="form-note">Stake SOL to earn rewards (≈6–7% APY). Your SOL remains in a stake account you control — not sent to a third party.</div>
+                            <div style="margin-bottom:14px;">
+                                <div style="display:flex;justify-content:space-between;align-items:center;padding:12px;border:1px solid #ccc;border-radius:4px;background:#f5f5f5;margin-bottom:8px;">
+                                    <div><div style="font-size:12px;font-weight:700;">Staked with Solana Foundation</div><div style="font-size:11px;color:#666;">10.00 SOL · Epoch 612 · APY 6.73%</div></div>
+                                    <div style="display:flex;gap:6px;"><button class="btn-small-outline" onclick="showToast('Deactivate stake — cooldown 1 epoch (~2 days)')">Unstake</button><button class="btn-small" onclick="showToast('Added to stake account')">＋ Stake More</button></div>
+                                </div>
+                                <div style="display:flex;justify-content:space-between;align-items:center;padding:12px;border:1px solid #ccc;border-radius:4px;background:#f5f5f5;">
+                                    <div><div style="font-size:12px;font-weight:700;">Marinade Liquid Staking (mSOL)</div><div style="font-size:11px;color:#666;">5.00 SOL staked · mSOL redeemable anytime · APY 6.5%</div></div>
+                                    <div><button class="btn-small-outline" onclick="showToast('Opening Marinade Finance…')">Manage ↗</button></div>
+                                </div>
+                            </div>
+                            <button class="btn-small" onclick="openModal('stakeModal')">＋ Create New Stake Account</button>
+                        </div>
+                        <div class="settings-section">
+                            <div class="settings-section-title">Staking Rewards</div>
+                            <table class="sessions-table">
+                                <thead><tr><th>Epoch</th><th>Validator</th><th>Reward (SOL)</th><th>APY</th></tr></thead>
+                                <tbody>
+                                    <tr><td>612</td><td>Solana Foundation</td><td>+0.00184 SOL</td><td>6.73%</td></tr>
+                                    <tr><td>611</td><td>Solana Foundation</td><td>+0.00182 SOL</td><td>6.70%</td></tr>
+                                    <tr><td>610</td><td>Solana Foundation</td><td>+0.00186 SOL</td><td>6.75%</td></tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
 
