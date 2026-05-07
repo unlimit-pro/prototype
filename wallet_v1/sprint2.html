@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Unlimit Wallet — Sprint 2: Invisible Token Manager</title>
+<title>Unlimit Wallet</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#fff;color:#000;line-height:1.5;min-height:100vh}
@@ -24,8 +24,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .header-actions{display:flex;align-items:center;gap:8px}
 .icon-btn{width:36px;height:36px;background:#fff;border:1px solid #ccc;border-radius:4px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:#000}
 .icon-btn:hover{background:#f5f5f5}
-.cluster-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;background:#fff;border:1px solid #ccc;font-size:11px;font-weight:700;color:#000}
-.cluster-dot{width:6px;height:6px;border-radius:50%;background:#000}
 .container{max-width:600px;margin:0 auto;padding:24px 20px 48px}
 .balance-card{background:#fff;border:1px solid #ccc;border-radius:6px;padding:24px;margin-bottom:16px}
 .bal-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#999;margin-bottom:4px}
@@ -104,6 +102,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .zero-failure-info{padding:10px 14px;background:#fafafa;border:1px solid #eee;border-radius:4px;font-size:11px;color:#666;line-height:1.6;margin-bottom:14px}
 .zero-failure-info strong{color:#000}
 .token-sort{background:none;border:none;cursor:pointer;color:#999;font-size:10px;font-weight:700;text-transform:uppercase}.token-sort:hover{color:#000}.token-sort.active{color:#000;text-decoration:underline}
+.lock-overlay{display:none;position:fixed;z-index:9999;inset:0;background:#fff;align-items:center;justify-content:center;padding:20px}
+.lock-overlay.active{display:flex}
+.lock-card{width:100%;max-width:360px;border:1px solid #ccc;border-radius:6px;padding:32px 28px;background:#fff;text-align:center}
+.lock-card .form-group{text-align:left}
 </style>
 </head>
 <body>
@@ -116,13 +118,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <div class="wallet-dropdown" id="walletDropdown">
 <div class="wd-header">My Wallets</div>
 <div class="wd-item active"><div class="wallet-avatar">U</div><div class="wd-info"><div class="wd-name">Unlimit Wallet</div><div class="wd-addr">DRos...xk8r</div></div><span>✓</span></div>
-<div class="wd-footer"><a href="sprint1.html">+ Add / Import Wallet</a></div>
+<div class="wd-footer"><a href="sprint1.html">+ Add / Import Wallet</a><a href="#" onclick="lockWallet();document.getElementById('walletDropdown').classList.remove('open')">🔒 Lock Wallet</a><a href="#" onclick="disconnectWallet();document.getElementById('walletDropdown').classList.remove('open')">🚪 Disconnect</a></div>
 </div>
 </div>
 <div class="header-actions">
-<span class="cluster-pill"><span class="cluster-dot"></span> Mainnet</span>
 <button class="icon-btn" onclick="showToast('0 new alerts')">🔔</button>
-<button class="icon-btn" onclick="window.location.href='sprint3.html'" title="Intelligence">⚙</button>
+<button class="icon-btn" onclick="lockWallet()" title="Lock Wallet">🔒</button>
+<button class="icon-btn" onclick="showToast('Settings — Coming Soon')" title="Settings">⚙</button>
 </div>
 </header>
 
@@ -138,7 +140,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <button class="action-btn" onclick="openModal('sendModal')"><span class="ab-icon">↑</span> Send</button>
 <button class="action-btn" onclick="openModal('receiveModal')"><span class="ab-icon">↓</span> Receive</button>
 <button class="action-btn" onclick="openModal('swapModal')"><span class="ab-icon">⇄</span> Swap</button>
-<button class="action-btn" onclick="showToast('Buy — coming in Sprint 3')"><span class="ab-icon">💳</span> Buy</button>
+<button class="action-btn" onclick="showToast('Buy — Coming Soon')"><span class="ab-icon">💳</span> Buy</button>
 </div>
 </div>
 
@@ -164,16 +166,24 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <div class="section-card">
 <div class="section-header">
 <span class="section-title">Recent Activity</span>
-<a href="sprint3.html" class="btn-small-outline">View All →</a>
+<button class="btn-small-outline" onclick="showToast('Full activity feed — Coming Soon')">View All →</button>
 </div>
 <div class="activity-list" id="activity-list"></div>
 </div>
 
-<div class="nav-links">
-<a href="management.html" class="nav-link">← Dashboard</a>
-<a href="sprint1.html" class="nav-link">← Onboarding</a>
-<a href="sprint3.html" class="nav-link">Intelligence →</a>
-<a href="sprint4.html" class="nav-link">Social Trading →</a>
+</div>
+
+<!-- Lock Overlay -->
+<div class="lock-overlay" id="lockOverlay">
+<div class="lock-card">
+<div style="font-size:36px;margin-bottom:8px">🔮</div>
+<div style="font-size:20px;font-weight:700;margin-bottom:4px">Unlimit Wallet</div>
+<div style="font-size:13px;color:#666;margin-bottom:20px">Wallet Locked</div>
+<div class="form-group"><label class="form-label">Password</label><input type="password" class="form-input" id="lock-password" placeholder="Enter your password" onkeydown="if(event.key==='Enter')unlockWallet()"></div>
+<button class="btn-primary" onclick="unlockWallet()">Unlock →</button>
+<div style="margin-top:14px;padding-top:14px;border-top:1px solid #eee">
+<button class="btn-secondary" style="font-size:12px" onclick="disconnectWallet()">🚪 Disconnect Wallet</button>
+</div>
 </div>
 </div>
 
@@ -284,6 +294,10 @@ function sortAssets(criteria,btn){document.querySelectorAll('.token-sort').forEa
 (function buildQR(){var g=document.getElementById('qrGrid');if(!g)return;var s=[1,0,1,1,0,1,0,1,1,0,1,0,0,1,1,0,1,0,1,1,0,1,0,0,1,0,1,1,0,1,0,0,1,1,0,1,0,1,0,1,1,0,0,1,0,1,1,0,1,0,1,1,0,1,0,0,1,1,0,1,0,1,0,0,1,0,1,0,1,1,0,1,1,0,0,1,0,1,0,1,1,0,1,0,1,1,0,0,1,0,0,1,1,0,1,0,1,1,0,1,1,0,0,1,0,1,1,0,1,0,0,1,1,0,1,0,1,1,0,0,1,0,1,1,0,1,0,0,1,1,0,1,0,1,0,1,1,0,0,1,1,0,1,0,0,1,1,0,1,0,1,1,0,0,1,0,1,1,0,1,0,0,1,1,0,1,0,1,0,1,1,0,0,1,0,1,1,0,1,0,1,1,0,0,1,0,0,1,1,0,1,0,1,1,0,1,1,0,0,1,0,1,1,0,1,0,0,1,1,0,1,0,1,1,0,0,1,0,1,1,0,1,0,0,1,1,0,1,0,1,0,1,1,0,0,1,1,0,1,0,0,1,1,0,1,0,1,1,0,0,1,0,1,1,0,1,0,0,1,1,0,1,0,1,0,1,1,0,0,1,0,1,1,0,1,0,1,1,0,0,1,0,0,1,1,0,1,0,1,1,0,1,1,0,0,1,0,1,1,0,1,0,0,1,1,0,1,0,1,1,0,0,1,0,1,1,0,1,0,0,1,1,0,1,0,1,0,1,1,0,0,1,1,0,1,0,0,1,1,0,1,0,1,1,0,0,1,0,1,1,0,1,0,0,1,1,0,1,0,1,0,1,1,0,0,1,0,1,1,0,1,0,1,1,0,0,1,0,0,1,1,0,1,0,1,1,0,1,1,0,0,1,0,1,1,0,1,0,0,1];s.forEach(function(v){var c=document.createElement('div');c.className='qr-cell'+(v?' b':'');g.appendChild(c)})})();
 
 function showToast(msg){var t=document.getElementById('toast');if(!t){t=document.createElement('div');t.id='toast';Object.assign(t.style,{position:'fixed',bottom:'24px',left:'50%',transform:'translateX(-50%)',background:'#000',color:'#fff',padding:'8px 16px',borderRadius:'4px',fontSize:'12px',fontWeight:'700',zIndex:'9999',transition:'opacity 0.3s',pointerEvents:'none'});document.body.appendChild(t)}t.textContent=msg;t.style.opacity='1';clearTimeout(t._t);t._t=setTimeout(function(){t.style.opacity='0'},2500)}
+
+function lockWallet(){document.getElementById('walletDropdown').classList.remove('open');document.getElementById('lockOverlay').classList.add('active');document.getElementById('lock-password').value='';document.getElementById('lock-password').focus()}
+function unlockWallet(){var pw=document.getElementById('lock-password').value;if(!pw){showToast('Please enter your password');return};document.getElementById('lockOverlay').classList.remove('active');document.getElementById('lock-password').value='';showToast('Wallet unlocked')}
+function disconnectWallet(){try{localStorage.removeItem('onboarding_complete');localStorage.removeItem('wallet_type');localStorage.removeItem('wallet_name')}catch(e){};document.getElementById('lockOverlay').classList.remove('active');window.location.href='sprint1.html'}
 
 (function init(){try{var n=localStorage.getItem('wallet_name');if(n){document.querySelectorAll('.wd-name').forEach(function(e){e.textContent=n});var bt=document.querySelector('.wallet-btn');if(bt){var sp=bt.querySelector('span:not(.wallet-caret):not(.wallet-avatar)');if(sp)sp.textContent=n}}}catch(e){}try{if(localStorage.getItem('onboarding_complete')!=='true')window.location.href='sprint1.html'}catch(e){}renderAssets();renderActivity()})();
 </script>

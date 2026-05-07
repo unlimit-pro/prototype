@@ -51,11 +51,11 @@ Unlimit is a Solana-native cryptocurrency wallet that redefines the user experie
 | **Wealth Recovery Splash** | "Your old wallets may hold forgotten SOL locked in empty accounts." CTA: Import Wallet |
 | **Path Selection** | Create New Wallet / Import Existing Wallet (seed phrase, private key, JSON backup) |
 | **Terms Gate** | Non-custodial notice. "You — and only you — control your keys." |
-| **Wallet Setup** | Name + Solana cluster (Mainnet/Devnet/Testnet) |
+| **Wallet Setup** | Name your wallet |
 | **Password Creation** | 4-segment live strength meter. AES-256-GCM encryption notice |
 | **Seed Phrase Reveal** | BIP-39 12-word phrase, blurred by default. Anti-screenshot overlay |
 | **Seed Confirmation** | Word-picker — place shuffled words back in correct order |
-| **Success / Scan** | Wallet created → redirect to dashboard |
+| **Success / Scan** | Wallet created → redirect to main wallet |
 | **Import + Recovery Scan** | Import seed → animated scanning → "We found 0.05 SOL locked in 3 empty token accounts" → Reclaim button |
 
 ### The Account Indexer
@@ -90,6 +90,8 @@ When a user imports a wallet, Unlimit doesn't just show a balance. It scans ever
 | **Receive** | QR code + base58 address. "Any token sent here is auto-detected. No setup needed." |
 | **Jupiter Swap** | Integrated swap with slippage control, rate display, and Jupiter logo |
 | **Activity Feed** | Shows auto-provisioned tokens with special "auto" badge and zero-failure transfers with "Z-F" badge |
+| **Wallet Header** | Wallet selector dropdown with "Add / Import Wallet" and "Lock Wallet" options. Notification bell + Lock button + Settings gear |
+| **Lock / Disconnect** | Lock button (🔒) in header instantly locks the wallet with a full-screen overlay. Wallet dropdown also has a "Lock Wallet" option. Unlock via password — follows Phantom and Solflare lock patterns |
 
 ### How Zero-Failure Works
 
@@ -145,7 +147,6 @@ When a user looks at a token, show real-time smart-money badges:
 |---------|-----------|
 | **Security** | Auto-lock timer, Pre-sign simulation toggle, Whale alerts, Phishing detection |
 | **Account** | Wallet name, .sol domain, Export backup, Remove wallet |
-| **Networks** | Mainnet/Devnet/Testnet + Custom RPC endpoint |
 | **Preferences** | Currency (USD/EUR/GBP), Language |
 
 ---
@@ -161,6 +162,7 @@ When a user looks at a token, show real-time smart-money badges:
 - **Copy Trade** — One-click "Copy Trade" button on any trade in the feed
 - **Risk Controls** — Configurable per-trade limit (1/2/5 SOL max), slippage tolerance
 - **Disclaimer** — "Copy-trading carries risk. The trader you follow may lose money."
+- **Wallet Header** — Full wallet dropdown with "Add / Import" and "Lock Wallet" options, Lock button (🔒), Settings gear
 
 ### TURBO Toggle
 
@@ -217,9 +219,42 @@ User trades → Creates Blink → Shares on X/DC
 
 ### Screen Navigation
 - Sprint 1: Single-page screen system with CSS toggle (`.screen.active`)
-- Sprint 2: Single page with modal overlays
-- Sprint 3: 4-tab layout (Portfolio / Transactions / Intelligence / Settings)
-- Sprint 4: 3-tab layout (Trade Feed / TURBO / Blinks)
+- Sprint 2: Single page with modal overlays for Send/Receive/Swap + Lock overlay
+- Sprint 3: 4-tab layout (Portfolio / Transactions / Intelligence / Settings) + Lock overlay
+- Sprint 4: 3-tab layout (Trade Feed / TURBO / Blinks) + Lock overlay
+
+### Lock / Disconnect Flow
+
+Modeled after Phantom's instant-lock and Solflare's idle-timeout patterns:
+
+```
+User clicks 🔒 (header or dropdown) → Full-screen overlay replaces app
+  → "Wallet Locked" + Password input
+  → Enter password → Overlay dismissed, wallet resumes
+  → (Prototype: any non-empty password unlocks)
+
+User clicks 🚪 Disconnect (dropdown or lock overlay) 
+  → Clears onboarding flag + wallet data from localStorage
+  → Redirects to sprint1.html (fresh onboarding)
+```
+
+The lock flow provides a security escape hatch that users expect from well-established wallets. It is available on every post-onboarding screen (sprint2, sprint3, sprint4) via:
+1. **Header action bar** — Lock icon button (🔒)
+2. **Wallet dropdown** — "🔒 Lock Wallet" option below "Add / Import Wallet"
+3. **Wallet dropdown** — "🚪 Disconnect" option — clears session, returns to onboarding
+4. **Lock overlay** — "🚪 Disconnect Wallet" button below the unlock form
+
+### Sprint Isolation
+
+Each sprint prototype is now self-contained — no cross-sprint navigation links exist:
+- **sprint1.html** — Cannot navigate to sprint2-4 (only the completion flow advances)
+- **sprint2.html** — Cannot navigate to sprint3 or sprint4 (Settings gear + "View All" now show "Coming Soon" toasts)
+- **sprint3.html** — Cannot navigate to sprint4 (Social Trading icon + Trade button show "Coming Soon" toasts; Send/Receive/Swap still link back to sprint2)
+- **sprint4.html** — Cannot navigate to earlier sprints (Settings gear shows "Coming Soon" toast)
+
+### Simplified Architecture
+
+- **Solana Mainnet only** — No network switcher, no cluster pills, no Devnet/Testnet toggles. Network management is removed from Settings.
 
 ### Onboarding Guard
 ```
@@ -254,10 +289,10 @@ Unlimit was designed by studying the best practices from:
 ```
 wallet_v1/
 ├── README.md          — This document
-├── management.html    — Project dashboard & sprint navigation
+├── management.html    — Project dashboard & sprint navigation (internal only)
 ├── sprint1.html       — Onboarding + Wealth Recovery landing page
-├── sprint2.html       — Invisible Token Manager + Core Wallet
-├── sprint3.html       — Intelligence Layer (Pre-Sign, Whale Tags, Jupiter)
+├── sprint2.html       — Main wallet: Invisible Token Manager, Send/Receive/Swap
+├── sprint3.html       — Intelligence layer: Pre-Sign, Whale Tags, Transactions, Settings
 └── sprint4.html       — Social Trading, TURBO Toggle, Blinks
 ```
 

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Unlimit Wallet — Sprint 3: Intelligence &amp; Security</title>
+<title>Unlimit Wallet</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#fff;color:#000;line-height:1.5;min-height:100vh}
@@ -116,6 +116,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .whale-tag:hover{background:#f5f5f5}
 .whale-tag.active{background:#f0f0f0;border-color:#000}
 .whale-tag-count{font-size:10px;color:#666;font-weight:700}
+.lock-overlay{display:none;position:fixed;z-index:9999;inset:0;background:#fff;align-items:center;justify-content:center;padding:20px}
+.lock-overlay.active{display:flex}
+.lock-card{width:100%;max-width:360px;border:1px solid #ccc;border-radius:6px;padding:32px 28px;background:#fff;text-align:center}
+.lock-card .form-group{text-align:left}
 </style>
 </head>
 <body>
@@ -128,13 +132,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <div class="wallet-dropdown" id="walletDropdown">
 <div class="wd-header">My Wallets</div>
 <div class="wd-item active"><div class="wallet-avatar">U</div><div class="wd-info"><div class="wd-name">Unlimit Wallet</div><div class="wd-addr">DRos...xk8r</div></div><span>✓</span></div>
-<div class="wd-footer"><a href="sprint1.html">+ Add / Import Wallet</a></div>
+<div class="wd-footer"><a href="sprint1.html">+ Add / Import Wallet</a><a href="#" onclick="lockWallet();document.getElementById('walletDropdown').classList.remove('open')">🔒 Lock Wallet</a><a href="#" onclick="disconnectWallet();document.getElementById('walletDropdown').classList.remove('open')">🚪 Disconnect</a></div>
 </div>
 </div>
 <div class="header-actions">
-<span class="cluster-pill"><span class="cluster-dot"></span> Mainnet</span>
 <button class="icon-btn" onclick="showToast('0 new alerts')">🔔</button>
-<button class="icon-btn" onclick="window.location.href='sprint4.html'" title="Social Trading">👥</button>
+<button class="icon-btn" onclick="lockWallet()" title="Lock Wallet">🔒</button>
+<button class="icon-btn" onclick="showToast('Social Trading — Coming Soon')" title="Social Trading">👥</button>
 </div>
 </header>
 
@@ -156,7 +160,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <button class="action-btn" onclick="window.location.href='sprint2.html'"><span class="ab-icon">↑</span>Send</button>
 <button class="action-btn" onclick="window.location.href='sprint2.html'"><span class="ab-icon">↓</span>Receive</button>
 <button class="action-btn" onclick="window.location.href='sprint2.html'"><span class="ab-icon">⇄</span>Swap</button>
-<button class="action-btn" onclick="window.location.href='sprint4.html'"><span class="ab-icon">👥</span>Trade</button>
+<button class="action-btn" onclick="showToast('Social Trading — Coming Soon')"><span class="ab-icon">👥</span>Trade</button>
 </div>
 </div>
 <div class="section-card">
@@ -209,7 +213,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <tr onclick="openPreSignDemo('sent')"><td>Apr 29</td><td><span class="tx-type-badge badge-sent">Sent</span></td><td>To 3kLpNq... (auto-ATA created)</td><td style="text-align:right;font-weight:700">-0.5 SOL</td><td class="tx-hash-cell">9fD4...r8x</td></tr>
 <tr onclick="openPreSignDemo('received')"><td>Apr 28</td><td><span class="tx-type-badge badge-received">Received</span></td><td>Auto-detected JTO airdrop</td><td style="text-align:right;font-weight:700">+45 JTO</td><td class="tx-hash-cell">2mP7...w3z</td></tr>
 <tr onclick="openPreSignDemo('swap')"><td>Apr 27</td><td><span class="tx-type-badge badge-swap">Swap</span></td><td>USDC → BONK (Jupiter)</td><td style="text-align:right;font-weight:700">100 USDC → 2.78M BONK</td><td class="tx-hash-cell">7hT1...y5n</td></tr>
-<tr onclick="openPreSignDemo('pending')"><td>Apr 26</td><td><span class="tx-type-badge badge-pending">Pending</span></td><td>Reclaim rent (Sprint 1)</td><td style="text-align:right;font-weight:700">+0.05 SOL</td><td class="tx-hash-cell">1xW9...v6c</td></tr>
+<tr onclick="openPreSignDemo('pending')"><td>Apr 26</td><td><span class="tx-type-badge badge-pending">Pending</span></td><td>Reclaim rent</td><td style="text-align:right;font-weight:700">+0.05 SOL</td><td class="tx-hash-cell">1xW9...v6c</td></tr>
 <tr onclick="openPreSignDemo('sent')"><td>Apr 25</td><td><span class="tx-type-badge badge-sent">Sent</span></td><td>To 6qRsNf... (Zero-Failure)</td><td style="text-align:right;font-weight:700">-100 USDC</td><td class="tx-hash-cell">8yP3...a7k</td></tr>
 </tbody>
 </table>
@@ -268,7 +272,6 @@ You are sending <strong>10 SOL</strong> (≈$1,690) in exchange for approximatel
 <div class="settings-sidebar"><ul class="settings-nav">
 <li class="active" onclick="switchSettings(this,'security')">🔒 Security</li>
 <li onclick="switchSettings(this,'account')">👤 Account</li>
-<li onclick="switchSettings(this,'networks')">🌐 Networks</li>
 <li onclick="switchSettings(this,'preferences')">⚙ Preferences</li>
 </ul></div>
 <div class="settings-content">
@@ -285,28 +288,26 @@ You are sending <strong>10 SOL</strong> (≈$1,690) in exchange for approximatel
 <div class="form-group"><label class="form-label">Solana Domain</label><input class="form-input" placeholder="yourname.sol"></div>
 <div style="display:flex;gap:10px"><button class="btn-secondary" style="flex:1">Export Backup</button><button class="btn-danger" style="flex:1">Remove Wallet</button></div>
 </div>
-<div class="settings-panel" id="panel-networks">
-<div class="settings-panel-title">Networks</div>
-<div style="padding:10px;background:#f5f5f5;border:1px solid #e0e0e0;border-radius:4px;margin-bottom:10px">
-<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #e0e0e0"><span style="font-weight:700">● Mainnet</span><span style="color:#666">api.mainnet-beta.solana.com</span></div>
-<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #e0e0e0"><span style="font-weight:700">● Devnet</span><span style="color:#666">api.devnet.solana.com</span></div>
-<div style="display:flex;justify-content:space-between;padding:6px 0"><span style="font-weight:700">● Testnet</span><span style="color:#666">api.testnet.solana.com</span></div>
-</div>
-<button class="btn-small-outline" onclick="showToast('Custom RPC dialog')">+ Add Custom RPC</button>
-</div>
 <div class="settings-panel" id="panel-preferences">
 <div class="settings-panel-title">Preferences</div>
 <div class="form-group"><label class="form-label">Currency</label><select class="form-input"><option>USD</option><option>EUR</option><option>GBP</option></select></div>
 <div class="form-group"><label class="form-label">Language</label><select class="form-input"><option>English</option><option>Chinese</option><option>Spanish</option></select></div>
 </div>
 </div>
-</div></div></div>
 
-<div class="container"><div class="nav-links">
-<a href="management.html" class="nav-link">← Dashboard</a>
-<a href="sprint2.html" class="nav-link">← Core Wallet</a>
-<a href="sprint4.html" class="nav-link">Social Trading →</a>
-</div></div>
+<!-- Lock Overlay -->
+<div class="lock-overlay" id="lockOverlay">
+<div class="lock-card">
+<div style="font-size:36px;margin-bottom:8px">🔮</div>
+<div style="font-size:20px;font-weight:700;margin-bottom:4px">Unlimit Wallet</div>
+<div style="font-size:13px;color:#666;margin-bottom:20px">Wallet Locked</div>
+<div class="form-group"><label class="form-label">Password</label><input type="password" class="form-input" id="lock-password" placeholder="Enter your password" onkeydown="if(event.key==='Enter')unlockWallet()"></div>
+<button class="btn-primary" onclick="unlockWallet()">Unlock →</button>
+<div style="margin-top:14px;padding-top:14px;border-top:1px solid #eee">
+<button class="btn-secondary" style="font-size:12px" onclick="disconnectWallet()">🚪 Disconnect Wallet</button>
+</div>
+</div>
+</div>
 
 <!-- Pre-Sign Modal -->
 <div class="modal" id="preSignModal"><div class="modal-content">
@@ -335,6 +336,9 @@ function closeModal(id){document.getElementById(id).classList.remove('active')}
 window.addEventListener('click',function(e){if(e.target.classList.contains('modal'))e.target.classList.remove('active');if(!e.target.closest('.wallet-zone')){var d=document.getElementById('walletDropdown');if(d)d.classList.remove('open')}});
 function showToast(msg){var t=document.getElementById('toast');if(!t){t=document.createElement('div');t.id='toast';Object.assign(t.style,{position:'fixed',bottom:'24px',left:'50%',transform:'translateX(-50%)',background:'#000',color:'#fff',padding:'8px 16px',borderRadius:'4px',fontSize:'12px',fontWeight:'700',zIndex:'9999',transition:'opacity 0.3s',pointerEvents:'none'});document.body.appendChild(t)}t.textContent=msg;t.style.opacity='1';clearTimeout(t._t);t._t=setTimeout(function(){t.style.opacity='0'},2500)}
 function showWhaleTokens(cat,btn){document.querySelectorAll('.whale-tag').forEach(function(t){t.classList.remove('active')});btn.classList.add('active');showToast('Showing '+cat+' whale activity')}
+function lockWallet(){document.getElementById('walletDropdown').classList.remove('open');document.getElementById('lockOverlay').classList.add('active');document.getElementById('lock-password').value='';document.getElementById('lock-password').focus()}
+function unlockWallet(){var pw=document.getElementById('lock-password').value;if(!pw){showToast('Please enter your password');return};document.getElementById('lockOverlay').classList.remove('active');document.getElementById('lock-password').value='';showToast('Wallet unlocked')}
+function disconnectWallet(){try{localStorage.removeItem('onboarding_complete');localStorage.removeItem('wallet_type');localStorage.removeItem('wallet_name')}catch(e){};document.getElementById('lockOverlay').classList.remove('active');window.location.href='sprint1.html'}
 </script>
 </body>
 </html>

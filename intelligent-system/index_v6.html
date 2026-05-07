@@ -1931,6 +1931,7 @@
   .heatmap-cell-sym{ font-weight:700; font-size:12px; letter-spacing:-0.01em; }
   .heatmap-cell-change{ font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:600; margin-top:2px; }
   .heatmap-cell-price{ font-size:9px; color:rgba(255,255,255,0.7); margin-top:1px; }
+  .heatmap-cell-flow-icon{font-size:11px; margin-top:2px; opacity:0.7;}
   .heatmap-flow-in{ background: oklch(48% 0.18 152); color:#fff; }
   .heatmap-flow-in2{ background: oklch(55% 0.14 152); color:#fff; }
   .heatmap-flow-out{ background: oklch(48% 0.18 25); color:#fff; }
@@ -2104,6 +2105,7 @@
     text-align: center;
   }
   .widget-type-card:hover{ border-color: var(--ink); background: var(--surface-2); }
+  .widget-type-card.already-added{ border-color: var(--ink); opacity:0.7; background: var(--surface-3); cursor:default; }
   .widget-type-card .wt-icon{
     width:40px; height:40px; border-radius:10px; background:var(--surface-3);
     display:grid; place-items:center; margin:0 auto 8px;
@@ -2148,6 +2150,18 @@
   .page-tab.active{ background:var(--ink); color:#fff; border-color:var(--ink); }
   .page-tab-add{ padding:6px 10px; border:1px dashed var(--line); border-radius:var(--r-sm); font-size:12px; color:var(--muted); cursor:pointer; }
   .page-tab-add:hover{ border-color:var(--ink); color:var(--ink); }
+  .heatmap-stats{display:flex;gap:16px;padding:12px 16px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);margin-bottom:12px;flex-wrap:wrap}
+  .heatmap-stat{display:flex;flex-direction:column;gap:2px}
+  .heatmap-stat-label{font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:0.05em}
+  .heatmap-stat-val{font-size:16px;font-weight:700;font-family:'JetBrains Mono',monospace}
+  .heatmap-search{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+  .heatmap-search input{padding:8px 12px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--surface);color:var(--ink);font-size:12px;font-family:inherit;flex:1;max-width:300px}
+  .heatmap-search input:focus{outline:none;border-color:var(--ink)}
+  .custom-dashboard-card{border:2px dashed var(--ink);border-radius:var(--r-lg);padding:24px;background:var(--surface);text-align:center;cursor:pointer;transition:all .15s;margin-bottom:16px}
+  .custom-dashboard-card:hover{background:var(--surface-2);border-color:var(--accent)}
+  .custom-dashboard-card h3{font-size:16px;font-weight:700;margin-bottom:4px}
+  .custom-dashboard-card p{font-size:12px;color:var(--muted);margin-bottom:12px}
+  .widget-built-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 6px;border-radius:12px;background:var(--ink);color:#fff;font-size:9px;font-weight:700;margin-top:6px}
 </style>
 </head>
 <body>
@@ -2568,9 +2582,17 @@ function init(){
       document.getElementById('sidebar').classList.add('collapsed');
       appState.sidebarCollapsed = true;
     }
+    const wp = localStorage.getItem('unlimit_widget_pages');
+    if (wp) { try { const parsed = JSON.parse(wp); if (parsed.length) appState.widgetPages = parsed; } catch(e){} }
+    const dp = localStorage.getItem('unlimit_default_page');
+    if (dp) appState.defaultCustomPage = parseInt(dp);
   } catch(e){}
   renderAuthState();
   navigateTo('overview');
+}
+
+function saveWidgetPages(){
+  try { localStorage.setItem('unlimit_widget_pages', JSON.stringify(appState.widgetPages)); } catch(e){}
 }
 
 // ==================== AUTH ====================
@@ -2872,6 +2894,19 @@ function renderOverview(){
       </div>
     </div>
 
+    <div class="custom-dashboard-card" onclick="navigateTo('widgets')">
+      <div style="display:flex;align-items:center;justify-content:center;gap:10px;">
+        <span style="font-size:24px;">📊</span>
+        <div style="text-align:left;">
+          <h3>Your Custom Dashboard</h3>
+          <p>${appState.widgetPages.length} page${appState.widgetPages.length>1?'s':''} · ${appState.widgetPages.reduce((s,p)=>s+p.widgets.length,0)} widgets configured</p>
+        </div>
+      </div>
+      <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center;">
+        ${appState.widgetPages.map(p => `<span class="widget-built-badge">${p.name} (${p.widgets.length})</span>`).join('')}
+      </div>
+    </div>
+
     <div class="stats">
       <div class="stat featured">
         <div class="stat-label">Market sentiment · 24h</div>
@@ -2989,13 +3024,20 @@ function renderOverview(){
           </div>
           <a class="card-action" onclick="navigateTo('heatmap')">Full heatmap →</a>
         </div>
-        <div class="card-body" style="display:grid;grid-template-columns:repeat(5,1fr);gap:3px;">
-          ${fundFlowData.slice(0,10).map(t => {
-            const nf = parseFloat(t.netFlow);
-            const bg = nf > 3 ? 'var(--pos-soft)' : nf < -1 ? 'var(--neg-soft)' : 'var(--surface-3)';
-            const clr = nf > 3 ? 'var(--pos)' : nf < -1 ? 'var(--neg)' : 'var(--muted)';
-            return `<div style="padding:6px 4px;border-radius:var(--r-sm);background:${bg};color:${clr};text-align:center;font-size:10px;font-weight:600;cursor:pointer;" onclick="navigateTo('heatmap')">${t.sym}<br/><span style="font-family:'JetBrains Mono',monospace;font-size:9px;">${nf > 0 ? '+' : ''}$${nf}M</span></div>`;
-          }).join('')}
+        <div class="card-body" style="display:flex;flex-direction:column;gap:12px;">
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:3px;">
+            ${fundFlowData.slice(0,10).map(t => {
+              const nf = parseFloat(t.netFlow);
+              const bg = nf > 3 ? 'var(--pos-soft)' : nf < -1 ? 'var(--neg-soft)' : 'var(--surface-3)';
+              const clr = nf > 3 ? 'var(--pos)' : nf < -1 ? 'var(--neg)' : 'var(--muted)';
+              return `<div style="padding:6px 4px;border-radius:var(--r-sm);background:${bg};color:${clr};text-align:center;font-size:10px;font-weight:600;cursor:pointer;" onclick="navigateTo('heatmap')">${t.sym}<br/><span style="font-family:'JetBrains Mono',monospace;font-size:9px;">${nf > 0 ? '+' : ''}$${nf}M</span></div>`;
+            }).join('')}
+          </div>
+          <div style="display:flex;gap:16px;font-size:10px;color:var(--muted);">
+            <span>🟢 Inbound: +$32.4M</span>
+            <span>🔴 Outbound: -$18.2M</span>
+            <span style="color:var(--pos);">Net: +$14.2M</span>
+          </div>
         </div>
       </div>
     </div>
@@ -3542,19 +3584,24 @@ function openDiscoveryToken(id){
 function renderHeatmap(){
   appState.currentPage = 'heatmap';
   const tr = feedState.heatmapTimeRange;
+  const q = (feedState.heatmapSearch || '').trim().toLowerCase();
+  const filtered = q ? fundFlowData.filter(t => t.sym.toLowerCase().includes(q) || t.name.toLowerCase().includes(q)) : fundFlowData;
+  const totalIn = fundFlowData.reduce((s,t)=>s+(parseFloat(t.inflow)||0),0);
+  const totalOut = fundFlowData.reduce((s,t)=>s+(parseFloat(t.outflow)||0),0);
+  const netTotal = totalIn - totalOut;
 
-  const cells = fundFlowData.map(t => {
+  const cells = filtered.map(t => {
     const nf = parseFloat(t.netFlow);
-    let cls = 'heatmap-flow-neutral';
-    if (nf > 8) cls = 'heatmap-flow-in';
-    else if (nf > 3) cls = 'heatmap-flow-in2';
-    else if (nf < -4) cls = 'heatmap-flow-out';
-    else if (nf < -1) cls = 'heatmap-flow-out2';
+    let cls = 'heatmap-flow-neutral', icon = '';
+    if (nf > 8) { cls = 'heatmap-flow-in'; icon = '▲'; }
+    else if (nf > 3) { cls = 'heatmap-flow-in2'; icon = '▲'; }
+    else if (nf < -4) { cls = 'heatmap-flow-out'; icon = '▼'; }
+    else if (nf < -1) { cls = 'heatmap-flow-out2'; icon = '▼'; }
     const fmtP = p => p<0.001 ? '$'+p.toFixed(6) : p<1 ? '$'+p.toFixed(4) : '$'+p.toFixed(2);
-    return `<div class="heatmap-cell ${cls}" onclick="openTokenPage('${t.sym}')"
-      title="${t.name}: Price ${fmtP(t.price)}, Net Flow $${nf}M, Inflow $${t.inflow}M, Outflow $${t.outflow}M">
+    return `<div class="heatmap-cell ${cls}" onclick="openTokenPage('${t.sym}')" onmouseenter="showTokPreview('${t.sym}',event)" onmouseleave="hideTokPreview()">
       <div class="heatmap-cell-sym">${t.sym}</div>
       <div class="heatmap-cell-change">${nf > 0 ? '+' : ''}$${nf}M</div>
+      <div class="heatmap-cell-flow-icon">${icon}</div>
       <div class="heatmap-cell-price">${fmtP(t.price)}</div>
     </div>`;
   }).join('');
@@ -3566,6 +3613,25 @@ function renderHeatmap(){
           <h1>Fund flow <span class="serif">heatmap</span></h1>
           <p class="sub">Visualize net fund flow for Top 100 Solana tokens. Green = net inflow, Red = net outflow, Gray = neutral. Click any cell for details.</p>
         </div>
+      </div>
+    </div>
+
+    <div class="heatmap-stats">
+      <div class="heatmap-stat">
+        <div class="heatmap-stat-label">Total Inflow</div>
+        <div class="heatmap-stat-val" style="color:var(--pos)">+$${totalIn.toFixed(1)}M</div>
+      </div>
+      <div class="heatmap-stat">
+        <div class="heatmap-stat-label">Total Outflow</div>
+        <div class="heatmap-stat-val" style="color:var(--neg)">-$${totalOut.toFixed(1)}M</div>
+      </div>
+      <div class="heatmap-stat">
+        <div class="heatmap-stat-label">Net Flow</div>
+        <div class="heatmap-stat-val" style="color:${netTotal>=0?'var(--pos)':'var(--neg)'}">${netTotal>=0?'+':'-'}$${Math.abs(netTotal).toFixed(1)}M</div>
+      </div>
+      <div class="heatmap-stat">
+        <div class="heatmap-stat-label">Tokens Tracked</div>
+        <div class="heatmap-stat-val">${filtered.length}</div>
       </div>
     </div>
 
@@ -3582,6 +3648,8 @@ function renderHeatmap(){
       </div>
     </div>
 
+    <div class="heatmap-search"><input type="text" placeholder="Search tokens (e.g. SOL, BONK)..." value="${feedState.heatmapSearch||''}" oninput="feedState.heatmapSearch=this.value;renderHeatmap()"><span style="font-size:11px;color:var(--muted);">${q?'Filtered: ':'Showing '}${filtered.length} tokens</span></div>
+
     <div class="heatmap-legend">
       <span style="color:var(--neg);">Outflow -$8M</span>
       <div class="heatmap-legend-bar"></div>
@@ -3589,7 +3657,7 @@ function renderHeatmap(){
       <span style="color:var(--muted);margin-left:4px;">· ${tr} window</span>
     </div>
 
-    <div class="heatmap-grid">${cells}</div>
+    <div class="heatmap-grid">${cells || '<div style="padding:24px;text-align:center;color:var(--muted);grid-column:1/-1;">No tokens match your search</div>'}</div>
 
     <div style="margin-top:12px;font-size:11px;color:var(--muted);">Fund flow data powered by on-chain transaction aggregation. Cell size is equal; color intensity reflects net flow magnitude.</div>`;
 }
@@ -3601,12 +3669,14 @@ function renderWidgetBuilder(){
   const activeIdx = appState.activeWidgetPage;
   const activePage = pages[activeIdx];
 
-  const catalogCards = widgetTypes.map(wt => `
-    <div class="widget-type-card" onclick="addWidgetToPage('${wt.id}')">
+  const catalogCards = widgetTypes.map(wt => {
+    const alreadyAdded = activePage.widgets.includes(wt.id);
+    return `<div class="widget-type-card ${alreadyAdded?'already-added':''}" onclick="addWidgetToPage('${wt.id}')">
       <div class="wt-icon">${wt.icon}</div>
       <div class="wt-name">${wt.name}</div>
+      ${alreadyAdded ? '<div class="widget-built-badge">✓ On page</div>' : ''}
       <div class="wt-desc">${wt.desc}</div>
-    </div>`).join('');
+    </div>`}).join('');
 
   const widgetInstances = activePage.widgets.map(wid => {
     const wt = widgetTypes.find(w=>w.id===wid);
@@ -3642,47 +3712,104 @@ function renderWidgetBuilder(){
     <div class="page-tabs">
       ${pages.map((p,i)=>`<div class="page-tab ${i===activeIdx?'active':''}" onclick="appState.activeWidgetPage=${i};renderWidgetBuilder()">${p.name}</div>`).join('')}
       <div class="page-tab-add" onclick="addWidgetPage()">+ New page</div>
+      ${pages.length>1?`<button class="btn btn-sm" style="margin-left:8px;padding:4px 10px;font-size:11px;" onclick="deleteWidgetPage()">Delete page</button>`:''}
+      <button class="btn btn-sm" style="margin-left:auto;padding:4px 10px;font-size:11px;" onclick="previewWidgetPage()">👁 Preview as Dashboard</button>
     </div>
 
     <div class="section-h">
-      <h2>Add widgets</h2>
-      <span style="font-size:12px;color:var(--muted);">Click to add to current page</span>
+      <h2>Add widgets to <em style="font-style:normal;cursor:pointer;text-decoration:underline;" onclick="renameWidgetPage()">${activePage.name}</em></h2>
+      <span style="font-size:12px;color:var(--muted);">Click to add · ${activePage.widgets.length} widget${activePage.widgets.length!==1?'s':''} placed</span>
     </div>
     <div class="widget-catalog">
       <div class="widget-catalog-grid">${catalogCards}</div>
     </div>
 
     <div class="section-h" style="margin-top:24px;">
-      <h2>${activePage.name}</h2>
-      <button class="btn btn-sm" onclick="resetWidgetPage()">Reset to default</button>
+      <h2>${activePage.name} — Layout</h2>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:11px;color:var(--muted)">${activePage.widgets.length} widget${activePage.widgets.length!==1?'s':''}</span>
+        <button class="btn btn-sm" onclick="resetWidgetPage()">Reset to default</button>
+      </div>
     </div>
-    <div class="widget-canvas">${widgetInstances}</div>
+    <div class="widget-canvas">${widgetInstances || '<div style="padding:40px;text-align:center;color:var(--muted);grid-column:1/-1;">Empty canvas — click a widget above to add it</div>'}</div>
 
-    <div style="margin-top:16px;font-size:11px;color:var(--muted);">Page layouts are saved per user. Drag-and-drop reordering coming in next iteration.</div>`;
+    <div style="margin-top:16px;font-size:11px;color:var(--muted);">Page layouts are saved automatically. Click <strong>Preview as Dashboard</strong> to see your layout as a live page.</div>`;
 }
 
 function addWidgetToPage(widgetId){
   const page = appState.widgetPages[appState.activeWidgetPage];
   if (page.widgets.includes(widgetId)){ showToast('Widget already on this page'); return; }
   page.widgets.push(widgetId);
+  saveWidgetPages();
   renderWidgetBuilder();
   showToast('Widget added');
 }
 function removeWidgetFromPage(widgetId){
   const page = appState.widgetPages[appState.activeWidgetPage];
   page.widgets = page.widgets.filter(w => w !== widgetId);
+  saveWidgetPages();
   renderWidgetBuilder();
   showToast('Widget removed');
 }
 function addWidgetPage(){
-  const name = 'Page ' + (appState.widgetPages.length + 1);
-  appState.widgetPages.push({name:name, widgets:[]});
+  const name = prompt('Page name:', 'My Page');
+  if (!name || !name.trim()) return;
+  appState.widgetPages.push({name:name.trim(), widgets:[]});
   appState.activeWidgetPage = appState.widgetPages.length - 1;
+  saveWidgetPages();
   renderWidgetBuilder();
-  showToast('New page created: ' + name);
+  showToast('New page created: ' + name.trim());
+}
+function deleteWidgetPage(){
+  if (appState.widgetPages.length <= 1) { showToast('Cannot delete the last page'); return; }
+  if (!confirm('Delete "' + appState.widgetPages[appState.activeWidgetPage].name + '" page?')) return;
+  appState.widgetPages.splice(appState.activeWidgetPage, 1);
+  appState.activeWidgetPage = Math.min(appState.activeWidgetPage, appState.widgetPages.length-1);
+  saveWidgetPages();
+  renderWidgetBuilder();
+  showToast('Page deleted');
+}
+function renameWidgetPage(){
+  const page = appState.widgetPages[appState.activeWidgetPage];
+  const name = prompt('Rename page:', page.name);
+  if (!name || !name.trim()) return;
+  page.name = name.trim();
+  saveWidgetPages();
+  renderWidgetBuilder();
+  showToast('Page renamed to: ' + name.trim());
+}
+function previewWidgetPage(){
+  const page = appState.widgetPages[appState.activeWidgetPage];
+  if (page.widgets.length===0){ showToast('Add widgets first to preview'); return; }
+  const fmtP = p => p<0.001 ? '$'+p.toFixed(6) : p<1 ? '$'+p.toFixed(4) : '$'+p.toFixed(2);
+  const wids = page.widgets.map(wid=>{
+    const wt=widgetTypes.find(w=>w.id===wid); if(!wt)return'';
+    let body='';
+    if(wid==='wt-leaderboard')body='<table style="width:100%;font-size:11px;">'+eliteWallets.slice(0,5).map(w=>`<tr style="border-bottom:1px solid var(--line);"><td style="padding:6px 4px;"><span class="wallet-addr-mono">${w.short}</span></td><td style="text-align:right;padding:6px 4px;" class="${w.pnl>=0?'pnl-pos':'pnl-neg'}">${(w.pnl>=0?'+':'-')+'\$'+Math.abs(w.pnl).toLocaleString()}</td><td style="text-align:right;padding:6px 4px;font-family:\'JetBrains Mono\',monospace;font-size:10px;color:var(--muted);">${w.winRate.toFixed(1)}%</td></tr>`).join('')+'</table>';
+    else if(wid==='wt-tokens')body='<table style="width:100%;font-size:11px;">'+top100Tokens.slice(0,5).map(t=>`<tr style="border-bottom:1px solid var(--line);"><td style="padding:6px 4px;font-weight:600;">${t.sym}</td><td style="text-align:right;padding:6px 4px;font-family:\'JetBrains Mono\',monospace;">${fmtP(t.price)}</td><td style="text-align:right;padding:6px 4px;" class="${t.pos?'change-pos':'change-neg'}">${t.pos?'↑':'↓'}${Math.abs(t.change).toFixed(2)}%</td></tr>`).join('')+'</table>';
+    else if(wid==='wt-heatmap')body='<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:3px;">'+fundFlowData.slice(0,10).map(t=>{const nf=parseFloat(t.netFlow);return`<div style="padding:6px 4px;border-radius:var(--r-sm);text-align:center;font-size:10px;font-weight:600;${nf>3?'background:var(--pos-soft);color:var(--pos);':nf<-1?'background:var(--neg-soft);color:var(--neg);':'background:var(--surface-3);color:var(--muted);'}">${t.sym}<br/><span style="font-size:9px;font-family:\'JetBrains Mono\',monospace;">${nf>0?'+':''}\$${nf}M</span></div>`}).join('')+'</div>';
+    else if(wid==='wt-signals')body='<div style="display:flex;flex-direction:column;gap:6px;">'+allSignals.slice(0,4).map(s=>`<div style="display:flex;gap:8px;align-items:center;font-size:11px;"><span class="signal-tag ${s.type==='SELL'?'sell':''}" style="font-size:8px;padding:2px 6px;">${s.type}</span><span style="font-family:\'JetBrains Mono\',monospace;">${s.wallet}</span><span style="color:var(--muted);margin-left:auto;">${s.usd} ${s.token}</span></div>`).join('')+'</div>';
+    else if(wid==='wt-feed')body='<div style="display:flex;flex-direction:column;gap:8px;">'+newsItems.slice(0,4).map(n=>`<div style="font-size:11px;padding:6px 8px;border:1px solid var(--line);border-radius:var(--r-sm);cursor:pointer;"><span class="impact-badge ${n.impact>=7?'high':''}" style="font-size:9px;">${n.impact}/10</span> <strong>${n.title.substring(0,50)}…</strong> <span style="color:var(--muted);font-size:10px;">${n.time}</span></div>`).join('')+'</div>';
+    else if(wid==='wt-chatbot')body='<div style="padding:20px;text-align:center;color:var(--muted);">💬 Ask me about any token, whale activity, or market news…</div>';
+    else if(wid==='wt-portfolio')body='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">'+['Total PnL','Win Rate','Active Trades'].map(l=>`<div style="padding:14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-sm);text-align:center;"><div style="font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:700;">${l}</div><div style="font-size:16px;font-weight:700;margin-top:4px;font-family:\'JetBrains Mono\',monospace;">—</div></div>`).join('')+'</div>';
+    else if(wid==='wt-discovery')body='<div style="display:flex;flex-direction:column;gap:6px;">'+discoveredTokens.slice(0,4).map(t=>`<div style="display:flex;gap:8px;align-items:center;font-size:11px;padding:6px 8px;border:1px solid var(--line);border-radius:var(--r-sm);"><span class="discovery-risk ${t.risk}" style="min-width:70px;font-size:9px;">${t.risk==='verified'?'✓ Verified':t.risk==='unverified'?'⚠ Unverified':'✗ Suspicious'}</span><strong>${t.sym}</strong><span style="color:var(--muted);margin-left:auto;">${t.age}</span></div>`).join('')+'</div>';
+    return`<div class="card" style="margin-bottom:10px;"><div class="card-header"><div class="card-title" style="font-size:14px;">${wt.name}</div></div><div class="card-body">${body}</div></div>`;
+  }).join('');
+  document.getElementById('content').innerHTML=`
+    <div class="hero"><div class="hero-row"><div><h1>${page.name} <span class="serif">dashboard</span></h1><p class="sub">Preview of your custom dashboard layout with live widget data.</p></div></div></div>
+    <div class="stats"><div class="stat"><div class="stat-label">Widgets</div><div class="stat-value num">${page.widgets.length}</div></div><div class="stat"><div class="stat-label">Page</div><div class="stat-value num">${appState.activeWidgetPage+1}/${appState.widgetPages.length}</div></div></div>
+    <div style="margin-bottom:16px;display:flex;gap:8px;"><button class="btn btn-primary" onclick="renderWidgetBuilder()">← Back to Builder</button><button class="btn" onclick="setCustomDashboardDefault()">★ Set as Default View</button></div>
+    ${wids}
+  `;
+}
+function setCustomDashboardDefault(){
+  appState.defaultCustomPage = appState.activeWidgetPage;
+  try { localStorage.setItem('unlimit_default_page', appState.activeWidgetPage); } catch(e){}
+  showToast('Custom dashboard set as your default view');
 }
 function resetWidgetPage(){
   appState.widgetPages[appState.activeWidgetPage].widgets = ['wt-leaderboard','wt-tokens','wt-signals'];
+  saveWidgetPages();
   renderWidgetBuilder();
   showToast('Page reset to default layout');
 }
