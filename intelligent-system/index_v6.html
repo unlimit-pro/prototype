@@ -2162,6 +2162,83 @@
   .custom-dashboard-card h3{font-size:16px;font-weight:700;margin-bottom:4px}
   .custom-dashboard-card p{font-size:12px;color:var(--muted);margin-bottom:12px}
   .widget-built-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 6px;border-radius:12px;background:var(--ink);color:#fff;font-size:9px;font-weight:700;margin-top:6px}
+
+  /* ==================== PLAN GATING ==================== */
+  .nav-item.nav-locked:not(.selected) {
+    color: var(--muted-2);
+  }
+  .nav-item.nav-locked:not(.selected) .nav-icon svg {
+    stroke: var(--muted-2) !important;
+  }
+  .nav-item.nav-locked:not(.selected):hover {
+    background: var(--surface-3);
+    color: var(--muted);
+  }
+  .nav-item.nav-locked:not(.selected):hover .nav-icon svg {
+    stroke: var(--muted) !important;
+  }
+  .nav-lock-tag {
+    display: inline-flex;
+    align-items: center;
+    font-size: 8px;
+    font-weight: 700;
+    color: var(--muted-2);
+    background: var(--surface-3);
+    border: 1px solid var(--line);
+    padding: 1px 5px;
+    border-radius: 3px;
+    letter-spacing: 0.06em;
+    flex-shrink: 0;
+  }
+  .nav-item:not(.nav-locked) .nav-lock-tag { display: none; }
+  .sidebar.collapsed .nav-lock-tag { display: none; }
+
+  /* ==================== PLAN CARDS (billing) ==================== */
+  .plan-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+  @media (max-width: 900px) { .plan-grid { grid-template-columns: 1fr; } }
+  .plan-card {
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    padding: 18px 20px;
+    position: relative;
+    background: var(--surface);
+    display: flex;
+    flex-direction: column;
+  }
+  .plan-card.current {
+    border-width: 1.5px;
+    border-color: var(--ink);
+  }
+  .plan-card.plan-pro {
+    background: linear-gradient(160deg, var(--surface) 55%, oklch(97% 0.03 295 / 0.45));
+  }
+  .plan-card-badge {
+    position: absolute;
+    top: -1px; right: 16px;
+    background: var(--ink);
+    color: #fff;
+    font-size: 8px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 0 0 6px 6px;
+    letter-spacing: 0.08em;
+  }
+  .plan-name { font-size: 17px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 2px; }
+  .plan-price { font-size: 28px; font-weight: 700; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; margin: 10px 0 2px; }
+  .plan-price-sub { font-size: 11px; color: var(--muted); margin-bottom: 14px; }
+  .plan-divider { height: 1px; background: var(--line-2); margin: 10px 0; }
+  .plan-features { list-style: none; display: flex; flex-direction: column; gap: 7px; flex: 1; }
+  .plan-features li { display: flex; align-items: flex-start; gap: 7px; font-size: 12px; line-height: 1.4; color: var(--ink-2); }
+  .plan-features li .pf-icon { flex-shrink: 0; font-size: 12px; width: 14px; text-align: center; margin-top: 0; }
+  .plan-features li .pf-icon.check { color: var(--pos); }
+  .plan-features li .pf-icon.lock { color: var(--muted-2); }
+  .plan-features li.pf-unavail { color: var(--muted-2); }
+  .plan-card-cta { margin-top: 16px; }
 </style>
 </head>
 <body>
@@ -2179,20 +2256,24 @@
     </div>
 
     <div>
-      <div class="sidebar-section-label">Navigate</div>
-      <div class="nav" id="navMenu">
+      <div class="sidebar-section-label">Free Plan</div>
+      <div class="nav">
         <div class="nav-item" id="nav-overview" onclick="navigateTo('overview')" data-tip="Home">
           <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 12l9-9 9 9"></path><path d="M5 10v10h4v-6h6v6h4V10"></path></svg></span>
           <span class="nav-label">Home</span>
         </div>
-        <div class="nav-item" id="nav-smartMoney" onclick="navigateTo('smartMoney')" data-tip="Whales">
-          <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M2 14c2-3 5-4 8-4s5 1 7 3"></path><path d="M17 13c2 0 4 1 5 3-2 1-4 1-5 0"></path><circle cx="6" cy="13" r="0.8" fill="currentColor"></circle></svg></span>
-          <span class="nav-label">Whales</span>
+        <div class="nav-item" id="nav-dashboard" onclick="navigateTo('dashboard')" data-tip="My Dashboard">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="5" rx="1"/><rect x="3" y="11" width="8" height="10" rx="1"/><rect x="14" y="11" width="7" height="4" rx="1"/><rect x="14" y="18" width="7" height="3" rx="1"/></svg></span>
+          <span class="nav-label">My Dashboard</span>
         </div>
         <div class="nav-item" id="nav-top100" onclick="navigateTo('top100')" data-tip="Tokens">
           <span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="9" cy="12" r="6"></circle><circle cx="15" cy="12" r="6"></circle></svg></span>
           <span class="nav-label">Tokens</span>
           <span class="nav-badge">100</span>
+        </div>
+        <div class="nav-item" id="nav-heatmap" onclick="navigateTo('heatmap')" data-tip="Heatmap">
+          <span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>
+          <span class="nav-label">Heatmap</span>
         </div>
         <div class="nav-item" id="nav-feed" onclick="navigateTo('feed')" data-tip="Insights">
           <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M9 21h6"></path><path d="M12 3a6 6 0 0 0-4 10.5c.8.8 1.3 1.7 1.5 2.5h5c.2-.8.7-1.7 1.5-2.5A6 6 0 0 0 12 3z"></path></svg></span>
@@ -2202,23 +2283,31 @@
           <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg></span>
           <span class="nav-label">Alerts</span>
         </div>
-        <div class="nav-item" id="nav-copyTrading" onclick="navigateTo('copyTrading')" data-tip="Portfolio">
+      </div>
+    </div>
+
+    <div>
+      <div class="sidebar-section-label">Pro Plan</div>
+      <div class="nav">
+        <div class="nav-item nav-locked" id="nav-smartMoney" onclick="navigateTo('smartMoney')" data-tip="Whales">
+          <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M2 14c2-3 5-4 8-4s5 1 7 3"></path><path d="M17 13c2 0 4 1 5 3-2 1-4 1-5 0"></path><circle cx="6" cy="13" r="0.8" fill="currentColor"></circle></svg></span>
+          <span class="nav-label">Whales</span>
+          <span class="nav-lock-tag">PRO</span>
+        </div>
+        <div class="nav-item nav-locked" id="nav-copyTrading" onclick="navigateTo('copyTrading')" data-tip="Portfolio">
           <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 7h6l2 3h10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"></path></svg></span>
           <span class="nav-label">Portfolio</span>
-          <span class="nav-badge">PRO</span>
+          <span class="nav-lock-tag">PRO</span>
         </div>
-        <div class="nav-item" id="nav-discovery" onclick="navigateTo('discovery')" data-tip="Discovery">
+        <div class="nav-item nav-locked" id="nav-discovery" onclick="navigateTo('discovery')" data-tip="Discovery">
           <span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></span>
           <span class="nav-label">Discovery</span>
-          <span class="nav-badge"><span class="live-dot" style="width:4px;height:4px;box-shadow:none;animation:none;"></span> LIVE</span>
+          <span class="nav-lock-tag">PRO</span>
         </div>
-        <div class="nav-item" id="nav-heatmap" onclick="navigateTo('heatmap')" data-tip="Heatmap">
-          <span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>
-          <span class="nav-label">Heatmap</span>
-        </div>
-        <div class="nav-item" id="nav-widgets" onclick="navigateTo('widgets')" data-tip="Widgets">
+        <div class="nav-item nav-locked" id="nav-widgets" onclick="navigateTo('widgets')" data-tip="Widgets">
           <span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></svg></span>
           <span class="nav-label">Widgets</span>
+          <span class="nav-lock-tag">PRO</span>
         </div>
       </div>
     </div>
@@ -2647,6 +2736,7 @@ function renderAuthState(){
       </div>`;
     renderSidebarAvatar();
   }
+  applyNavLockStates();
 }
 
 function renderSidebarAvatar(){
@@ -2667,6 +2757,44 @@ function renderSidebarAvatar(){
       <div class="dropdown-item" onclick="navigateTo('settings')">Settings</div>
       ${appState.authState === 'walletConnected' ? '<div class="dropdown-item" onclick="disconnectWallet()">Disconnect wallet</div>' : ''}
       <div class="dropdown-item danger" onclick="signOut()">Sign out</div>
+    </div>`;
+}
+
+// ==================== PLAN GATING ====================
+function _isPro(){
+  return appState.user.tier === 'Pro' || appState.user.tier === 'Enterprise';
+}
+
+function applyNavLockStates(){
+  const proIds = ['nav-smartMoney','nav-copyTrading','nav-discovery','nav-widgets'];
+  const locked = !_isPro();
+  proIds.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (locked) el.classList.add('nav-locked');
+    else el.classList.remove('nav-locked');
+  });
+}
+
+function renderProUpsellPage(featureName){
+  const isAuth = appState.authState !== 'unauthenticated';
+  document.getElementById('content').innerHTML = `
+    <div class="hero"><div><h1>${featureName}</h1>
+      <p class="sub">This feature is available on the Pro plan.</p>
+    </div></div>
+    <div class="card" style="padding:52px 40px;text-align:center;max-width:520px;margin:0 auto;">
+      <div style="width:52px;height:52px;border-radius:14px;background:var(--accent-soft);display:grid;place-items:center;margin:0 auto 18px;">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </div>
+      <div style="font-size:18px;font-weight:700;margin-bottom:8px;letter-spacing:-0.02em;">Pro plan required</div>
+      <div style="color:var(--muted);font-size:13px;margin-bottom:22px;line-height:1.6;">
+        <strong>${featureName}</strong> is a Pro-only feature. Upgrade your plan to unlock smart money tracking, copy trading, token discovery, custom widgets, and the AI market assistant.
+      </div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+        ${!isAuth
+          ? '<button class="btn" onclick="signIn()">Sign in</button><button class="btn btn-primary" onclick="signUp()">Sign up</button>'
+          : '<button class="btn btn-accent" onclick="navigateTo(\'settings\');setTimeout(()=>switchTab(\'billing\'),50)">View plans &amp; upgrade →</button><button class="btn" onclick="navigateTo(\'overview\')">← Back to Home</button>'}
+      </div>
     </div>`;
 }
 
@@ -2734,10 +2862,32 @@ function setCrumbs(items){
   el.innerHTML = items.map((s,i)=>i===items.length-1 ? `<strong>${s}</strong>` : `<span>${s}</span><span class="crumb-sep">/</span>`).join('');
 }
 function navigateTo(page){
+  // Pro gate — intercept before rendering
+  const proPages = ['smartMoney','copyTrading','discovery','widgets'];
+  if (proPages.includes(page) && !_isPro()){
+    const isAuth = appState.authState !== 'unauthenticated';
+    if (!isAuth){
+      appState.currentPage = page;
+      closeWalletDrawer(); closeNewsDrawer(); closeTokenDrawer();
+      document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('selected'));
+      const navMap = { overview:'nav-overview',top100:'nav-top100',smartMoney:'nav-smartMoney',feed:'nav-feed',copyTrading:'nav-copyTrading',signals:'nav-signals',settings:'nav-settings',discovery:'nav-discovery',heatmap:'nav-heatmap',widgets:'nav-widgets',dashboard:'nav-dashboard' };
+      const id = navMap[page]; if (id) document.getElementById(id)?.classList.add('selected');
+      const names = { smartMoney:'Whales · Smart Money', copyTrading:'Portfolio · Copy Trading', discovery:'Token Discovery', widgets:'Widget Builder' };
+      setCrumbs([names[page] || page]);
+      renderProUpsellPage(names[page] || page);
+      return;
+    }
+    // logged-in Free user: show upgrade prompt
+    showToast('Upgrade to Pro to unlock this feature');
+    appState.currentTab = 'billing'; appState._settingsTabSet = true;
+    // fall through to settings render
+    page = 'settings';
+  }
+
   appState.currentPage = page;
   closeWalletDrawer(); closeNewsDrawer(); closeTokenDrawer();
   document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('selected'));
-  const navMap = { overview:'nav-overview',top100:'nav-top100',smartMoney:'nav-smartMoney',feed:'nav-feed',copyTrading:'nav-copyTrading',signals:'nav-signals',settings:'nav-settings',discovery:'nav-discovery',heatmap:'nav-heatmap',widgets:'nav-widgets' };
+  const navMap = { overview:'nav-overview',top100:'nav-top100',smartMoney:'nav-smartMoney',feed:'nav-feed',copyTrading:'nav-copyTrading',signals:'nav-signals',settings:'nav-settings',discovery:'nav-discovery',heatmap:'nav-heatmap',widgets:'nav-widgets',dashboard:'nav-dashboard' };
   const id = navMap[page]; if (id) document.getElementById(id)?.classList.add('selected');
 
   if (page === 'settings'){
@@ -2756,6 +2906,7 @@ function navigateTo(page){
   else if (page==='discovery'){   setCrumbs(['Discover']); renderDiscovery(); }
   else if (page==='heatmap'){     setCrumbs(['Heatmap']); renderHeatmap(); }
   else if (page==='widgets'){     setCrumbs(['Widgets']); renderWidgetBuilder(); }
+  else if (page==='dashboard'){   setCrumbs(['My Dashboard']); renderMyDashboard(); }
   else { setCrumbs(['Home']); renderOverview(); }
 }
 
@@ -2891,19 +3042,6 @@ function renderOverview(){
           <h1>Overview</h1>
           <p class="sub">Solana on-chain analytics, elite wallet PnL, and AI-enriched news intelligence — at a glance.</p>
         </div>
-      </div>
-    </div>
-
-    <div class="custom-dashboard-card" onclick="navigateTo('widgets')">
-      <div style="display:flex;align-items:center;justify-content:center;gap:10px;">
-        <span style="font-size:24px;">📊</span>
-        <div style="text-align:left;">
-          <h3>Your Custom Dashboard</h3>
-          <p>${appState.widgetPages.length} page${appState.widgetPages.length>1?'s':''} · ${appState.widgetPages.reduce((s,p)=>s+p.widgets.length,0)} widgets configured</p>
-        </div>
-      </div>
-      <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center;">
-        ${appState.widgetPages.map(p => `<span class="widget-built-badge">${p.name} (${p.widgets.length})</span>`).join('')}
       </div>
     </div>
 
@@ -3778,6 +3916,91 @@ function renameWidgetPage(){
   renderWidgetBuilder();
   showToast('Page renamed to: ' + name.trim());
 }
+// ==================== MY DASHBOARD ====================
+function renderMyDashboard(){
+  const isPro = _isPro();
+  const fmtP = p => p<0.001 ? '$'+p.toFixed(6) : p<1 ? '$'+p.toFixed(4) : '$'+p.toFixed(2);
+
+  function widgetBody(wid){
+    if(wid==='wt-leaderboard') return '<table style="width:100%;font-size:11px;">'+eliteWallets.slice(0,5).map(w=>'<tr style="border-bottom:1px solid var(--line);"><td style="padding:6px 4px;"><span class="wallet-addr-mono">'+w.short+'</span></td><td style="text-align:right;padding:6px 4px;" class="'+(w.pnl>=0?'pnl-pos':'pnl-neg')+'">'+(w.pnl>=0?'+':'-')+'$'+Math.abs(w.pnl).toLocaleString()+'</td><td style="text-align:right;padding:6px 4px;font-family:\'JetBrains Mono\',monospace;font-size:10px;color:var(--muted);">'+w.winRate.toFixed(1)+'%</td></tr>').join('')+'</table>';
+    if(wid==='wt-tokens') return '<table style="width:100%;font-size:11px;">'+top100Tokens.slice(0,5).map(t=>'<tr style="border-bottom:1px solid var(--line);"><td style="padding:6px 4px;font-weight:600;">'+t.sym+'</td><td style="text-align:right;padding:6px 4px;font-family:\'JetBrains Mono\',monospace;">'+fmtP(t.price)+'</td><td style="text-align:right;padding:6px 4px;" class="'+(t.pos?'change-pos':'change-neg')+'">'+(t.pos?'↑':'↓')+Math.abs(t.change).toFixed(2)+'%</td></tr>').join('')+'</table>';
+    if(wid==='wt-heatmap') return '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:3px;">'+fundFlowData.slice(0,10).map(t=>{const nf=parseFloat(t.netFlow);return'<div style="padding:6px 4px;border-radius:var(--r-sm);text-align:center;font-size:10px;font-weight:600;'+(nf>3?'background:var(--pos-soft);color:var(--pos);':nf<-1?'background:var(--neg-soft);color:var(--neg);':'background:var(--surface-3);color:var(--muted);')+'">'+t.sym+'<br/><span style="font-size:9px;font-family:\'JetBrains Mono\',monospace;">'+(nf>0?'+':'')+'$'+nf+'M</span></div>';}).join('')+'</div>';
+    if(wid==='wt-signals') return '<div style="display:flex;flex-direction:column;gap:6px;">'+allSignals.slice(0,4).map(s=>'<div style="display:flex;gap:8px;align-items:center;font-size:11px;"><span class="signal-tag '+(s.type==='SELL'?'sell':'')+'" style="font-size:8px;padding:2px 6px;">'+s.type+'</span><span style="font-family:\'JetBrains Mono\',monospace;">'+s.wallet+'</span><span style="color:var(--muted);margin-left:auto;">'+s.usd+' '+s.token+'</span></div>').join('')+'</div>';
+    if(wid==='wt-feed') return '<div style="display:flex;flex-direction:column;gap:8px;">'+newsItems.slice(0,4).map(n=>'<div style="font-size:11px;padding:6px 8px;border:1px solid var(--line);border-radius:var(--r-sm);cursor:pointer;" onclick="openNewsDrawer('+n.id+')"><span class="impact-badge '+(n.impact>=7?'high':'')+'" style="font-size:9px;">'+n.impact+'/10</span> <strong>'+n.title.substring(0,50)+'…</strong> <span style="color:var(--muted);font-size:10px;">'+n.time+'</span></div>').join('')+'</div>';
+    if(wid==='wt-chatbot') return '<div style="padding:20px;text-align:center;color:var(--muted);">💬 Ask me about any token, whale activity, or market news…</div>';
+    if(wid==='wt-portfolio') return '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">'+['Total PnL','Win Rate','Active Trades'].map(l=>'<div style="padding:14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-sm);text-align:center;"><div style="font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:700;">'+l+'</div><div style="font-size:16px;font-weight:700;margin-top:4px;font-family:\'JetBrains Mono\',monospace;">—</div></div>').join('')+'</div>';
+    if(wid==='wt-discovery') return '<div style="display:flex;flex-direction:column;gap:6px;">'+discoveredTokens.slice(0,4).map(t=>'<div style="display:flex;gap:8px;align-items:center;font-size:11px;padding:6px 8px;border:1px solid var(--line);border-radius:var(--r-sm);"><span class="discovery-risk '+t.risk+'" style="min-width:70px;font-size:9px;">'+(t.risk==='verified'?'✓ Verified':t.risk==='unverified'?'⚠ Unverified':'✗ Suspicious')+'</span><strong>'+t.sym+'</strong><span style="color:var(--muted);margin-left:auto;">'+t.age+'</span></div>').join('')+'</div>';
+    return '<div style="font-size:11px;color:var(--muted);">Widget preview</div>';
+  }
+
+  if (!isPro){
+    const defaultWidgets = [
+      {id:'wt-tokens',   name:'Top Tokens'},
+      {id:'wt-heatmap',  name:'Fund Flow Heatmap'},
+      {id:'wt-feed',     name:'Intelligence Feed'},
+      {id:'wt-signals',  name:'Live Signals'}
+    ];
+    const lockedWidgets = [
+      {id:'wt-leaderboard', name:'Smart Money Leaderboard'},
+      {id:'wt-chatbot',     name:'AI Market Assistant'},
+      {id:'wt-portfolio',   name:'Portfolio Summary'},
+      {id:'wt-discovery',   name:'Token Discovery'}
+    ];
+    const freeCols = defaultWidgets.map(w=>'<div class="card" style="margin-bottom:0;"><div class="card-header"><div class="card-title">'+w.name+'</div></div><div class="card-body">'+widgetBody(w.id)+'</div></div>').join('');
+    const lockIcon = '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
+    const lockedCols = lockedWidgets.map(w=>'<div class="card" style="margin-bottom:0;opacity:0.55;position:relative;"><div style="position:absolute;inset:0;display:grid;place-items:center;z-index:2;pointer-events:none;"><div style="background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);padding:8px 14px;display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;">'+lockIcon+' Pro</div></div><div class="card-header"><div class="card-title">'+w.name+' <span class="nav-lock-tag" style="display:inline-flex;">PRO</span></div></div><div class="card-body" style="filter:blur(2px);pointer-events:none;">'+widgetBody(w.id)+'</div></div>').join('');
+    const isAuth = appState.authState !== 'unauthenticated';
+    const upgradeCta = isAuth
+      ? '<button class="btn btn-accent" onclick="navigateTo(\'settings\');setTimeout(()=>switchTab(\'billing\'),50)">Upgrade to Pro →</button>'
+      : '<button class="btn btn-primary" onclick="signUp()">Sign up for Pro</button>';
+    document.getElementById('content').innerHTML = `
+      <div class="hero">
+        <div class="hero-row">
+          <div><h1>My <span class="serif">Dashboard</span></h1><p class="sub">Your personal market overview. Upgrade to Pro to customise every widget and build multiple layouts.</p></div>
+          <div style="display:flex;gap:8px;">${upgradeCta}</div>
+        </div>
+      </div>
+      <div style="background:var(--warn-soft,#fef9ee);border:1px solid var(--warn,#e8b400);border-radius:var(--r-md);padding:10px 14px;display:flex;align-items:center;gap:10px;margin-bottom:18px;font-size:12px;">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <span><strong>Free plan</strong> — showing default layout. Upgrade to Pro to build custom layouts with the Widget Builder.</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:14px;">${freeCols}</div>
+      <div style="margin:20px 0 10px;display:flex;align-items:center;gap:10px;">
+        <span style="font-size:13px;font-weight:600;">Pro widgets</span>
+        <span style="font-size:11px;color:var(--muted);">Unlock with a Pro plan</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;">${lockedCols}</div>
+    `;
+    return;
+  }
+
+  // Pro user: show configured widget pages
+  const pages = appState.widgetPages;
+  if (!appState.activeDashboardPage || appState.activeDashboardPage >= pages.length) appState.activeDashboardPage = 0;
+  const safeidx = appState.activeDashboardPage;
+  const page = pages[safeidx];
+
+  const pageTabs = pages.map((p,i)=>'<div class="page-tab '+(i===safeidx?'active':'')+'" onclick="appState.activeDashboardPage='+i+';renderMyDashboard()">'+p.name+'</div>').join('');
+
+  const widgetCards = page.widgets.length === 0
+    ? '<div class="empty-state" style="grid-column:1/-1;"><div class="empty-state-title">No widgets on this page</div><p>Add widgets in the Widget Builder to see them here.</p></div>'
+    : page.widgets.map(wid=>{
+        const wt=widgetTypes.find(w=>w.id===wid); if(!wt) return '';
+        return '<div class="card" style="margin-bottom:0;"><div class="card-header"><div class="card-title">'+wt.name+'</div></div><div class="card-body">'+widgetBody(wid)+'</div></div>';
+      }).join('');
+
+  document.getElementById('content').innerHTML = `
+    <div class="hero">
+      <div class="hero-row">
+        <div><h1>My <span class="serif">Dashboard</span></h1><p class="sub">${pages.length} page${pages.length>1?'s':''} · ${pages.reduce((s,p)=>s+p.widgets.length,0)} widgets configured</p></div>
+        <button class="btn" onclick="navigateTo('widgets')">Edit in Widget Builder →</button>
+      </div>
+    </div>
+    <div class="page-tabs" style="margin-bottom:18px;">${pageTabs}</div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;">${widgetCards}</div>
+  `;
+}
+
 function previewWidgetPage(){
   const page = appState.widgetPages[appState.activeWidgetPage];
   if (page.widgets.length===0){ showToast('Add widgets first to preview'); return; }
@@ -3816,6 +4039,13 @@ function resetWidgetPage(){
 
 // ==================== AI CHATBOT (IS-367) ====================
 function toggleChat(){
+  if (!_isPro()){
+    const isAuth = appState.authState !== 'unauthenticated';
+    if (!isAuth) { showToast('Sign up and upgrade to Pro to use the AI Market Assistant'); return; }
+    showToast('Upgrade to Pro to use the AI Market Assistant');
+    appState.currentTab = 'billing'; appState._settingsTabSet = true;
+    navigateTo('settings'); return;
+  }
   const panel = document.getElementById('chatPanel');
   panel.classList.toggle('active');
   feedState.chatOpen = panel.classList.contains('active');
@@ -4505,40 +4735,91 @@ function renderBillingTab(){
     ` : ''}
 
     <div class="scard">
-      <div class="scard-title">Compare plans</div>
-      <div class="card-body tight">
-        <table>
-          <thead><tr><th>Plan</th><th>Monthly</th><th>Yearly</th><th>Wallet limit</th><th>API/day</th><th>History</th></tr></thead>
-          <tbody>
-            <tr style="background:${tier==='Free'?'var(--surface-2)':'transparent'};"><td><strong>Free</strong>${tier==='Free'?' <span class="badge" style="margin-left:6px;font-size:9px;">CURRENT</span>':''}</td><td>$0</td><td>$0</td><td>10</td><td>1,000</td><td>7 days</td></tr>
-            <tr style="background:${tier==='Pro'?'var(--surface-2)':'transparent'};"><td><strong>Pro</strong>${tier==='Pro'?' <span class="badge" style="margin-left:6px;font-size:9px;">CURRENT</span>':''}</td><td>$45</td><td>$450</td><td>Unlimited</td><td>10,000</td><td>90 days</td></tr>
-            <tr style="background:${tier==='Enterprise'?'var(--surface-2)':'transparent'};"><td><strong>Enterprise</strong>${tier==='Enterprise'?' <span class="badge" style="margin-left:6px;font-size:9px;">CURRENT</span>':''}</td><td>Custom</td><td>Custom</td><td>Unlimited</td><td>Unlimited</td><td>Full</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+      <div class="scard-title">Subscription plans</div>
+      <div class="scard-body" style="padding-top:14px;">
+        <div class="plan-grid">
 
-    <div class="scard">
-      <div class="scard-title">Plan management</div>
-      <div class="scard-body">
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
-          <div style="padding:14px;border:${tier==='Free'?'1.5px solid var(--ink)':'1px solid var(--line)'};border-radius:var(--r-md);${tier==='Free'?'':'opacity:0.6;'}">
-            <div style="font-weight:600;margin-bottom:8px;">Free</div>
-            <button class="btn" disabled style="width:100%;">${tier==='Free'?'Current plan':'Free plan'}</button>
-            <div style="font-size:11px;color:var(--muted-2);margin-top:8px;">${tier==='Free'?'Up to 10 wallets, 7 days history':'Unsubscribe to revert to Free'}</div>
+          <!-- FREE -->
+          <div class="plan-card ${tier==='Free'?'current':''}">
+            ${tier==='Free'?'<div class="plan-card-badge">CURRENT</div>':''}
+            <div class="plan-name">Free</div>
+            <div class="plan-price">$0</div>
+            <div class="plan-price-sub">Forever free</div>
+            <div class="plan-divider"></div>
+            <ul class="plan-features">
+              <li><span class="pf-icon check">✓</span> Market Overview Dashboard</li>
+              <li><span class="pf-icon check">✓</span> Top 100 Token Rankings</li>
+              <li><span class="pf-icon check">✓</span> Intelligence Feed (basic)</li>
+              <li><span class="pf-icon check">✓</span> Fund Flow Heatmap</li>
+              <li><span class="pf-icon check">✓</span> Basic Alerts · 24h history</li>
+              <li><span class="pf-icon check">✓</span> 10 wallet slots</li>
+              <li><span class="pf-icon check">✓</span> 1,000 API calls / day</li>
+              <li><span class="pf-icon check">✓</span> 7-day data history</li>
+              <li class="pf-unavail"><span class="pf-icon lock">—</span> Smart Money Leaderboard</li>
+              <li class="pf-unavail"><span class="pf-icon lock">—</span> Copy Trading &amp; Portfolio</li>
+              <li class="pf-unavail"><span class="pf-icon lock">—</span> Token Discovery Feed</li>
+              <li class="pf-unavail"><span class="pf-icon lock">—</span> Custom Widget Dashboard</li>
+              <li class="pf-unavail"><span class="pf-icon lock">—</span> AI Market Assistant</li>
+              <li class="pf-unavail"><span class="pf-icon lock">—</span> Sub-5s WebSocket signals</li>
+            </ul>
+            <div class="plan-card-cta">
+              <button class="btn" style="width:100%;" disabled>${tier==='Free'?'Current plan':'Downgrade to Free'}</button>
+            </div>
           </div>
-          <div style="padding:14px;border:${tier==='Pro'?'1.5px solid var(--ink)':'1px solid var(--line)'};border-radius:var(--r-md);">
-            <div style="font-weight:600;margin-bottom:8px;">Pro <span class="badge badge-warning" style="margin-left:4px;">14-Day Trial</span></div>
-            ${tier!=='Pro'
-              ? '<button class="btn btn-accent" onclick="startTrial()" style="width:100%;">Start trial</button>'
-              : '<button class="btn" disabled style="width:100%;">Current plan</button>'}
+
+          <!-- PRO -->
+          <div class="plan-card plan-pro ${tier==='Pro'?'current':''}">
+            ${tier==='Pro'?'<div class="plan-card-badge">CURRENT</div>':''}
+            <div class="plan-name">Pro <span class="badge badge-accent" style="margin-left:6px;">PRO</span></div>
+            <div class="plan-price">$45</div>
+            <div class="plan-price-sub">per month &middot; or $450 / yr (save 2 months)</div>
+            <div class="plan-divider"></div>
+            <ul class="plan-features">
+              <li><span class="pf-icon check">✓</span> <strong>Everything in Free</strong></li>
+              <li><span class="pf-icon check">✓</span> Smart Money Leaderboard (500 wallets)</li>
+              <li><span class="pf-icon check">✓</span> Elite Wallet Deep Dive &amp; PnL tracking</li>
+              <li><span class="pf-icon check">✓</span> Copy Trading &amp; Portfolio mirroring</li>
+              <li><span class="pf-icon check">✓</span> Token Discovery Feed (live)</li>
+              <li><span class="pf-icon check">✓</span> Custom Widget Dashboard builder</li>
+              <li><span class="pf-icon check">✓</span> AI Market Assistant (RAG chatbot)</li>
+              <li><span class="pf-icon check">✓</span> Sub-5s signals via WebSocket</li>
+              <li><span class="pf-icon check">✓</span> 90-day data history</li>
+              <li><span class="pf-icon check">✓</span> Unlimited wallet tracking</li>
+              <li><span class="pf-icon check">✓</span> 10,000 API calls / day</li>
+              <li><span class="pf-icon check">✓</span> 14-day free trial</li>
+            </ul>
+            <div class="plan-card-cta">
+              ${tier!=='Pro'
+                ? '<button class="btn btn-accent" onclick="startTrial()" style="width:100%;">Start 14-day free trial →</button>'
+                : tier==='Pro' && planStatus!=='Canceled'
+                  ? '<button class="btn btn-danger" onclick="cancelSubscription()" style="width:100%;">Cancel subscription</button>'
+                  : '<button class="btn btn-accent" onclick="startTrial()" style="width:100%;">Reactivate Pro</button>'}
+            </div>
           </div>
-          <div style="padding:14px;border:${tier==='Enterprise'?'1.5px solid var(--ink)':'1px solid var(--line)'};border-radius:var(--r-md);">
-            <div style="font-weight:600;margin-bottom:8px;">Enterprise</div>
-            <button class="btn" onclick="contactSales()" style="width:100%;">Contact sales</button>
+
+          <!-- ENTERPRISE -->
+          <div class="plan-card ${tier==='Enterprise'?'current':''}">
+            ${tier==='Enterprise'?'<div class="plan-card-badge">CURRENT</div>':''}
+            <div class="plan-name">Enterprise</div>
+            <div class="plan-price" style="font-size:22px;margin-top:14px;">Custom</div>
+            <div class="plan-price-sub">Volume pricing &middot; annual contract</div>
+            <div class="plan-divider"></div>
+            <ul class="plan-features">
+              <li><span class="pf-icon check">✓</span> <strong>Everything in Pro</strong></li>
+              <li><span class="pf-icon check">✓</span> Unlimited API calls / day</li>
+              <li><span class="pf-icon check">✓</span> Full data history</li>
+              <li><span class="pf-icon check">✓</span> Dedicated account manager</li>
+              <li><span class="pf-icon check">✓</span> Custom data endpoints</li>
+              <li><span class="pf-icon check">✓</span> White-label options</li>
+              <li><span class="pf-icon check">✓</span> SLA &amp; priority support</li>
+              <li><span class="pf-icon check">✓</span> On-prem deployment options</li>
+            </ul>
+            <div class="plan-card-cta">
+              <button class="btn" onclick="contactSales()" style="width:100%;">${tier==='Enterprise'?'Manage plan':'Contact sales →'}</button>
+            </div>
           </div>
+
         </div>
-
       </div>
     </div>
 
@@ -4571,6 +4852,7 @@ function cancelSubscription(){
     appState.user.tier = 'Free';
     closeModal('confirmDeleteModal');
     btn.textContent = 'Confirm';
+    applyNavLockStates();
     renderSettings();
     showToast('You have unsubscribed. Pro access continues until period end.');
   };
@@ -4589,6 +4871,7 @@ function saveCard(){
     return d.toISOString().split('T')[0];
   })();
   closeModal('addCardModal');
+  applyNavLockStates();
   renderSettings();
   showToast(`Redirecting to ${label}… trial activated`);
 }
