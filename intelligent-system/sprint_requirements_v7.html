@@ -4905,6 +4905,952 @@
             IS-450 Top 100 Tab Consolidation — FE (6 SP) · IS-451 Top 100 Tab Design Spec — Design (3 SP) · IS-452 Emoji Removal Pass — FE (5 SP) · IS-453 Emoji Removal QA — QA (2 SP) · IS-454 Nav Removal (Journal/Network/Research) — FE (3 SP) · IS-455 Nav Removal Design Spec — Design (2 SP) · IS-456 Referral Hub Enrichment — FE (5 SP) · IS-457 Referral Backend — BE (8 SP) · IS-458 Token Comparison Enrichment — FE (4 SP) · IS-459 Sprint 29 Regression — QA (3 SP). Sprint 29 total: <strong>41 SP</strong>. Cumulative grand total across all sprints (8–29): <strong>453 SP</strong>. Prototype: <a href="index_v7.html" style="color:#000;font-weight:700;">index_v7.html</a>.
         </div>
 
+        <!-- ═══════════════════════════════════════════════ SPRINT 30 ══ -->
+        <div class="sprint-divider">
+            <span class="sprint-divider-label">Sprint 30 — Navigation Reduction, Topbar Cleanup &amp; DCA/API Enrichment</span>
+            <span class="sprint-divider-line"></span>
+            <span style="font-size:11px;font-weight:700;color:#999;">IS-460 → IS-469 · 39 SP</span>
+        </div>
+
+        <!-- IS-460 FE: Remove Pages from Navigation (Phase 2) -->
+        <div class="task-card">
+            <div class="task-header">
+                <div style="display:flex;align-items:center;">
+                    <span class="task-id">IS-460</span>
+                    <span class="task-title">Navigation Reduction Phase 2 — Remove Wallet Profiler, Multi-Wallet, Backtesting, Rebalancer, Strategy Comparison, Alerts History, AI Advisor</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="team-badge fe">FE</span>
+                    <span class="story-points">5 SP</span>
+                </div>
+            </div>
+            <div class="task-body">
+                <div class="task-desc">Remove seven sidebar nav items: Wallet Profiler (<code>nav-profiler</code>), Multi-Wallet (<code>nav-multiWallet</code>), Backtesting (<code>nav-backtest</code>), Portfolio Rebalancer (<code>nav-rebalancer</code>), Strategy Comparison (<code>nav-stratCompare</code>), Alerts History (<code>nav-alertsHistory</code>), AI Advisor (<code>nav-aiAdvisor</code>). Update <code>navigateTo()</code>: <code>profiler/multiWallet → smartMoney</code>, <code>backtest/rebalancer/stratCompare → strategies</code>, <code>alertsHistory → alertrules</code>, <code>aiAdvisor → overview</code>. Maintain render functions in codebase but mark deprecated.</div>
+                <div class="acceptance">
+                    <div class="acc-title">Acceptance Criteria</div>
+                    <ul>
+                        <li>Seven nav items absent from sidebar on all viewports</li>
+                        <li>All seven deep-link routes redirect without JS error</li>
+                        <li>Sidebar sections (Analytics, Automation, Developer) remain structurally intact</li>
+                        <li>pageNavMap{} updated to remove stale keys</li>
+                        <li>Zero JS console errors after nav removal</li>
+                    </ul>
+                </div>
+                <div class="tech-section">
+                    <div class="tech-label">Tech Notes</div>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Python regex removal script for nav-item blocks</span>
+                        <span class="tech-tag">navigateTo() switch cleaned of duplicates</span>
+                        <span class="tech-tag">Deprecated render functions: renderProfiler, renderBacktest, renderRebalancer, renderStrategyCompare, renderAiAdvisor, renderMultiWallet</span>
+                    </div>
+                </div>
+                <div class="dep-section">
+                    <div class="tech-label">Dependencies</div>
+                    <div class="dep-item">IS-454 (Nav Removal Phase 1) · sidebar HTML structure</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- IS-461 Design: Sidebar IA Spec After Phase 2 Reduction -->
+        <div class="task-card">
+            <div class="task-header">
+                <div style="display:flex;align-items:center;">
+                    <span class="task-id">IS-461</span>
+                    <span class="task-title">Sidebar Information Architecture — Post-Reduction Spec &amp; Section Labelling</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="team-badge design">Design</span>
+                    <span class="story-points">2 SP</span>
+                </div>
+            </div>
+            <div class="task-body">
+                <div class="task-desc">Update the sidebar IA document after Phase 2 navigation reduction. Define the final section structure: Markets, Portfolio, Analytics, Automation, Developer, Workspace. Confirm correct grouping for each remaining nav item. Spec the empty-state within each section if all items within it are removed. Update the sitemap and Figma navigation component.</div>
+                <div class="acceptance">
+                    <div class="acc-title">Acceptance Criteria</div>
+                    <ul>
+                        <li>Updated Figma sidebar component with final item list</li>
+                        <li>Sitemap document reflects all removals from Sprint 29 and 30</li>
+                        <li>Redirects documented in IA spec (where each removed page sends users)</li>
+                    </ul>
+                </div>
+                <div class="dep-section">
+                    <div class="tech-label">Dependencies</div>
+                    <div class="dep-item">IS-460 (FE removal) · IS-455 (Phase 1 IA spec)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- IS-462 FE: Remove Topbar Search Bar -->
+        <div class="task-card">
+            <div class="task-header">
+                <div style="display:flex;align-items:center;">
+                    <span class="task-id">IS-462</span>
+                    <span class="task-title">Remove Topbar Search Bar — Keep Sidebar Search Palette Only</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="team-badge fe">FE</span>
+                    <span class="story-points">2 SP</span>
+                </div>
+            </div>
+            <div class="task-body">
+                <div class="task-desc">Remove the <code>.topbar-search-hint</code> element from the topbar HTML. The search functionality is preserved via the sidebar search palette (Ctrl+K / Cmd+K). Keep the keyboard shortcut handler, sidebar search input, and <code>openSearchPalette()</code> function. Also remove the corresponding CSS rule for <code>.topbar-search-hint</code>.</div>
+                <div class="acceptance">
+                    <div class="acc-title">Acceptance Criteria</div>
+                    <ul>
+                        <li>Topbar no longer shows the search hint button</li>
+                        <li>Sidebar search palette still opens on Ctrl+K / Cmd+K</li>
+                        <li>Topbar actions area only shows auth container (sign in / avatar)</li>
+                        <li>No orphaned CSS for <code>.topbar-search-hint</code></li>
+                    </ul>
+                </div>
+                <div class="dep-section">
+                    <div class="tech-label">Dependencies</div>
+                    <div class="dep-item">IS-438 (Sidebar Search) — sidebar search is the replacement</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- IS-463 FE: Remove Screener Tab from Top 100 -->
+        <div class="task-card">
+            <div class="task-header">
+                <div style="display:flex;align-items:center;">
+                    <span class="task-id">IS-463</span>
+                    <span class="task-title">Top 100 — Remove Screener Tab, Retain All Assets + Trending</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="team-badge fe">FE</span>
+                    <span class="story-points">2 SP</span>
+                </div>
+            </div>
+            <div class="task-body">
+                <div class="task-desc">Remove the Screener tab from the Top 100 tab bar. Retain two tabs: All Assets and Trending. Update <code>feedState.top100Tab</code> default to <code>'assets'</code>. Update any deep-link route that set <code>top100Tab='screener'</code> to redirect to <code>top100Tab='assets'</code>. Remove <code>_renderScreenerTab()</code> from the file in a follow-up clean-up sprint.</div>
+                <div class="acceptance">
+                    <div class="acc-title">Acceptance Criteria</div>
+                    <ul>
+                        <li>Top 100 tab bar shows exactly two tabs: All Assets and Trending</li>
+                        <li><code>navigateTo('screener')</code> opens Top 100 with All Assets tab active</li>
+                        <li>No JS error when tab state defaults</li>
+                        <li>Trending tab still renders correctly</li>
+                    </ul>
+                </div>
+                <div class="dep-section">
+                    <div class="tech-label">Dependencies</div>
+                    <div class="dep-item">IS-450 (Top 100 tab consolidation)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- IS-464 FE: Enhanced DCA Execution History -->
+        <div class="task-card">
+            <div class="task-header">
+                <div style="display:flex;align-items:center;">
+                    <span class="task-id">IS-464</span>
+                    <span class="task-title">DCA Execution History — Stats Summary, Token Filters, P&amp;L Column &amp; Status Colours</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="team-badge fe">FE</span>
+                    <span class="story-points">4 SP</span>
+                </div>
+            </div>
+            <div class="task-body">
+                <div class="task-desc">Enrich <code>renderDcaHistory()</code> with: (1) a 3-stat summary bar (Total Invested, Success Rate, Executions filled/total); (2) token filter pills (All tokens + one pill per unique token in history); (3) a P&amp;L column showing per-row unrealised gain/loss in JetBrains Mono with pos/neg colour; (4) status badge colours (filled=green, cancelled=amber, failed=red); (5) an Export CSV button in the card header; (6) 8 mock history rows including cancelled and failed states. All data simulated.</div>
+                <div class="acceptance">
+                    <div class="acc-title">Acceptance Criteria</div>
+                    <ul>
+                        <li>Stats bar shows Total Invested, Success Rate %, and filled/total count</li>
+                        <li>Token filter pills filter the table in-place</li>
+                        <li>P&amp;L column shows + values in green, — in muted, negative in red</li>
+                        <li>Status badges: filled=green, cancelled=amber, failed=red</li>
+                        <li>Export CSV button triggers <code>showToast('CSV exported')</code></li>
+                        <li>Empty state shown if no rows match the filter</li>
+                    </ul>
+                </div>
+                <div class="tech-section">
+                    <div class="tech-label">Tech Notes</div>
+                    <div class="tech-tags">
+                        <span class="tech-tag">appState.dcaHistFilter state</span>
+                        <span class="tech-tag">renderDcaHistory() returns HTML string (called from renderStrategies)</span>
+                        <span class="tech-tag">Filter re-renders via outerHTML replacement</span>
+                    </div>
+                </div>
+                <div class="dep-section">
+                    <div class="tech-label">Dependencies</div>
+                    <div class="dep-item">IS-421 (original DCA history) · renderStrategies() embedding</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- IS-465 BE: DCA Execution Log API -->
+        <div class="task-card">
+            <div class="task-header">
+                <div style="display:flex;align-items:center;">
+                    <span class="task-id">IS-465</span>
+                    <span class="task-title">DCA Execution Log — Backend API &amp; Database Schema</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="team-badge be">BE</span>
+                    <span class="story-points">6 SP</span>
+                </div>
+            </div>
+            <div class="task-body">
+                <div class="task-desc">Implement the backend for DCA execution logging. Each DCA execution event (triggered by strategy scheduler) is persisted to a <code>dca_executions</code> table. Expose <code>GET /v1/strategies/executions</code> with pagination, token filter, and date range params. Each row: strategy_id, action, token, amount_usd, price, quantity, status (filled/cancelled/failed), pnl_usd, executed_at. Support CSV export endpoint <code>GET /v1/strategies/executions/export</code>.</div>
+                <div class="acceptance">
+                    <div class="acc-title">Acceptance Criteria</div>
+                    <ul>
+                        <li><code>GET /v1/strategies/executions?token=SOL&amp;limit=20&amp;page=1</code> returns paginated rows</li>
+                        <li><code>GET /v1/strategies/executions/export</code> returns CSV with correct headers</li>
+                        <li>Schema: strategy_id, action, token, amount_usd, price, qty, status, pnl_usd, executed_at</li>
+                        <li>Status enum: filled, cancelled, failed</li>
+                        <li>Endpoint protected by auth JWT, scoped to user's own strategies</li>
+                    </ul>
+                </div>
+                <div class="tech-section">
+                    <div class="tech-label">Tech Notes</div>
+                    <div class="tech-tags">
+                        <span class="tech-tag">dca_executions table with index on (user_id, executed_at)</span>
+                        <span class="tech-tag">pnl_usd calculated at export time from current price</span>
+                        <span class="tech-tag">CSV: Content-Type: text/csv; Content-Disposition: attachment</span>
+                    </div>
+                </div>
+                <div class="dep-section">
+                    <div class="tech-label">Dependencies</div>
+                    <div class="dep-item">DCA strategy scheduler · IS-464 (FE history table)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- IS-466 FE: API Playground Enrichment -->
+        <div class="task-card">
+            <div class="task-header">
+                <div style="display:flex;align-items:center;">
+                    <span class="task-id">IS-466</span>
+                    <span class="task-title">API Playground — Grouped Endpoints, Response History, Auth Header Display &amp; Request Stats</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="team-badge fe">FE</span>
+                    <span class="story-points">5 SP</span>
+                </div>
+            </div>
+            <div class="task-body">
+                <div class="task-desc">Rebuild <code>renderApiPlayground()</code> with: (1) grouped endpoint list by category (Tokens, Wallets, Feed, Signals, Other); (2) Recent Requests history panel (last 5, showing method/path/status/timing); (3) API base URL and auth header display with masked Bearer token + "Manage keys" link; (4) Response panel: status badge (green/red), timing in ms, byte count, Copy JSON and Clear buttons; (5) Empty state for response with icon; (6) Clear button to reset response state; (7) <code>feedState.apiHistory[]</code> accumulates request history.</div>
+                <div class="acceptance">
+                    <div class="acc-title">Acceptance Criteria</div>
+                    <ul>
+                        <li>Endpoints grouped by category with category labels</li>
+                        <li>Recent Requests shows up to 5 most recent calls with method/path/status</li>
+                        <li>Auth section shows masked Bearer token + Manage keys nav</li>
+                        <li>Response panel shows status badge, timing, bytes, Copy JSON, Clear</li>
+                        <li>Empty response state shows descriptive icon + text</li>
+                        <li>Sending a request appends to <code>feedState.apiHistory</code></li>
+                    </ul>
+                </div>
+                <div class="tech-section">
+                    <div class="tech-label">Tech Notes</div>
+                    <div class="tech-tags">
+                        <span class="tech-tag">feedState.apiHistory[] accumulates on each sendApiRequest()</span>
+                        <span class="tech-tag">feedState.apiLastResponse.bytes = JSON.stringify(body).length</span>
+                        <span class="tech-tag">Manage keys: navigateTo('settings'); switchTab('api')</span>
+                    </div>
+                </div>
+                <div class="dep-section">
+                    <div class="tech-label">Dependencies</div>
+                    <div class="dep-item">apiEndpoints[] · apiMockResponses{} · IS-435 (API key management)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- IS-467 Design: API Playground UI Spec -->
+        <div class="task-card">
+            <div class="task-header">
+                <div style="display:flex;align-items:center;">
+                    <span class="task-id">IS-467</span>
+                    <span class="task-title">API Playground — Design Specification &amp; Developer UX Audit</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="team-badge design">Design</span>
+                    <span class="story-points">3 SP</span>
+                </div>
+            </div>
+            <div class="task-body">
+                <div class="task-desc">Create the design spec for the enriched API Playground. Define: two-column layout (endpoint list + request builder), parameter row treatment, response panel states (empty/loading/success/error), status badge colours (GET=green, POST=accent, PUT=amber, DELETE=red), JSON syntax highlighting colours, and the Recent Requests history list. Ensure consistent use of JetBrains Mono for all code elements. Spec the auth header masked display.</div>
+                <div class="acceptance">
+                    <div class="acc-title">Acceptance Criteria</div>
+                    <ul>
+                        <li>Figma mockup for all three response states (empty/loading/success)</li>
+                        <li>HTTP method badge colours defined and applied</li>
+                        <li>JSON syntax highlighting: keys, strings, numbers in design tokens</li>
+                        <li>Recent Requests list annotated</li>
+                        <li>Auth section design approved</li>
+                    </ul>
+                </div>
+                <div class="dep-section">
+                    <div class="tech-label">Dependencies</div>
+                    <div class="dep-item">IS-466 (FE implementation)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- IS-468 FE: Remove Invite via Email from Share Hub -->
+        <div class="task-card">
+            <div class="task-header">
+                <div style="display:flex;align-items:center;">
+                    <span class="task-id">IS-468</span>
+                    <span class="task-title">Share Hub — Remove Invite via Email CTA</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="team-badge fe">FE</span>
+                    <span class="story-points">1 SP</span>
+                </div>
+            </div>
+            <div class="task-body">
+                <div class="task-desc">Remove the "Invite via Email" button from the Share &amp; Referral Hub referral programme card. Retain Copy Code and Share Link CTAs. Two-button row replaces three-button row.</div>
+                <div class="acceptance">
+                    <div class="acc-title">Acceptance Criteria</div>
+                    <ul>
+                        <li>Referral card shows only Copy Code and Share Link buttons</li>
+                        <li>Both buttons full-width in two-column flex row</li>
+                        <li>No dead email invite handler in JS</li>
+                    </ul>
+                </div>
+                <div class="dep-section">
+                    <div class="tech-label">Dependencies</div>
+                    <div class="dep-item">IS-456 (Share Hub FE)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- IS-469 QA: Sprint 30 Full Regression -->
+        <div class="task-card">
+            <div class="task-header">
+                <div style="display:flex;align-items:center;">
+                    <span class="task-id">IS-469</span>
+                    <span class="task-title">Sprint 30 Regression — Nav Reduction, Topbar, DCA History, API Playground</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="team-badge qa">QA</span>
+                    <span class="story-points">4 SP</span>
+                </div>
+            </div>
+            <div class="task-body">
+                <div class="task-desc">Regression test for Sprint 30: (1) Verify 7 nav items removed from sidebar; (2) All 7 removed routes redirect correctly; (3) Topbar has no search element; (4) Sidebar search palette still opens on Ctrl+K; (5) Top 100 shows only All Assets + Trending tabs; (6) DCA History: stats bar, filter pills, P&amp;L column, status colours, CSV export; (7) API Playground: grouped endpoints, recent history, auth display, response panel; (8) Share Hub: only Copy Code + Share Link. Zero JS console errors across all routes.</div>
+                <div class="acceptance">
+                    <div class="acc-title">Acceptance Criteria</div>
+                    <ul>
+                        <li>All 7 removed nav items visually absent</li>
+                        <li>7 stale routes redirect without error</li>
+                        <li>Topbar: no search bar visible</li>
+                        <li>Top 100: exactly 2 tabs</li>
+                        <li>DCA History: all 3 stats, filter pills, P&amp;L column functional</li>
+                        <li>API Playground: send request, response renders, history updates</li>
+                        <li>Zero JS errors in browser console</li>
+                    </ul>
+                </div>
+                <div class="dep-section">
+                    <div class="tech-label">Dependencies</div>
+                    <div class="dep-item">IS-460 · IS-462 · IS-463 · IS-464 · IS-466 · IS-468</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="scope-note">
+            <strong>Sprint 30 Scope Summary:</strong>
+            IS-460 Nav Reduction Phase 2 — FE (5 SP) · IS-461 Sidebar IA Spec — Design (2 SP) · IS-462 Remove Topbar Search — FE (2 SP) · IS-463 Remove Screener Tab — FE (2 SP) · IS-464 DCA History Enrichment — FE (4 SP) · IS-465 DCA Execution Log API — BE (6 SP) · IS-466 API Playground Enrichment — FE (5 SP) · IS-467 API Playground Design Spec — Design (3 SP) · IS-468 Remove Invite via Email — FE (1 SP) · IS-469 Sprint 30 Regression — QA (4 SP). Sprint 30 total: <strong>34 SP</strong>. Cumulative grand total across all sprints (8–30): <strong>487 SP</strong>.
+        </div>
+
+        <!-- ═══════════════════════════════════════════════ SPRINT 31 ══ -->
+        <div class="sprint-divider">
+            <span class="sprint-divider-label">Sprint 31 — UI/UX Consistency Pass: Signals, Discovery, Watchlist, Price Alerts &amp; Community</span>
+            <span class="sprint-divider-line"></span>
+            <span style="font-size:11px;font-weight:700;color:#999;">IS-470 → IS-478 · 33 SP</span>
+        </div>
+
+        <!-- IS-470 FE: Signals Page Enrichment -->
+        <div class="task-card">
+            <div class="task-header">
+                <div style="display:flex;align-items:center;">
+                    <span class="task-id">IS-470</span>
+                    <span class="task-title">Live Signals Page — Stats Bar, Signal Card Clickthrough &amp; Empty State</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="team-badge fe">FE</span>
+                    <span class="story-points">4 SP</span>
+                </div>
+            </div>
+            <div class="task-body">
+                <div class="task-desc">Enrich <code>renderSignalsPage()</code> with: (1) a 4-stat hero bar (Live signals count, Buy signals %, Sell signals %, Most active token); (2) filter pills showing counts in label (All (N) / Buys (N) / Sells (N)); (3) signal card <code>onclick</code> opens the relevant wallet drawer; (4) responsive grid using <code>auto-fill minmax(260px,1fr)</code> instead of fixed 3-column; (5) proper empty state when filter returns 0 results.</div>
+                <div class="acceptance">
+                    <div class="acc-title">Acceptance Criteria</div>
+                    <ul>
+                        <li>Stats bar renders with 4 metrics correctly calculated from allSignals[]</li>
+                        <li>Filter pills include counts in labels</li>
+                        <li>Clicking a signal card calls <code>openWalletDrawer(walletId)</code></li>
+                        <li>Empty state shows when filter matches 0 signals</li>
+                        <li>Grid is responsive: 1 column on mobile, auto-fill on desktop</li>
+                    </ul>
+                </div>
+                <div class="dep-section">
+                    <div class="tech-label">Dependencies</div>
+                    <div class="dep-item">allSignals[] · openWalletDrawer() · IS-446 (UI consistency)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- IS-471 FE: Discovery Page — Remove Symbol Icons, Clean Filter Pills -->
+        <div class="task-card">
+            <div class="task-header">
+                <div style="display:flex;align-items:center;">
+                    <span class="task-id">IS-471</span>
+                    <span class="task-title">Discovery Page — Remove Filter Symbol Icons, Clean Risk Labels</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="team-badge fe">FE</span>
+                    <span class="story-points">2 SP</span>
+                </div>
+            </div>
+            <div class="task-body">
+                <div class="task-desc">Remove the <code>✓</code> and <code>✗</code> symbols from Discovery filter pills and risk column. Risk labels become: Verified / Unverified / Suspicious (plain text, colour-coded by <code>.discovery-risk</code> CSS class). Ensure the Live Monitor section uses the same plain-text risk labels.</div>
+                <div class="acceptance">
+                    <div class="acc-title">Acceptance Criteria</div>
+                    <ul>
+                        <li>Filter pills: Verified, Unverified, Suspicious (no symbols)</li>
+                        <li>Table risk column: plain text labels with CSS colour classes</li>
+                        <li>Live Monitor uses same plain-text risk labels</li>
+                    </ul>
+                </div>
+                <div class="dep-section">
+                    <div class="tech-label">Dependencies</div>
+                    <div class="dep-item">IS-452 (Emoji removal pass)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- IS-472 Design: Signals + Discovery Design Spec -->
+        <div class="task-card">
+            <div class="task-header">
+                <div style="display:flex;align-items:center;">
+                    <span class="task-id">IS-472</span>
+                    <span class="task-title">Signals &amp; Discovery Pages — Design Specification</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="team-badge design">Design</span>
+                    <span class="story-points">3 SP</span>
+                </div>
+            </div>
+            <div class="task-body">
+                <div class="task-desc">Create design specifications for the Signals and Discovery pages. Define: signal card layout (type badge, time, wallet, description), stats bar treatment, grid responsive behaviour, Discovery risk label colour system (Verified=green, Unverified=amber, Suspicious=red), and the Live Monitor side panel. All states: populated, empty, loading.</div>
+                <div class="acceptance">
+                    <div class="acc-title">Acceptance Criteria</div>
+                    <ul>
+                        <li>Figma frames for Signals (populated, empty per filter) and Discovery (all 4 filter states)</li>
+                        <li>Risk colour tokens documented: Verified=--pos, Suspicious=--neg, Unverified=--warn</li>
+                        <li>Signal card annotated with all interactive zones</li>
+                    </ul>
+                </div>
+                <div class="dep-section">
+                    <div class="tech-label">Dependencies</div>
+                    <div class="dep-item">IS-470 · IS-471</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- IS-473 BE: WebSocket Signals Delivery -->
+        <div class="task-card">
+            <div class="task-header">
+                <div style="display:flex;align-items:center;">
+                    <span class="task-id">IS-473</span>
+                    <span class="task-title">Live Signals — WebSocket Delivery Pipeline &amp; 5s Latency Guarantee</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="team-badge be">BE</span>
+                    <span class="story-points">8 SP</span>
+                </div>
+            </div>
+            <div class="task-body">
+                <div class="task-desc">Implement the WebSocket delivery pipeline for elite wallet signals. The indexer detects swaps from tracked wallets within 1 block (~400ms on Solana). Signals are enriched with USD value and pushed to subscribers via <code>wss://api.unlimit.io/v1/ws/signals</code>. Per-connection auth via JWT query param. Implement heartbeat/ping-pong keepalive. Signal schema: <code>{id, walletId, wallet, type, token, usd, amount, ago, txHash, blockTime}</code>. Target end-to-end latency: &lt;5s from block finalization.</div>
+                <div class="acceptance">
+                    <div class="acc-title">Acceptance Criteria</div>
+                    <ul>
+                        <li>WebSocket endpoint authenticated via JWT query param</li>
+                        <li>Signal pushed within 5s of block finalization (P95)</li>
+                        <li>Signal schema validated against TypeScript interface</li>
+                        <li>Heartbeat keepalive: ping every 30s, disconnect on missed pong</li>
+                        <li>Load test: 500 concurrent connections without message drop</li>
+                    </ul>
+                </div>
+                <div class="tech-section">
+                    <div class="tech-label">Tech Notes</div>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Solana indexer: Helius webhooks or RPC subscription</span>
+                        <span class="tech-tag">WebSocket server: ws or uWebSockets.js</span>
+                        <span class="tech-tag">Signal fan-out: Redis pub/sub per channel</span>
+                    </div>
+                </div>
+                <div class="dep-section">
+                    <div class="tech-label">Dependencies</div>
+                    <div class="dep-item">Elite wallet list · Solana indexer · Auth JWT service</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- IS-474 FE: Price Alerts — Delivery Channel Badges -->
+        <div class="task-card">
+            <div class="task-header">
+                <div style="display:flex;align-items:center;">
+                    <span class="task-id">IS-474</span>
+                    <span class="task-title">Price Alerts — Remove Emoji from Delivery Channel Display</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="team-badge fe">FE</span>
+                    <span class="story-points">2 SP</span>
+                </div>
+            </div>
+            <div class="task-body">
+                <div class="task-desc">Replace emoji-based delivery channel indicators in the Alerts History table (<code>🔔</code> for in-app, <code>📧</code> for email) with plain text badges: "App" and "Email". Ensure consistent badge styling. Also confirm <code>pa-status-triggered</code> renders as plain "Triggered" (no bell emoji).</div>
+                <div class="acceptance">
+                    <div class="acc-title">Acceptance Criteria</div>
+                    <ul>
+                        <li>Alerts History delivery column: "App", "Email" (comma-separated), no emoji</li>
+                        <li>Triggered status: "Triggered" badge, no bell emoji</li>
+                        <li>Badge styling consistent with other status badges in the app</li>
+                    </ul>
+                </div>
+                <div class="dep-section">
+                    <div class="tech-label">Dependencies</div>
+                    <div class="dep-item">IS-452 (Emoji removal)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- IS-475 FE: Community Leaderboard — Avatar Initials -->
+        <div class="task-card">
+            <div class="task-header">
+                <div style="display:flex;align-items:center;">
+                    <span class="task-id">IS-475</span>
+                    <span class="task-title">Community Leaderboard — Replace Emoji Avatars with 2-Letter Initials &amp; Plain Rank Labels</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="team-badge fe">FE</span>
+                    <span class="story-points">3 SP</span>
+                </div>
+            </div>
+            <div class="task-body">
+                <div class="task-desc">Replace all emoji avatars in <code>communityLeaderboard{}</code> data with 2-letter uppercase initials (CE, SD, FT, etc.). Replace <code>🥇🥈🥉</code> rank medals with plain text: "1st", "2nd", "3rd" styled via <code>.community-rank-gold/silver/bronze</code> CSS classes. Replace avatar table cell <code>font-size:18px</code> rendering with <code>&lt;span class="kol-avatar"&gt;</code> component (same pattern as KOL Feed).</div>
+                <div class="acceptance">
+                    <div class="acc-title">Acceptance Criteria</div>
+                    <ul>
+                        <li>All 10 leaderboard rows use 2-letter avatar initials</li>
+                        <li>Rank 1/2/3 show "1st"/"2nd"/"3rd" with CSS gold/silver/bronze colour</li>
+                        <li>Avatar cell uses <code>.kol-avatar</code> CSS class (28px × 28px, 10px font)</li>
+                        <li>Emoji grep returns 0 matches after change</li>
+                    </ul>
+                </div>
+                <div class="dep-section">
+                    <div class="tech-label">Dependencies</div>
+                    <div class="dep-item">IS-452 (emoji removal) · .kol-avatar CSS class</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- IS-476 Design: Community, Watchlist, Price Alerts Spec -->
+        <div class="task-card">
+            <div class="task-header">
+                <div style="display:flex;align-items:center;">
+                    <span class="task-id">IS-476</span>
+                    <span class="task-title">Community, Watchlist &amp; Price Alerts — Design Specification</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="team-badge design">Design</span>
+                    <span class="story-points">3 SP</span>
+                </div>
+            </div>
+            <div class="task-body">
+                <div class="task-desc">Create design specs for Community Leaderboard, Watchlist, and Price Alerts pages. Define: leaderboard row anatomy (rank, avatar, user, return %, tier badge, strategy badge, follow CTA), watchlist token/wallet table columns, watchlist note input states, price alert row anatomy (token pill, direction badge, target price, status badge, toggle, delete), and alert creation form layout.</div>
+                <div class="acceptance">
+                    <div class="acc-title">Acceptance Criteria</div>
+                    <ul>
+                        <li>Figma frames for all three pages with all states (populated, empty, auth-gated)</li>
+                        <li>Leaderboard: gold/silver/bronze rank colours defined</li>
+                        <li>Price alert status badges: Active=green, Triggered=amber, Paused=muted, spec'd</li>
+                        <li>Watchlist star icon treatment (active=filled, inactive=outline) documented</li>
+                    </ul>
+                </div>
+                <div class="dep-section">
+                    <div class="tech-label">Dependencies</div>
+                    <div class="dep-item">IS-470 · IS-474 · IS-475</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- IS-477 BE: Price Alert Push Notifications -->
+        <div class="task-card">
+            <div class="task-header">
+                <div style="display:flex;align-items:center;">
+                    <span class="task-id">IS-477</span>
+                    <span class="task-title">Price Alerts — Backend Push &amp; Email Delivery on Trigger</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="team-badge be">BE</span>
+                    <span class="story-points">6 SP</span>
+                </div>
+            </div>
+            <div class="task-body">
+                <div class="task-desc">Implement the backend for price alert triggers. A price monitoring service polls or subscribes to token prices every 5s. When an alert condition is met (price above/below target), mark the alert as triggered in DB, push an in-app notification via <code>POST /v1/notifications/push</code>, and send an email via the transactional email provider. Endpoint: <code>POST /v1/alerts/price</code> (create), <code>DELETE /v1/alerts/price/:id</code> (delete), <code>PATCH /v1/alerts/price/:id</code> (toggle active/paused).</div>
+                <div class="acceptance">
+                    <div class="acc-title">Acceptance Criteria</div>
+                    <ul>
+                        <li>Alert triggers within 10s of price condition being met</li>
+                        <li>In-app notification delivered via WebSocket push</li>
+                        <li>Email delivered within 60s of trigger (non-blocking queue)</li>
+                        <li>Alert status updated to "triggered" in DB and returned via API</li>
+                        <li>CRUD endpoints all return correct HTTP status codes</li>
+                    </ul>
+                </div>
+                <div class="tech-section">
+                    <div class="tech-label">Tech Notes</div>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Price monitoring: Helius price feed or CoinGecko polling</span>
+                        <span class="tech-tag">Email: Resend or SendGrid transactional</span>
+                        <span class="tech-tag">One alert trigger per condition (no repeat firing)</span>
+                    </div>
+                </div>
+                <div class="dep-section">
+                    <div class="tech-label">Dependencies</div>
+                    <div class="dep-item">IS-443 (Notification pipeline) · IS-473 (WebSocket) · Email service</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- IS-478 QA: Sprint 31 Regression -->
+        <div class="task-card">
+            <div class="task-header">
+                <div style="display:flex;align-items:center;">
+                    <span class="task-id">IS-478</span>
+                    <span class="task-title">Sprint 31 Regression — Signals, Discovery, Community, Watchlist, Price Alerts</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="team-badge qa">QA</span>
+                    <span class="story-points">2 SP</span>
+                </div>
+            </div>
+            <div class="task-body">
+                <div class="task-desc">Regression test for Sprint 31: (1) Signals: stats bar, filter counts, card clickthrough, empty state; (2) Discovery: no symbol icons in filter pills or risk column; (3) Community: avatar initials, plain rank labels, no emoji; (4) Watchlist: populated and empty states for tokens and wallets; (5) Price Alerts: delivery channel badges plain text, triggered status plain text. Zero emoji in all tested pages.</div>
+                <div class="acceptance">
+                    <div class="acc-title">Acceptance Criteria</div>
+                    <ul>
+                        <li>Signals stats bar: 4 metrics visible and correct</li>
+                        <li>Discovery filter pills: Verified / Unverified / Suspicious (no symbols)</li>
+                        <li>Community: 2-letter avatars, "1st"/"2nd"/"3rd" rank</li>
+                        <li>Price Alerts: "App"/"Email" delivery text, "Triggered" status</li>
+                        <li>Emoji grep: 0 matches across all tested pages</li>
+                    </ul>
+                </div>
+                <div class="dep-section">
+                    <div class="tech-label">Dependencies</div>
+                    <div class="dep-item">IS-470 · IS-471 · IS-474 · IS-475</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="scope-note">
+            <strong>Sprint 31 Scope Summary:</strong>
+            IS-470 Signals Enrichment — FE (4 SP) · IS-471 Discovery Cleanup — FE (2 SP) · IS-472 Signals + Discovery Design — Design (3 SP) · IS-473 WebSocket Signals BE — BE (8 SP) · IS-474 Price Alerts Delivery Badges — FE (2 SP) · IS-475 Community Avatar Initials — FE (3 SP) · IS-476 Community/Watchlist/Alerts Design — Design (3 SP) · IS-477 Price Alert Push BE — BE (6 SP) · IS-478 Sprint 31 Regression — QA (2 SP). Sprint 31 total: <strong>33 SP</strong>. Cumulative grand total across all sprints (8–31): <strong>520 SP</strong>.
+        </div>
+
+        <!-- ═══════════════════════════════════════════════ SPRINT 32 ══ -->
+        <div class="sprint-divider">
+            <span class="sprint-divider-label">Sprint 32 — Flow &amp; Logic Audit: Clickability, Empty States &amp; Full Prototype Validation</span>
+            <span class="sprint-divider-line"></span>
+            <span style="font-size:11px;font-weight:700;color:#999;">IS-479 → IS-487 · 35 SP</span>
+        </div>
+
+        <!-- IS-479 FE: Clickability Audit — All Interactive Elements -->
+        <div class="task-card">
+            <div class="task-header">
+                <div style="display:flex;align-items:center;">
+                    <span class="task-id">IS-479</span>
+                    <span class="task-title">Clickability Audit — Ensure All Buttons, Links &amp; Cards Have Sensible Handlers</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="team-badge fe">FE</span>
+                    <span class="story-points">6 SP</span>
+                </div>
+            </div>
+            <div class="task-body">
+                <div class="task-desc">Audit every interactive element in index_v7.html. Replace bare <code>href="#"</code> dead links with either a <code>navigateTo()</code> call or <code>showToast()</code> placeholder. Ensure every button has <code>cursor:pointer</code>. Ensure every clickable row has a meaningful <code>onclick</code> handler (open drawer, navigate, or show modal). Add <code>title</code> attributes to icon-only buttons. Scan for orphaned <code>onclick=""</code> empty handlers. All toast messages should be descriptive (not just "Coming soon").</div>
+                <div class="acceptance">
+                    <div class="acc-title">Acceptance Criteria</div>
+                    <ul>
+                        <li>Zero <code>href="#"</code> dead links in entire file</li>
+                        <li>All <code>&lt;button&gt;</code> elements have explicit <code>onclick</code> or are <code>type="submit"</code></li>
+                        <li>All row-click elements navigate or open a drawer</li>
+                        <li>Icon-only buttons have <code>title</code> attributes</li>
+                        <li>Toast messages are descriptive, not "Coming soon" placeholders</li>
+                    </ul>
+                </div>
+                <div class="tech-section">
+                    <div class="tech-label">Tech Notes</div>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Grep for href="#" — must return 0 results</span>
+                        <span class="tech-tag">Grep for onclick="" — must return 0 results</span>
+                        <span class="tech-tag">cursor:pointer via .row-click, .nav-item, .card-action CSS classes</span>
+                    </div>
+                </div>
+                <div class="dep-section">
+                    <div class="tech-label">Dependencies</div>
+                    <div class="dep-item">All render functions · navigateTo() · showToast() · openWalletDrawer()</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- IS-480 FE: Empty State Audit — All Pages -->
+        <div class="task-card">
+            <div class="task-header">
+                <div style="display:flex;align-items:center;">
+                    <span class="task-id">IS-480</span>
+                    <span class="task-title">Empty State Audit — Add Consistent Empty States to All List/Table Pages</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="team-badge fe">FE</span>
+                    <span class="story-points">5 SP</span>
+                </div>
+            </div>
+            <div class="task-body">
+                <div class="task-desc">Audit every page that renders a list, table, or card grid. Ensure each has a proper empty state when data is empty or filtered to zero results. Empty state pattern: <code>.empty-state</code> div with icon SVG (48px, opacity:0.15), title, and optional CTA. Pages to check: Watchlist (tokens/wallets), Price Alerts, Signals (per filter), Top 100 (search), Discovery (per filter), Portfolio, Notification Inbox, KOL Feed, Smart Money, Copy Trading, Community Leaderboard.</div>
+                <div class="acceptance">
+                    <div class="acc-title">Acceptance Criteria</div>
+                    <ul>
+                        <li>All list/table pages have empty states using <code>.empty-state</code> class</li>
+                        <li>Empty state includes: icon (SVG, 48px, opacity 0.15), title, sub-text</li>
+                        <li>Where relevant, empty state includes a CTA (e.g., "+ Add Alert", "+ Add Token")</li>
+                        <li>Filter-to-zero shows "No results" empty state, not a blank card</li>
+                    </ul>
+                </div>
+                <div class="dep-section">
+                    <div class="tech-label">Dependencies</div>
+                    <div class="dep-item">IS-479 (Clickability audit) · All render functions</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- IS-481 Design: Flow Audit & Clickability Spec -->
+        <div class="task-card">
+            <div class="task-header">
+                <div style="display:flex;align-items:center;">
+                    <span class="task-id">IS-481</span>
+                    <span class="task-title">Flow Audit — Define All Interactive Flows &amp; Navigation Paths</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="team-badge design">Design</span>
+                    <span class="story-points">4 SP</span>
+                </div>
+            </div>
+            <div class="task-body">
+                <div class="task-desc">Create a comprehensive flow map for the prototype covering all major user journeys: sign-up → onboarding → upgrade, signal discovery → wallet drawer → copy trade, token search → detail → watchlist, alert creation → trigger → inbox notification. Annotate every dead end or placeholder flow with the intended target. Define the empty state pattern component: icon + title + sub-text + optional CTA button.</div>
+                <div class="acceptance">
+                    <div class="acc-title">Acceptance Criteria</div>
+                    <ul>
+                        <li>Flow map Figma document covering 5 primary user journeys</li>
+                        <li>All dead ends annotated with intended target page/action</li>
+                        <li>Empty state component defined in the design system</li>
+                        <li>Navigation paths reviewed and approved by product</li>
+                    </ul>
+                </div>
+                <div class="dep-section">
+                    <div class="tech-label">Dependencies</div>
+                    <div class="dep-item">IS-479 · IS-480 · Full prototype review</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- IS-482 BE: pushNotification() Pipeline Integration -->
+        <div class="task-card">
+            <div class="task-header">
+                <div style="display:flex;align-items:center;">
+                    <span class="task-id">IS-482</span>
+                    <span class="task-title">Notification Pipeline — pushNotification() Live Simulation &amp; 45s Interval</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="team-badge be">BE</span>
+                    <span class="story-points">5 SP</span>
+                </div>
+            </div>
+            <div class="task-body">
+                <div class="task-desc">Implement the <code>pushNotification(item)</code> helper in the prototype: prepends a new item to <code>notifInboxItems[]</code>, caps the array at 50, calls <code>syncInboxBadge()</code>, and triggers <code>showToast()</code>. Wire to <code>startLiveSim()</code>: every 15 ticks (~45s), auto-push a price alert notification for a randomly selected top-10 token. On the production backend, define the <code>POST /v1/notifications/push</code> endpoint and schema: <code>{type, title, body, token, page, user_id}</code>.</div>
+                <div class="acceptance">
+                    <div class="acc-title">Acceptance Criteria</div>
+                    <ul>
+                        <li><code>pushNotification()</code> defined and callable from any render function</li>
+                        <li>Live sim pushes a notification every ~45s</li>
+                        <li>Inbox badge increments on each push</li>
+                        <li>Inbox capped at 50 items (oldest discarded)</li>
+                        <li>BE: <code>POST /v1/notifications/push</code> persists to DB and fans out via WebSocket</li>
+                    </ul>
+                </div>
+                <div class="dep-section">
+                    <div class="tech-label">Dependencies</div>
+                    <div class="dep-item">IS-443 (BE pipeline) · IS-442 (FE inbox) · startLiveSim()</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- IS-483 FE: Logic Audit — navigateTo() Routing Sanity Check -->
+        <div class="task-card">
+            <div class="task-header">
+                <div style="display:flex;align-items:center;">
+                    <span class="task-id">IS-483</span>
+                    <span class="task-title">Logic Audit — navigateTo() Routing, Pro Gates &amp; Auth Walls</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="team-badge fe">FE</span>
+                    <span class="story-points">4 SP</span>
+                </div>
+            </div>
+            <div class="task-body">
+                <div class="task-desc">Audit the full <code>navigateTo()</code> switch statement. Verify: (1) every route either renders a page or redirects — no orphaned routes; (2) pro-gated pages correctly call <code>_isPro()</code> before rendering; (3) auth-gated pages call <code>_authWall()</code>; (4) all redirect routes use <code>return</code> to prevent double-render; (5) no duplicate case entries. Also audit all <code>_isPro()</code> and <code>_authWall()</code> call sites for correctness.</div>
+                <div class="acceptance">
+                    <div class="acc-title">Acceptance Criteria</div>
+                    <ul>
+                        <li>Every route in navigateTo() either renders or redirects</li>
+                        <li>No duplicate case entries</li>
+                        <li>All redirect cases use <code>return</code></li>
+                        <li>Pro-gated pages show upgrade prompt when tier is Free</li>
+                        <li>Auth-gated pages show sign-in prompt when unauthenticated</li>
+                    </ul>
+                </div>
+                <div class="dep-section">
+                    <div class="tech-label">Dependencies</div>
+                    <div class="dep-item">IS-460 (Nav reduction) · _isPro() · _authWall()</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- IS-484 Design: Sprint 32 Final UI Audit -->
+        <div class="task-card">
+            <div class="task-header">
+                <div style="display:flex;align-items:center;">
+                    <span class="task-id">IS-484</span>
+                    <span class="task-title">Final UI Audit — Low-Fidelity Consistency Pass Across All Remaining Pages</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="team-badge design">Design</span>
+                    <span class="story-points">4 SP</span>
+                </div>
+            </div>
+            <div class="task-body">
+                <div class="task-desc">Conduct a final visual consistency audit of all prototype pages. Check each page against the low-fidelity design system: correct font weights, spacing, color tokens, button hierarchy, card structure, table alignment. Pages to audit: Tax Summary, KOL Feed, Smart Money, Copy Trading, Heatmap, Consensus, Sentiment, DEX Pools, Strategies, Alert Rules, AI Curator, CT Report, MM Tracker, Community, Watchlist, Settings (all tabs). File a design debt log for any deviations.</div>
+                <div class="acceptance">
+                    <div class="acc-title">Acceptance Criteria</div>
+                    <ul>
+                        <li>All 17 pages audited against design system checklist</li>
+                        <li>Design debt log filed with severity (Critical/High/Medium/Low)</li>
+                        <li>Critical and High items fixed within sprint</li>
+                        <li>No page renders outside the --bg / --surface / --ink colour tokens</li>
+                    </ul>
+                </div>
+                <div class="dep-section">
+                    <div class="tech-label">Dependencies</div>
+                    <div class="dep-item">All previous UI consistency passes · Design system tokens</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- IS-485 BE: Prototype Data Sync — API Endpoints for All Mock Data -->
+        <div class="task-card">
+            <div class="task-header">
+                <div style="display:flex;align-items:center;">
+                    <span class="task-id">IS-485</span>
+                    <span class="task-title">API Contract — Define OpenAPI Spec for All Prototype Data Sources</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="team-badge be">BE</span>
+                    <span class="story-points">5 SP</span>
+                </div>
+            </div>
+            <div class="task-body">
+                <div class="task-desc">Document all mock data arrays used in the prototype as formal OpenAPI 3.0 endpoint specifications. Covers: <code>top100Tokens[]</code>, <code>eliteWallets[]</code>, <code>allSignals[]</code>, <code>notifInboxItems[]</code>, <code>portfolioHoldings[]</code>, <code>discoveredTokens[]</code>, <code>communityLeaderboard{}</code>, <code>trendingTokens[]</code>, <code>apiEndpoints[]</code>. For each: define schema, response envelope, pagination, auth requirement, and rate limit.</div>
+                <div class="acceptance">
+                    <div class="acc-title">Acceptance Criteria</div>
+                    <ul>
+                        <li>OpenAPI 3.0 YAML spec covering all 9 data sources</li>
+                        <li>Each endpoint specifies: path, method, auth, schema, pagination, rate limit</li>
+                        <li>Spec published to internal docs portal</li>
+                        <li>Schema validated with Swagger validator (zero errors)</li>
+                    </ul>
+                </div>
+                <div class="dep-section">
+                    <div class="tech-label">Dependencies</div>
+                    <div class="dep-item">All mock data arrays in index_v7.html · IS-466 (API Playground)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- IS-486 FE: Tax Summary &amp; KOL Feed UI Pass -->
+        <div class="task-card">
+            <div class="task-header">
+                <div style="display:flex;align-items:center;">
+                    <span class="task-id">IS-486</span>
+                    <span class="task-title">Tax Summary &amp; KOL Feed — UI/UX Consistency Pass</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="team-badge fe">FE</span>
+                    <span class="story-points">3 SP</span>
+                </div>
+            </div>
+            <div class="task-body">
+                <div class="task-desc">Tax Summary: add a 4-stat summary bar (Total Gains, Total Losses, Net P&amp;L, Tax Estimate); ensure Export CSV button is present; confirm no emoji. KOL Feed: replace like/retweet count display with plain text (no emoji); ensure KOL avatar initials render correctly via <code>.kol-avatar</code>; add token filter pills to KOL feed; confirm all token pill <code>onclick</code> handlers work. Both pages: consistent hero section, card structure, empty states.</div>
+                <div class="acceptance">
+                    <div class="acc-title">Acceptance Criteria</div>
+                    <ul>
+                        <li>Tax Summary: 4 stats visible, Export CSV functional</li>
+                        <li>KOL Feed: no emoji in engagement counts, avatar initials render</li>
+                        <li>KOL token filter pills correctly filter the post grid</li>
+                        <li>Both pages: zero emoji, consistent card/hero structure</li>
+                    </ul>
+                </div>
+                <div class="dep-section">
+                    <div class="tech-label">Dependencies</div>
+                    <div class="dep-item">renderTaxSummary() · renderKolFeed() · IS-452 (emoji pass)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- IS-487 QA: Sprint 32 Full Prototype Validation -->
+        <div class="task-card">
+            <div class="task-header">
+                <div style="display:flex;align-items:center;">
+                    <span class="task-id">IS-487</span>
+                    <span class="task-title">Sprint 32 Full Prototype Validation — Clickability, Empty States, Routing, No Emoji</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="team-badge qa">QA</span>
+                    <span class="story-points">5 SP</span>
+                </div>
+            </div>
+            <div class="task-body">
+                <div class="task-desc">Comprehensive end-to-end prototype validation for Sprint 32. Open every navigable route in index_v7.html. Verify: (1) no <code>href="#"</code> dead links; (2) no blank pages on any route; (3) all empty states render correctly; (4) pushNotification() fires during live sim; (5) zero JS errors on any route; (6) zero emoji across all pages; (7) all pro-gated and auth-gated pages show correct prompts; (8) Tax Summary and KOL Feed consistency. Compile a final QA sign-off checklist.</div>
+                <div class="acceptance">
+                    <div class="acc-title">Acceptance Criteria</div>
+                    <ul>
+                        <li>All 30+ routes render without JS error</li>
+                        <li>Zero dead <code>href="#"</code> links</li>
+                        <li>Empty state renders on: Watchlist (empty), Signals (all-sells filter), Portfolio (no holdings)</li>
+                        <li>pushNotification() fires during live sim — inbox badge increments</li>
+                        <li>Emoji grep: 0 matches</li>
+                        <li>QA sign-off checklist completed and approved</li>
+                    </ul>
+                </div>
+                <div class="dep-section">
+                    <div class="tech-label">Dependencies</div>
+                    <div class="dep-item">IS-479 · IS-480 · IS-482 · IS-483 · IS-486</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="scope-note">
+            <strong>Sprint 32 Scope Summary:</strong>
+            IS-479 Clickability Audit — FE (6 SP) · IS-480 Empty State Audit — FE (5 SP) · IS-481 Flow Audit Design — Design (4 SP) · IS-482 pushNotification Pipeline — BE (5 SP) · IS-483 Routing Logic Audit — FE (4 SP) · IS-484 Final UI Audit — Design (4 SP) · IS-485 OpenAPI Spec — BE (5 SP) · IS-486 Tax/KOL UI Pass — FE (3 SP) · IS-487 Full Prototype Validation — QA (5 SP). Sprint 32 total: <strong>41 SP</strong>. Cumulative grand total across all sprints (8–32): <strong>561 SP</strong>. Prototype: <a href="index_v7.html" style="color:#000;font-weight:700;">index_v7.html</a>.
+        </div>
+
     </div>
 
     <footer>
