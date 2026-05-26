@@ -2,7 +2,7 @@
 <html lang="en"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Unlimit · Intelligent System · v7</title>
+<title>Unlimit · Intelligent System · v2.0.0 · Expansion</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
 <style>
@@ -2609,7 +2609,7 @@
   <aside id="sidebar" class="sidebar">
     <div class="brand">
       <div class="brand-mark" onclick="toggleSidebar()">U</div>
-      <div class="brand-name" onclick="toggleSidebar()">Unlimit<small>Intelligent System</small></div>
+      <div class="brand-name" onclick="toggleSidebar()">Unlimit<small>v2.0.0 · Expansion</small></div>
       <button class="sidebar-collapse" onclick="toggleSidebar()" aria-label="Toggle sidebar" title="Collapse sidebar">
         <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
       </button>
@@ -3010,8 +3010,8 @@
 <script>
 // ==================== STATE ====================
 const appState = {
-  authState: 'unauthenticated',
-  user: { username:'', email:'', walletAddress:'', balance:0, tier:'Free', planStatus:'Active', loginProvider:'google', avatarUrl:null, joinDate:'2026-01-15', renewalDate:'2026-05-01' },
+  authState: 'emailConnected',
+  user: { username:'demo', email:'demo@unlimit.io', walletAddress:'', balance:0, tier:'Pro', planStatus:'Active', loginProvider:'google', avatarUrl:null, joinDate:'2026-01-15', renewalDate:'2026-07-01' },
   currentTab: 'billing',
   currentPage: 'welcome',
   apiKeys: [],
@@ -3878,8 +3878,29 @@ function _authWall(featureLabel, type = 'login'){
 }
 
 // ==================== PLAN GATING ====================
-function _isPro(){
-  return appState.user.tier === 'Pro' || appState.user.tier === 'Enterprise';
+// v2.0.0 - Phase 1+2 Features (Expansion phase)
+const PHASE_MAX = 2; // v2.0.0 shows Phase 1+2
+const PHASE_FEATURES = {
+  1: ['alertrules','priceAlerts','watchlist','portfolio','signals','compare','top100','heatmap','dashboard','overview','feed','launches','kolFeed','notifInbox','shareHub','settings'],
+  2: ['smartMoney','copyTrading','discovery','widgets','consensus','sentiment','dex','strategies','aiCurator','mmTracker','ctReport','profiler','research','alertsHistory'],
+  3: ['backtest','apiPlayground','rebalancer','stratCompare','multiWallet'],
+  4: []
+};
+// Build list of features NOT available in this phase
+const HIDDEN_FEATURES = [];
+for (let p = PHASE_MAX + 1; p <= 4; p++) {
+  HIDDEN_FEATURES.push(...PHASE_FEATURES[p]);
+}
+
+function _isPro(){ return true; } // v2.0.0 — all Phase 1+2 features unlocked
+
+function applyPhaseVisibility(){
+  // Hide features not in this phase
+  HIDDEN_FEATURES.forEach(feature => {
+    const navId = NAV_MAP[feature];
+    const el = document.getElementById(navId);
+    if (el) el.style.display = 'none';
+  });
 }
 
 function applyNavLockStates(){
@@ -3890,6 +3911,8 @@ function applyNavLockStates(){
     if (locked) el.classList.add('nav-locked');
     else el.classList.remove('nav-locked');
   });
+  // Also apply phase visibility
+  applyPhaseVisibility();
 }
 
 function renderProUpsellPage(featureName){
@@ -3997,7 +4020,8 @@ const NAV_MAP = {
   community:'nav-community', taxSummary:'nav-taxSummary'
 };
 // Pages that require a Pro subscription
-const PRO_PAGES = ['smartMoney','copyTrading','discovery','widgets','alertrules','consensus','sentiment','dex','strategies','profiler','backtest','multiWallet','apiPlayground','aiAdvisor','rebalancer','stratCompare','alertsHistory','mmTracker','ctReport','aiCurator'];
+// v2.0.0 (Expansion phase): Phase 1+2 Pro features available; all Phase 1+2 unlocked for Pro users
+const PRO_PAGES = ['smartMoney','copyTrading','discovery','widgets','alertrules','consensus','sentiment','dex','strategies','profiler','backtest','multiWallet','apiPlayground','aiAdvisor','rebalancer','stratCompare','alertsHistory','mmTracker','ctReport','aiCurator','research'];
 // Display names for Pro-gated pages
 // Display names for Pro-gated pages
 const PRO_PAGE_NAMES = {
@@ -4221,7 +4245,7 @@ function renderOverview(){
       <div class="hero-row">
         <div>
           <h1>Overview</h1>
-          <p class="sub">Solana on-chain analytics, elite wallet PnL, and AI-enriched news intelligence — at a glance.</p>
+          <p class="sub">Expansion phase · AI-powered predictive intelligence, smart money analytics, and Pro tier.</p>
         </div>
       </div>
     </div>
@@ -6306,6 +6330,34 @@ function renderBillingTab(){
             </div>
           </div>
 
+          <!-- PRO+ -->
+          <div class="plan-card plan-pro ${tier==='Pro+'?'current':''}">
+            ${tier==='Pro+'?'<div class="plan-card-badge">CURRENT</div>':''}
+            <div class="plan-name">Pro+ <span class="badge badge-accent" style="margin-left:6px;">POWER</span></div>
+            <div class="plan-price">$99</div>
+            <div class="plan-price-sub">per month &middot; or $990 / yr (save 2 months)</div>
+            <div class="plan-divider"></div>
+            <ul class="plan-features">
+              <li><span class="pf-icon check">✓</span> <strong>Everything in Pro</strong></li>
+              <li><span class="pf-icon check">✓</span> Anomaly Detection model</li>
+              <li><span class="pf-icon check">✓</span> Whale Consensus Scanner</li>
+              <li><span class="pf-icon check">✓</span> Strategy Backtesting engine</li>
+              <li><span class="pf-icon check">✓</span> Portfolio Rebalancer</li>
+              <li><span class="pf-icon check">✓</span> API Playground &amp; SDK</li>
+              <li><span class="pf-icon check">✓</span> Webhook support</li>
+              <li><span class="pf-icon check">✓</span> iOS &amp; Android mobile apps</li>
+              <li><span class="pf-icon check">✓</span> Push notifications</li>
+              <li><span class="pf-icon check">✓</span> Developer documentation</li>
+            </ul>
+            <div class="plan-card-cta">
+              ${tier!=='Pro+'
+                ? '<button class="btn btn-accent" onclick="showToast(\'Pro+ trial coming soon\')" style="width:100%;">Coming soon →</button>'
+                : tier==='Pro+' && planStatus!=='Canceled'
+                  ? '<button class="btn btn-danger" onclick="cancelSubscription()" style="width:100%;">Cancel subscription</button>'
+                  : '<button class="btn btn-accent" onclick="startTrial()" style="width:100%;">Reactivate Pro+</button>'}
+            </div>
+          </div>
+
           <!-- ENTERPRISE -->
           <div class="plan-card ${tier==='Enterprise'?'current':''}">
             ${tier==='Enterprise'?'<div class="plan-card-badge">CURRENT</div>':''}
@@ -6314,7 +6366,7 @@ function renderBillingTab(){
             <div class="plan-price-sub">Volume pricing &middot; annual contract</div>
             <div class="plan-divider"></div>
             <ul class="plan-features">
-              <li><span class="pf-icon check">✓</span> <strong>Everything in Pro</strong></li>
+              <li><span class="pf-icon check">✓</span> <strong>Everything in Pro+</strong></li>
               <li><span class="pf-icon check">✓</span> Unlimited API calls / day</li>
               <li><span class="pf-icon check">✓</span> Full data history</li>
               <li><span class="pf-icon check">✓</span> Dedicated account manager</li>
@@ -10006,3 +10058,4 @@ init();
 
 
 </body></html>
+

@@ -2,7 +2,7 @@
 <html lang="en"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Unlimit · Intelligent System · v7</title>
+<title>Unlimit · Intelligent System · v1.0.0 · Foundation</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
 <style>
@@ -2609,7 +2609,7 @@
   <aside id="sidebar" class="sidebar">
     <div class="brand">
       <div class="brand-mark" onclick="toggleSidebar()">U</div>
-      <div class="brand-name" onclick="toggleSidebar()">Unlimit<small>Intelligent System</small></div>
+      <div class="brand-name" onclick="toggleSidebar()">Unlimit<small>v1.0.0 · Foundation</small></div>
       <button class="sidebar-collapse" onclick="toggleSidebar()" aria-label="Toggle sidebar" title="Collapse sidebar">
         <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
       </button>
@@ -3878,8 +3878,31 @@ function _authWall(featureLabel, type = 'login'){
 }
 
 // ==================== PLAN GATING ====================
+// v1.0.0 - Phase 1 Features Only
+const PHASE_MAX = 1; // v1.0.0 shows Phase 1 only
+const PHASE_FEATURES = {
+  1: ['alertrules','priceAlerts','watchlist','portfolio','signals','compare','top100','heatmap','dashboard','overview','feed','launches','kolFeed','notifInbox','shareHub','settings'],
+  2: ['smartMoney','copyTrading','discovery','widgets','consensus','sentiment','dex','strategies','aiCurator','mmTracker','ctReport','profiler','research','alertsHistory'],
+  3: ['backtest','apiPlayground','rebalancer','stratCompare','multiWallet'],
+  4: []
+};
+// Build list of features NOT available in this phase
+const HIDDEN_FEATURES = [];
+for (let p = PHASE_MAX + 1; p <= 4; p++) {
+  HIDDEN_FEATURES.push(...PHASE_FEATURES[p]);
+}
+
 function _isPro(){
   return appState.user.tier === 'Pro' || appState.user.tier === 'Enterprise';
+}
+
+function applyPhaseVisibility(){
+  // Hide features not in this phase
+  HIDDEN_FEATURES.forEach(feature => {
+    const navId = NAV_MAP[feature];
+    const el = document.getElementById(navId);
+    if (el) el.style.display = 'none';
+  });
 }
 
 function applyNavLockStates(){
@@ -3890,6 +3913,8 @@ function applyNavLockStates(){
     if (locked) el.classList.add('nav-locked');
     else el.classList.remove('nav-locked');
   });
+  // Also apply phase visibility
+  applyPhaseVisibility();
 }
 
 function renderProUpsellPage(featureName){
@@ -3997,7 +4022,8 @@ const NAV_MAP = {
   community:'nav-community', taxSummary:'nav-taxSummary'
 };
 // Pages that require a Pro subscription
-const PRO_PAGES = ['smartMoney','copyTrading','discovery','widgets','alertrules','consensus','sentiment','dex','strategies','profiler','backtest','multiWallet','apiPlayground','aiAdvisor','rebalancer','stratCompare','alertsHistory','mmTracker','ctReport','aiCurator'];
+// v1.0.0 (Foundation phase): Phase 1 Pro features only; Phase 2+ features locked
+const PRO_PAGES = ['smartMoney','copyTrading','discovery','widgets','alertrules','consensus','sentiment','dex','strategies','mmTracker','ctReport','aiCurator','research','backtest','profiler','multiWallet','apiPlayground','aiAdvisor','rebalancer','stratCompare','alertsHistory'];
 // Display names for Pro-gated pages
 // Display names for Pro-gated pages
 const PRO_PAGE_NAMES = {
@@ -4221,7 +4247,7 @@ function renderOverview(){
       <div class="hero-row">
         <div>
           <h1>Overview</h1>
-          <p class="sub">Solana on-chain analytics, elite wallet PnL, and AI-enriched news intelligence — at a glance.</p>
+          <p class="sub">Foundation phase · Core analytics platform — wallet tracking, basic alerts, and token metrics.</p>
         </div>
       </div>
     </div>
@@ -6303,28 +6329,6 @@ function renderBillingTab(){
                 : tier==='Pro' && planStatus!=='Canceled'
                   ? '<button class="btn btn-danger" onclick="cancelSubscription()" style="width:100%;">Cancel subscription</button>'
                   : '<button class="btn btn-accent" onclick="startTrial()" style="width:100%;">Reactivate Pro</button>'}
-            </div>
-          </div>
-
-          <!-- ENTERPRISE -->
-          <div class="plan-card ${tier==='Enterprise'?'current':''}">
-            ${tier==='Enterprise'?'<div class="plan-card-badge">CURRENT</div>':''}
-            <div class="plan-name">Enterprise</div>
-            <div class="plan-price" style="font-size:22px;margin-top:14px;">Custom</div>
-            <div class="plan-price-sub">Volume pricing &middot; annual contract</div>
-            <div class="plan-divider"></div>
-            <ul class="plan-features">
-              <li><span class="pf-icon check">✓</span> <strong>Everything in Pro</strong></li>
-              <li><span class="pf-icon check">✓</span> Unlimited API calls / day</li>
-              <li><span class="pf-icon check">✓</span> Full data history</li>
-              <li><span class="pf-icon check">✓</span> Dedicated account manager</li>
-              <li><span class="pf-icon check">✓</span> Custom data endpoints</li>
-              <li><span class="pf-icon check">✓</span> White-label options</li>
-              <li><span class="pf-icon check">✓</span> SLA &amp; priority support</li>
-              <li><span class="pf-icon check">✓</span> On-prem deployment options</li>
-            </ul>
-            <div class="plan-card-cta">
-              <button class="btn" onclick="contactSales()" style="width:100%;">${tier==='Enterprise'?'Manage plan':'Contact sales →'}</button>
             </div>
           </div>
 
