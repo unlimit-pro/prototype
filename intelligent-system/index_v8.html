@@ -2599,6 +2599,70 @@
   .sidebar.collapsed .sidebar-search-label,
   .sidebar.collapsed .sidebar-search-kbd{ display: none; }
   .sidebar.collapsed .sidebar-search-bar svg{ flex-shrink: 0; }
+
+  /* ==================== GLOSSARY TOOLTIPS ==================== */
+  .gloss-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 13px; height: 13px;
+    border-radius: 50%;
+    background: var(--accent-soft);
+    color: var(--accent-ink);
+    font-size: 8px;
+    font-weight: 800;
+    font-style: normal;
+    font-family: 'Inter', sans-serif;
+    cursor: help;
+    margin-left: 5px;
+    vertical-align: middle;
+    flex-shrink: 0;
+    position: relative;
+    user-select: none;
+    line-height: 1;
+    transition: background .15s;
+  }
+  .gloss-icon:hover { background: var(--accent); color: #fff; }
+  .gloss-icon::after {
+    content: attr(data-gloss);
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    background: var(--ink-2);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 1.5;
+    padding: 8px 11px;
+    border-radius: var(--r-md);
+    white-space: normal;
+    width: 220px;
+    box-shadow: var(--shadow-3);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .15s, transform .15s;
+    z-index: 9999;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  .gloss-icon::before {
+    content: '';
+    position: absolute;
+    bottom: calc(100% + 4px);
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: var(--ink-2);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .15s;
+    z-index: 9999;
+  }
+  .gloss-icon:hover::after,
+  .gloss-icon:hover::before { opacity: 1; }
+  .gloss-icon:hover::after { transform: translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
@@ -10053,6 +10117,123 @@ function showToast(msg){
 }
 
 // ==================== START ====================
+
+// ==================== GLOSSARY TOOLTIPS ====================
+const GLOSSARY = {
+  'Market Cap':               'Total market value of all circulating tokens. = Current Price × Circulating Supply.',
+  'FDV':                      'Fully Diluted Valuation — theoretical market cap if every token (including locked/unvested) were in circulation.',
+  '24h Volume':               'Total trading volume across all exchanges in the last 24 hours.',
+  '24h DEX Volume':           'Total volume traded on decentralised exchanges (DEXs) in the past 24 hours.',
+  '24H Price':                'Current 24-hour spot price of the token.',
+  'TVL':                      'Total Value Locked — total assets deposited in DeFi or AMM liquidity pools.',
+  'Total TVL':                'Total Value Locked across all tracked DEX liquidity pools.',
+  'Raydium TVL':              'Total Value Locked in Raydium\'s automated market-maker (AMM) pools.',
+  'Orca TVL':                 'Total Value Locked in Orca\'s concentrated liquidity (CLMM) pools.',
+  'ATH / ATL':                'All-Time High / All-Time Low — the historical peak and floor prices of the token.',
+  'ATH':                      'All-Time High — the highest price the token has ever reached.',
+  'ATL':                      'All-Time Low — the lowest price the token has ever recorded.',
+  'PnL':                      'Profit & Loss — net gain or loss on a position or portfolio.',
+  'Total PnL':                'Combined net profit or loss across all trades in the portfolio.',
+  'Total P&L':                'Combined net profit or loss across all logged trades.',
+  'Copy PnL':                 'Profit & Loss generated exclusively from copy-trading another wallet.',
+  'Unrealized P&L':           'Gain or loss on positions still open — not yet converted to cash.',
+  'Unrealised P&L':           'Gain or loss on open positions that have not yet been closed.',
+  'Win Rate':                 'Percentage of closed trades that ended in profit. Higher = more consistent profitability.',
+  'Net Worth':                'Total current market value of all your held assets combined.',
+  'Total Value':              'Combined current market value of all portfolio holdings.',
+  'Cost Basis':               'The original price paid for an asset, used to calculate unrealised gains or losses.',
+  'Token Velocity':           'How frequently a token changes hands relative to its supply. High velocity can indicate active speculation.',
+  'Unique Holders':           'Number of distinct wallet addresses currently holding this token.',
+  'Market sentiment':         'Aggregate bullish vs. bearish mood derived from news, social media, and on-chain signals.',
+  'Market momentum':          'Rate of change in price and volume trends — indicates how strong the current trend is.',
+  'Total Whale Capital':      'Combined USD value of assets held by large tracked wallets (whales).',
+  'Active MMs':               'Market Makers actively quoting bid and ask prices to provide liquidity.',
+  'Total 24h MM Volume':      'Total trading volume generated by market makers over the past 24 hours.',
+  'Avg Spread':               'Average bid-ask spread across tracked market makers in basis points (bps). Tighter = more liquid.',
+  'Liquidity':                'Ease of buying or selling an asset without significantly moving its price.',
+  'Buy signals':              'AI-identified indicators suggesting a potential upward price move or buying opportunity.',
+  'Sell signals':             'AI-identified indicators suggesting a potential downward price move or selling pressure.',
+  'Copy Trading':             'Automatically mirroring another trader\'s positions and executions in real-time.',
+  'Volume copied':            'Total USD value of trades replicated via the copy trading feature.',
+  'Trades executed':          'Total number of trades placed automatically through copy trading.',
+  'Active strategies':        'Number of automated trading strategies currently running and placing orders.',
+  'Total Deployed':           'Total capital currently allocated and active across all automated strategies.',
+  'Execution engine':         'The automated system that converts strategy signals into real market orders.',
+  'Active consensus signals': 'Signals where multiple whale wallets agree on the same directional trade.',
+  'Strongest Signal':         'The highest-conviction directional signal from the current whale consensus data.',
+  'Watching window':          'Time window during which whale wallet activity is aggregated for consensus analysis.',
+  'Price':                    'Current market price of the selected token.',
+  'Total Referrals':          'Total number of users who signed up using your referral link.',
+  'Active Subscribers':       'Referred users who maintain an active paid subscription.',
+  'Rewards Earned':           'Total commissions or credits earned from successful referrals.',
+  'Best Trade':               'The highest percentage gain recorded in your trade journal.',
+  'Worst Trade':              'The largest percentage loss recorded in your trade journal.',
+  'Triggers Today':           'Number of price or condition alerts that fired in the current calendar day.',
+  'Active rules':             'Number of alert rules currently enabled and monitoring the market.',
+  'Following':                'Number of elite wallets or traders you are currently copy-trading.',
+  'Sentiment':                'NLP-derived market tone for a news item — Bullish, Bearish, or Neutral.',
+  'Emotion':                  'Detected emotional tone of a news article (e.g. Fear, Excitement, Caution).',
+  'Verified':                 'Newly minted tokens that have passed on-chain verification checks.',
+  'Unverified':               'Newly minted tokens that have not yet been verified — exercise caution.',
+  'Suspicious':               'Newly minted tokens flagged by heuristics as potentially fraudulent or scam-related.',
+  'Assets':                   'Number of distinct token holdings in the portfolio.',
+  'Epoch':                    'A fixed time window (~2 days on Solana) used for staking reward calculation and validator metrics.',
+  'Active alerts':            'Number of alert rules that are currently active and monitoring market conditions.',
+  'Active elite wallets':     'Tracked high-value wallets (whales/insiders) that have been active in the last 24 hours.',
+  'Overall Mood':             'Aggregated social sentiment across all tracked tokens and news — Bullish, Bearish, or Neutral.',
+  'Total Mentions':           'Total number of social media and news mentions across all tracked tokens in the period.',
+  'Trending Tokens':          'Tokens with the highest recent surge in social mentions or on-chain activity.',
+  'Top Mentioned':            'The token with the most social media and news references in the selected period.',
+  'Triggered today':          'Number of alert rules that fired at least once in the current calendar day.',
+  'Delivery: In-App':         'Alerts delivered as in-app notifications inside the Unlimit dashboard.',
+  'Delivery: Email':          'Alerts delivered to your registered email address.',
+  'Live signals':             'Real-time AI-generated buy/sell signals based on on-chain and market data.',
+  'Most active token':        'The token generating the highest number of signals in the current session.',
+  'Avg Spread (filtered)':    'Average bid-ask spread (bps) for the currently filtered set of market makers.',
+};
+
+function applyGlossary(root) {
+  root = root || document;
+  const selectors = '.stat-label, .lbl, .pnl-box .lbl';
+  root.querySelectorAll(selectors).forEach(el => {
+    if (el.querySelector('.gloss-icon')) return; // already annotated
+    const raw = el.textContent.replace(/·.*$/, '').trim();
+    const matched = Object.keys(GLOSSARY).find(k =>
+      raw === k ||
+      raw.toLowerCase() === k.toLowerCase() ||
+      raw.toLowerCase().startsWith(k.toLowerCase())
+    );
+    if (matched) {
+      const icon = document.createElement('span');
+      icon.className = 'gloss-icon';
+      icon.setAttribute('data-gloss', GLOSSARY[matched]);
+      icon.textContent = 'i';
+      el.appendChild(icon);
+    }
+  });
+}
+
+(function() {
+  // Apply once body is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => applyGlossary());
+  } else {
+    setTimeout(() => applyGlossary(), 0);
+  }
+  // Re-apply whenever new nodes are added to #content (dynamic renders)
+  const obs = new MutationObserver(mutations => {
+    mutations.forEach(m => m.addedNodes.forEach(n => {
+      if (n.nodeType === 1) applyGlossary(n);
+    }));
+  });
+  const contentEl = document.getElementById('content');
+  if (contentEl) obs.observe(contentEl, { childList: true, subtree: true });
+  else document.addEventListener('DOMContentLoaded', () => {
+    const el = document.getElementById('content');
+    if (el) obs.observe(el, { childList: true, subtree: true });
+  });
+})();
+
 init();
 </script>
 
