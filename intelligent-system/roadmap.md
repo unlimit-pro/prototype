@@ -13,7 +13,7 @@ The development schedule is divided into four six-month phases designed to move 
 | Feature Category                | Free | Pro | Pro+ | Enterprise |
 |---------------------------------|------|-----|------|------------|
 | Market Overview, Top 100, Heatmap | ✔    | ✔   | ✔    | ✔          |
-| Intelligence Feed (basic)       | ✔    | ✔   | ✔    | ✔          |
+| Intelligence Feed (AI-enriched)   |      | ✔   | ✔    | ✔          |
 | Basic Alerts, 24h history       | ✔    | ✔   | ✔    | ✔          |
 | 10 wallet slots, 7d history     | ✔    | ✔   | ✔    | ✔          |
 | Elite Wallet tracking           |      | ✔   | ✔    | ✔          |
@@ -57,7 +57,6 @@ The development schedule is divided into four six-month phases designed to move 
 - Market Overview Dashboard with real-time Solana network stats
 - Top 100 Token Rankings with price, volume, and 24h change
 - Fund Flow Heatmap for visual capital movement
-- Intelligence Feed with AI-enriched news (basic tier)
 
 ### Wallet & Token Tracking
 - Elite Wallet tracking — logic-based thresholds for volume, win rate, and P&L
@@ -87,11 +86,12 @@ The development schedule is divided into four six-month phases designed to move 
 
 ## Phase 2 · Expansion — Months 7–12
 
-**Summary:** Deploy advanced AI models for Predictive Insights and Anomaly Detection.
+**Summary:** Deploy the AI-enriched Intelligence Feed, advanced predictive models, and Anomaly Detection.
 
 **Goal:** Launch Pro and Enterprise tiers and expand the team to 15 members.
 
 ### AI & Predictive Intelligence
+- Intelligence Feed with AI-enriched news
 - AI/ML-based Predictive Insights — framed as informational signals with explicit disclaimer (not financial guarantees)
 - Anomaly Detection model for unusual on-chain activity
 - AI Market Assistant (RAG chatbot) for contextual token queries
