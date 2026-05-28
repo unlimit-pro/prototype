@@ -4708,73 +4708,160 @@ function _renderTrendingTab(tabBar){
     <div class="banner" style="margin-top:12px;"><span class="banner-dot"></span><div>Rank movement shows change from previous 24h period. Positive = moved up, negative = moved down.</div></div>`;
 }
 
-// ==================== SMART MONEY ====================
+// ==================== SMART MONEY (WHALES INTELLIGENCE) ====================
+// Whale table mock data
+const whaleTableData = [
+  { addr:'0xBb3C6B709EE93A87408...', score:92, usd:'$250M', tokens:[{sym:'SOL',color:'#9945ff'},{sym:'WIF',color:'#f5a623'}], txCount:938, flow:'+$15M', flowDir:'pos', pnl:'+$15M', pnlDir:'pos', lastActive:'5 min ago' },
+  { addr:'0xBb3C6B709EE93A87408...', score:88, usd:'$180M', tokens:[{sym:'BONK',color:'#f5a623'},{sym:'JUP',color:'#4a90d9'}], txCount:362, flow:'-$5M', flowDir:'neg', pnl:'-$5M', pnlDir:'neg', lastActive:'1 hour ago' },
+  { addr:'0xBb3C6B709EE93A87408...', score:75, usd:'$320M', tokens:[{sym:'PYTH',color:'#22c55e'},{sym:'RNDR',color:'#ef4444'}], txCount:251, flow:'+$2M', flowDir:'pos', pnl:'+$2M', pnlDir:'pos', lastActive:'30 min ago' },
+  { addr:'0xBb3C6B709EE93A87408...', score:80, usd:'$110M', tokens:[{sym:'MEME',color:'#f5a623'}], txCount:3, flow:'+$1M', flowDir:'pos', pnl:'+$1M', pnlDir:'pos', lastActive:'2 hour ago' },
+  { addr:'0xBb3C6B709EE93A87408...', score:68, usd:'$400M', tokens:[{sym:'SOL',color:'#9945ff'},{sym:'JTO',color:'#6b7280'}], txCount:129, flow:'-$10M', flowDir:'neg', pnl:'-$10M', pnlDir:'neg', lastActive:'1 hour ago' },
+  { addr:'0xBb3C6B709EE93A87408...', score:68, usd:'$400M', tokens:[{sym:'SOL',color:'#9945ff'},{sym:'JTO',color:'#6b7280'}], txCount:129, flow:'-$10M', flowDir:'neg', pnl:'-$10M', pnlDir:'neg', lastActive:'1 hour ago' },
+  { addr:'0xBb3C6B709EE93A87408...', score:68, usd:'$400M', tokens:[{sym:'SOL',color:'#9945ff'},{sym:'JTO',color:'#6b7280'}], txCount:129, flow:'-$10M', flowDir:'neg', pnl:'-$10M', pnlDir:'neg', lastActive:'1 hour ago' },
+  { addr:'0xBb3C6B709EE93A87408...', score:68, usd:'$400M', tokens:[{sym:'SOL',color:'#9945ff'},{sym:'JTO',color:'#6b7280'}], txCount:129, flow:'-$10M', flowDir:'neg', pnl:'-$10M', pnlDir:'neg', lastActive:'1 hour ago' },
+  { addr:'0xBb3C6B709EE93A87408...', score:68, usd:'$400M', tokens:[{sym:'SOL',color:'#9945ff'},{sym:'JTO',color:'#6b7280'}], txCount:129, flow:'-$10M', flowDir:'neg', pnl:'-$10M', pnlDir:'neg', lastActive:'1 hour ago' },
+  { addr:'0xBb3C6B709EE93A87408...', score:68, usd:'$400M', tokens:[{sym:'SOL',color:'#9945ff'},{sym:'JTO',color:'#6b7280'}], txCount:129, flow:'-$10M', flowDir:'neg', pnl:'-$10M', pnlDir:'neg', lastActive:'1 hour ago' },
+  { addr:'0xBb3C6B709EE93A87408...', score:68, usd:'$400M', tokens:[{sym:'SOL',color:'#9945ff'},{sym:'JTO',color:'#6b7280'}], txCount:129, flow:'-$10M', flowDir:'neg', pnl:'-$10M', pnlDir:'neg', lastActive:'1 hour ago' },
+  { addr:'0xBb3C6B709EE93A87408...', score:68, usd:'$400M', tokens:[{sym:'SOL',color:'#9945ff'},{sym:'JTO',color:'#6b7280'}], txCount:129, flow:'-$10M', flowDir:'neg', pnl:'-$10M', pnlDir:'neg', lastActive:'1 hour ago' },
+  { addr:'0xBb3C6B709EE93A87408...', score:68, usd:'$400M', tokens:[{sym:'SOL',color:'#9945ff'},{sym:'JTO',color:'#6b7280'}], txCount:129, flow:'-$10M', flowDir:'neg', pnl:'-$10M', pnlDir:'neg', lastActive:'1 hour ago' },
+  { addr:'0xBb3C6B709EE93A87408...', score:68, usd:'$400M', tokens:[{sym:'SOL',color:'#9945ff'},{sym:'JTO',color:'#6b7280'}], txCount:129, flow:'-$10M', flowDir:'neg', pnl:'-$10M', pnlDir:'neg', lastActive:'1 hour ago' },
+  { addr:'0xBb3C6B709EE93A87408...', score:68, usd:'$400M', tokens:[{sym:'SOL',color:'#9945ff'},{sym:'JTO',color:'#6b7280'}], txCount:129, flow:'-$10M', flowDir:'neg', pnl:'-$10M', pnlDir:'neg', lastActive:'1 hour ago' },
+  { addr:'0xBb3C6B709EE93A87408...', score:68, usd:'$400M', tokens:[{sym:'SOL',color:'#9945ff'},{sym:'JTO',color:'#6b7280'}], txCount:129, flow:'-$10M', flowDir:'neg', pnl:'-$10M', pnlDir:'neg', lastActive:'1 hour ago' },
+  { addr:'0xBb3C6B709EE93A87408...', score:68, usd:'$400M', tokens:[{sym:'SOL',color:'#9945ff'},{sym:'JTO',color:'#6b7280'}], txCount:129, flow:'-$10M', flowDir:'neg', pnl:'-$10M', pnlDir:'neg', lastActive:'1 hour ago' },
+  { addr:'0xBb3C6B709EE93A87408...', score:68, usd:'$400M', tokens:[{sym:'SOL',color:'#9945ff'},{sym:'JTO',color:'#6b7280'}], txCount:129, flow:'-$10M', flowDir:'neg', pnl:'-$10M', pnlDir:'neg', lastActive:'1 hour ago' },
+  { addr:'0xBb3C6B709EE93A87408...', score:68, usd:'$400M', tokens:[{sym:'SOL',color:'#9945ff'},{sym:'JTO',color:'#6b7280'}], txCount:129, flow:'-$10M', flowDir:'neg', pnl:'-$10M', pnlDir:'neg', lastActive:'1 hour ago' },
+  { addr:'0xBb3C6B709EE93A87408...', score:68, usd:'$400M', tokens:[{sym:'SOL',color:'#9945ff'},{sym:'JTO',color:'#6b7280'}], txCount:129, flow:'-$10M', flowDir:'neg', pnl:'-$10M', pnlDir:'neg', lastActive:'1 hour ago' }
+];
+
+if (!feedState.whalePage) feedState.whalePage = 2;
+if (!feedState.whaleTab) feedState.whaleTab = 'all';
+if (!feedState.whaleFavorites) feedState.whaleFavorites = new Set();
+
 function renderSmartMoney(){
   appState.currentPage = 'smartMoney';
-  const sorted = [...eliteWallets].sort((a,b)=>{
-    let av=a[feedState.sortKey], bv=b[feedState.sortKey];
-    if (typeof av === 'string') return feedState.sortDir==='asc'?av.localeCompare(bv):bv.localeCompare(av);
-    return feedState.sortDir==='asc'?av-bv:bv-av;
-  });
-  const fmt = n => (n>=0?'+':'-')+'$'+Math.abs(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-  const si = k => feedState.sortKey===k ? (feedState.sortDir==='asc'?'▲':'▼') : '↕';
+  const page = feedState.whalePage || 2;
+  const tab = feedState.whaleTab || 'all';
   const q = feedState.walletSearch.trim().toLowerCase();
-  const filtered = sorted.filter(w => !q || w.short.toLowerCase().includes(q) || w.full.toLowerCase().includes(q));
 
-  const rows = filtered.map((w,i)=>`
-    <tr class="row-click" onclick="openWalletDrawer('${w.id}')">
-      <td class="rank">#${i+1}</td>
-      <td><span class="wallet-addr-mono">${w.short}</span></td>
-      <td class="${w.pnl>=0?'pnl-pos':'pnl-neg'}">${fmt(w.pnl)}</td>
-      <td><div class="winrate-bar"><span>${w.winRate.toFixed(1)}%</span><span class="bar"><span style="width:${w.winRate}%"></span></span></div></td>
+  let tableData = [...whaleTableData];
+  if (q) tableData = tableData.filter(w => w.addr.toLowerCase().includes(q));
+  if (tab === 'favorites') tableData = tableData.filter((_,i) => feedState.whaleFavorites.has(i));
+
+  const ROWS_PER_PAGE = 20;
+  const totalPages = 6;
+  const startIdx = (page - 1) * ROWS_PER_PAGE;
+  const pageData = tableData.slice(startIdx, startIdx + ROWS_PER_PAGE);
+
+  const tokenChip = (t) => `<span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;background:var(--surface-3);border-radius:999px;font-size:11px;font-weight:600;font-family:'JetBrains Mono',monospace;margin-right:4px;"><span style="width:8px;height:8px;border-radius:50%;background:${t.color};"></span>${t.sym}</span>`;
+
+  const rows = pageData.map((w, i) => {
+    const globalIdx = startIdx + i;
+    const isFav = feedState.whaleFavorites.has(globalIdx);
+    return `<tr class="row-click">
+      <td><span style="cursor:pointer;font-size:16px;color:${isFav?'var(--warn)':'var(--muted-2)'};" onclick="event.stopPropagation();toggleWhaleFav(${globalIdx})">&#9733;</span></td>
+      <td><span class="wallet-addr-mono">${w.addr}</span></td>
+      <td style="font-family:'JetBrains Mono',monospace;font-weight:600;">${w.score}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-weight:500;">${w.usd}</td>
+      <td>${w.tokens.map(tokenChip).join('')}</td>
+      <td style="font-family:'JetBrains Mono',monospace;">${w.txCount}</td>
+      <td class="${w.flowDir==='pos'?'pnl-pos':'pnl-neg'}">${w.flow}</td>
+      <td class="${w.pnlDir==='pos'?'pnl-pos':'pnl-neg'}">${w.pnl}</td>
       <td class="last-active">${w.lastActive}</td>
-    </tr>`).join('') || `<tr><td colspan="5"><div class="empty-state"><div class="empty-state-title">No wallets match</div><p>Try a different search term.</p></div></td></tr>`;
+    </tr>`;
+  }).join('') || `<tr><td colspan="9"><div class="empty-state"><div class="empty-state-title">No wallets match</div><p>Try a different search or filter.</p></div></td></tr>`;
 
-  const sigHtml = allSignals.slice(0,5).map(s=>`
-    <div class="signal-card">
-      <div class="signal-head"><span class="signal-tag ${s.type==='SELL'?'sell':''}">${s.type}</span><span class="signal-time">${s.ago}</span></div>
-      <div class="signal-wallet"><a onclick="openWalletDrawer('${s.walletId}')">${s.wallet}</a></div>
-      <div class="signal-desc">Swapped ${s.usd} of <strong>${s.token}</strong></div>
-    </div>`).join('');
+  const pageNums = Array.from({length:totalPages},(_,i)=>i+1).map(p =>
+    `<span style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:var(--r-sm);font-size:12px;font-weight:600;font-family:'JetBrains Mono',monospace;cursor:pointer;${p===page?'background:var(--ink);color:#fff;':'background:var(--surface);border:1px solid var(--line);color:var(--muted);'}" onclick="changeWhalePage(${p})">${String(p).padStart(2,'0')}</span>`
+  ).join('');
+  const pagination = `<div style="display:flex;align-items:center;justify-content:center;gap:4px;margin-top:20px;">
+    <span style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:var(--r-sm);border:1px solid var(--line);cursor:pointer;color:var(--muted);font-size:16px;" onclick="changeWhalePage('prev')">&#8249;</span>
+    ${pageNums}
+    <span style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:var(--r-sm);border:1px solid var(--line);cursor:pointer;color:var(--muted);font-size:16px;" onclick="changeWhalePage('next')">&#8250;</span>
+  </div>`;
+
+  const filtersPanel = `<div style="width:280px;min-width:280px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:20px;display:flex;flex-direction:column;gap:20px;height:fit-content;position:sticky;top:0;">
+    <div style="font-size:16px;font-weight:700;letter-spacing:-0.02em;padding-bottom:12px;border-bottom:1px solid var(--line);">Filters</div>
+    <div><div style="font-size:12px;font-weight:600;margin-bottom:6px;">Portfolio Value Range</div><input type="range" min="100" max="1000" value="110" style="width:100%;accent-color:var(--accent);"><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;"><span>$100M</span><span>$1B+</span></div></div>
+    <div><div style="font-size:12px;font-weight:600;margin-bottom:6px;">Whale Score Range</div><input type="range" min="0" max="100" value="50" style="width:100%;accent-color:var(--accent);"><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;"><span>0</span><span>100</span></div></div>
+    <div><div style="font-size:12px;font-weight:600;margin-bottom:6px;">Transaction Range</div><input type="range" min="0" max="1000" value="500" style="width:100%;accent-color:var(--accent);"><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;"><span>0</span><span>1k+</span></div></div>
+    <div><div style="font-size:12px;font-weight:600;margin-bottom:6px;">24H Flow Range</div><input type="range" min="0" max="10000000" value="1000000" style="width:100%;accent-color:var(--accent);"><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;"><span>0</span><span>10M+</span></div></div>
+    <div><div style="font-size:12px;font-weight:600;margin-bottom:6px;">24H PnL Range</div><input type="range" min="0" max="10000000" value="1000000" style="width:100%;accent-color:var(--accent);"><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;"><span>0</span><span>10M+</span></div></div>
+    <div><div style="font-size:12px;font-weight:600;margin-bottom:6px;">Token Exposure Filter</div><input class="form-input" placeholder="eg. SOL, ETH" style="max-width:100%;"></div>
+    <div><div style="font-size:12px;font-weight:600;margin-bottom:6px;">Activity Time Window</div><select class="form-select" style="max-width:100%;"><option selected>24 Hours</option><option>7 Days</option><option>30 Days</option><option>90 Days</option></select></div>
+    <button class="btn btn-accent" style="width:100%;justify-content:center;" onclick="renderSmartMoney()">Apply Filters</button>
+  </div>`;
+
+  const kpis = `<div class="stats" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px;">
+    <div class="stat" style="background:linear-gradient(135deg,oklch(35% 0.15 295),oklch(25% 0.12 280));color:#fff;border:none;">
+      <div class="stat-label" style="color:rgba(255,255,255,0.7);">Tracked Whales</div>
+      <div class="stat-value" style="color:#fff;">1,234</div>
+    </div>
+    <div class="stat" style="background:linear-gradient(135deg,oklch(30% 0.12 240),oklch(25% 0.10 220));color:#fff;border:none;">
+      <div class="stat-label" style="color:rgba(255,255,255,0.7);">Tracked Tokens</div>
+      <div class="stat-value" style="color:#fff;">21</div>
+    </div>
+    <div class="stat" style="background:linear-gradient(135deg,oklch(32% 0.16 295),oklch(22% 0.14 280));color:#fff;border:none;">
+      <div class="stat-label" style="color:rgba(255,255,255,0.7);">Whale Net Buy Volume</div>
+      <div class="stat-value" style="color:#fff;">$1.2B</div>
+    </div>
+    <div class="stat" style="background:linear-gradient(135deg,oklch(30% 0.10 250),oklch(22% 0.12 240));color:#fff;border:none;">
+      <div class="stat-label" style="color:rgba(255,255,255,0.7);">Most Accumulated Token</div>
+      <div class="stat-value" style="color:#fff;">SOL</div>
+    </div>
+  </div>`;
 
   document.getElementById('content').innerHTML = `
     <div class="hero">
-      <div class="hero-row">
-        <div>
-          <h1>Smart Money <span class="serif">leaderboard</span></h1>
-          <p class="sub">Real-time PnL tracking for top-performing Solana traders. <span class="badge badge-solana">Solana only</span></p>
-        </div>
-        <input class="search-input" placeholder="Search wallet address…" value="${feedState.walletSearch}" oninput="onWalletSearchLive(this.value)" />
-      </div>
+      <h1>Whales <span class="serif">Intelligence</span></h1>
+      <p class="sub">Aggregated whale wallet activity with real-time tracking, filters, and PnL analysis.</p>
     </div>
 
-    <div style="display:grid;grid-template-columns:1fr 320px;gap:16px;">
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title"><span class="card-title-icon"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg></span>${filtered.length} elite wallets</div>
+    <div style="display:flex;gap:20px;align-items:flex-start;">
+      ${filtersPanel}
+      <div style="flex:1;min-width:0;">
+        ${kpis}
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap;">
+          <input class="search-input" placeholder="Search wallet address…" value="${feedState.walletSearch}" oninput="onWalletSearchLive(this.value)" style="width:320px;"/>
+          <div class="pills">
+            <button class="pill ${tab==='all'?'active':''}" onclick="setWhaleTab('all')">All Whale</button>
+            <button class="pill ${tab==='favorites'?'active':''}" onclick="setWhaleTab('favorites')">Favorites</button>
+          </div>
         </div>
-        <div class="card-body tight">
-          <table>
-            <thead><tr>
-              <th>Rank</th>
-              <th>Wallet</th>
-              <th class="sortable ${feedState.sortKey==='pnl'?'sorted':''}" onclick="sortLB('pnl')">Total PnL <span class="sort-ind">${si('pnl')}</span></th>
-              <th class="sortable ${feedState.sortKey==='winRate'?'sorted':''}" onclick="sortLB('winRate')">Win rate <span class="sort-ind">${si('winRate')}</span></th>
-              <th>Last active</th>
-            </tr></thead>
-            <tbody>${rows}</tbody>
-          </table>
+        <div class="card">
+          <div class="card-body tight">
+            <table>
+              <thead><tr>
+                <th></th>
+                <th>Wallet Address</th>
+                <th>Whale Score</th>
+                <th>Total USD</th>
+                <th>Token Exposure</th>
+                <th>Transaction Count</th>
+                <th>24H Net Flow</th>
+                <th>24H PnL</th>
+                <th>Last Active</th>
+              </tr></thead>
+              <tbody>${rows}</tbody>
+            </table>
+          </div>
         </div>
-      </div>
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title"><span class="live-dot"></span> Live Signals</div>
-          <a class="card-action" onclick="navigateTo('signals')">All →</a>
-        </div>
-        <div class="card-body" style="display:flex;flex-direction:column;gap:8px;">${sigHtml}</div>
+        ${pagination}
       </div>
     </div>
   `;
+}
+function toggleWhaleFav(idx){
+  if (!feedState.whaleFavorites) feedState.whaleFavorites = new Set();
+  if (feedState.whaleFavorites.has(idx)) feedState.whaleFavorites.delete(idx);
+  else feedState.whaleFavorites.add(idx);
+  renderSmartMoney();
+}
+function setWhaleTab(tab){ feedState.whaleTab = tab; renderSmartMoney(); }
+function changeWhalePage(p){
+  if (p==='prev' && feedState.whalePage > 1) feedState.whalePage--;
+  else if (p==='next' && feedState.whalePage < 6) feedState.whalePage++;
+  else if (typeof p === 'number') feedState.whalePage = p;
+  renderSmartMoney();
 }
 function sortLB(k){
   if (feedState.sortKey === k) feedState.sortDir = feedState.sortDir==='asc'?'desc':'asc';
