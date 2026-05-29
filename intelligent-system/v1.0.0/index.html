@@ -3843,7 +3843,7 @@ function renderAuthState(){
     if (inboxNav) inboxNav.style.display = '';
     if (shareNav) shareNav.style.display = '';
     if (bellBtn) bellBtn.style.display = '';
-    c.innerHTML = `<button class="btn btn-accent" onclick="connectWallet(event)">Connect wallet</button>`;
+    c.innerHTML = `<button class="btn btn-accent" onclick="connectWallet(event)" style="display:none">Connect wallet</button>`;
     renderSidebarAvatar();
   } else {
     sb.classList.remove('hidden');
@@ -3910,7 +3910,7 @@ function _authWall(featureLabel, type = 'login'){
       <div style="font-size:13px;font-weight:700;letter-spacing:.08em;color:var(--muted);margin-bottom:16px;">WALLET</div>
       <div style="font-size:17px;font-weight:700;margin-bottom:8px;">Connect a Wallet</div>
       <div style="color:var(--muted);font-size:13px;margin-bottom:22px;line-height:1.6;">Connect your Solana wallet to view ${featureLabel.toLowerCase()} data linked to your holdings.</div>
-      <button class="btn btn-accent" onclick="connectWallet(event)">Connect Wallet</button>
+      <button class="btn btn-accent" onclick="connectWallet(event)" style="display:none">Connect Wallet</button>
     </div>`;
   }
   if (type === 'login' && !isAuth){
@@ -4975,7 +4975,7 @@ function renderCopyTrading(){
         <div style="display:flex;gap:10px;justify-content:center;">
           ${!isAuth ? '<button class="btn" onclick="signIn()">Sign in</button><button class="btn btn-primary" onclick="signUp()">Sign up</button>' : ''}
           ${isAuth && !isPro ? '<button class="btn btn-accent" onclick="navigateTo(\'settings\');setTimeout(()=>switchTab(\'billing\'),50)">Upgrade to Pro</button>' : ''}
-          ${isAuth && !isWalletConnected ? '<button class="btn btn-primary" onclick="connectWallet(event)">Connect wallet</button>' : ''}
+          ${isAuth && !isWalletConnected ? '<button class="btn btn-primary" onclick="connectWallet(event)" style="display:none">Connect wallet</button>' : ''}
         </div>
       </div>`;
     return;
@@ -6141,7 +6141,7 @@ function renderAccountTab(){
           <div>
             ${isWalletConnected
               ? `<button class="btn btn-danger" onclick="disconnectWallet()">Disconnect</button>`
-              : `<button class="btn btn-accent" onclick="connectWallet(event)">Connect wallet</button>`}
+              : `<button class="btn btn-accent" onclick="connectWallet(event)" style="display:none">Connect wallet</button>`}
           </div>
         </div>
         <div style="font-size:12px;color:var(--muted);margin-top:6px;">
