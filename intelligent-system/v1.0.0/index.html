@@ -1574,91 +1574,6 @@
     background: var(--surface-2);
   }
 
-  /* CHATBOT */
-  .chat-btn{
-    position: fixed;
-    bottom: 20px; right: 20px;
-    width: 48px; height: 48px;
-    background: var(--accent);
-    border-radius: 50%;
-    display: grid; place-items: center;
-    cursor: pointer;
-    z-index: 900;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-    transition: transform .15s, box-shadow .15s;
-    color: #fff;
-    border: none;
-  }
-  .chat-btn:hover{ transform: scale(1.08); box-shadow: 0 6px 24px rgba(0,0,0,0.3); }
-  .chat-btn svg{ width:22px; height:22px; }
-  .chat-panel{
-    position: fixed;
-    bottom: 80px; right: 20px;
-    width: 380px; max-width: 95vw;
-    height: 460px;
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: var(--r-xl);
-    z-index: 950;
-    display: none;
-    flex-direction: column;
-    box-shadow: var(--shadow-3);
-  }
-  .chat-panel.active{ display:flex; }
-  .chat-panel-header{
-    padding: 14px 18px;
-    border-bottom: 1px solid var(--line-2);
-    display:flex; justify-content:space-between; align-items:center;
-  }
-  .chat-panel-title{ font-size:14px; font-weight:600; display:flex; align-items:center; gap:8px; }
-  .chat-panel-title .badge{ font-size:9px; }
-  .chat-messages{
-    flex:1; overflow-y:auto; padding:14px;
-    display:flex; flex-direction:column; gap:10px;
-  }
-  .chat-msg{
-    max-width: 85%;
-    padding: 10px 14px;
-    border-radius: var(--r-md);
-    font-size: 13px;
-    line-height: 1.5;
-  }
-  .chat-msg.bot{
-    background: var(--surface-3);
-    color: var(--ink);
-    align-self: flex-start;
-  }
-  .chat-msg.user{
-    background: var(--ink);
-    color: #fff;
-    align-self: flex-end;
-  }
-  .chat-msg.bot .chat-ref{
-    display:inline-block; padding:2px 6px; background:var(--accent-soft); color:var(--accent-ink);
-    border-radius:3px; font-size:11px; font-weight:600; cursor:pointer; margin:2px 0;
-  }
-  .chat-input-area{
-    padding: 12px 14px;
-    border-top: 1px solid var(--line-2);
-    display:flex; gap:8px; align-items:center;
-  }
-  .chat-input{
-    flex:1; padding:9px 12px; border:1px solid var(--line); border-radius:var(--r-sm);
-    font-size:13px; font-family:inherit; background:var(--surface);
-  }
-  .chat-input:focus{ outline:none; border-color:var(--ink); }
-  .chat-suggestions{
-    padding:8px 14px;
-    border-top:1px solid var(--line-2);
-    display:flex; gap:6px; flex-wrap:wrap;
-  }
-  .chat-suggestion{
-    padding:5px 10px; background:var(--surface-3); border-radius:999px;
-    font-size:11px; font-weight:500; cursor:pointer; color:var(--ink-2);
-    transition: background .12s;
-  }
-  .chat-suggestion:hover{ background:var(--surface-2); }
-
   /* WIDGET BUILDER */
   .widget-catalog{
     background: var(--surface);
@@ -2714,13 +2629,13 @@
 
       <div class="nav-group-label">Intelligence</div>
       <div class="nav">
-        <div class="nav-item" id="nav-feed" onclick="navigateTo('feed')" data-tip="Insights">
+        <div class="nav-item" id="nav-feed" onclick="navigateTo('feed')" data-tip="News">
           <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M9 21h6"></path><path d="M12 3a6 6 0 0 0-4 10.5c.8.8 1.3 1.7 1.5 2.5h5c.2-.8.7-1.7 1.5-2.5A6 6 0 0 0 12 3z"></path></svg></span>
-          <span class="nav-label">Insights</span>
+          <span class="nav-label">News</span>
         </div>
-        <div class="nav-item" id="nav-signals" onclick="navigateTo('signals')" data-tip="Alerts">
+        <div class="nav-item" id="nav-signals" onclick="navigateTo('signals')" data-tip="Trade Signals">
           <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg></span>
-          <span class="nav-label">Alerts</span>
+          <span class="nav-label">Trade Signals</span>
         </div>
 
       </div>
@@ -2736,11 +2651,6 @@
 
       <div class="nav-group-label">Portfolio</div>
       <div class="nav">
-        <div class="nav-item" id="nav-portfolio" onclick="navigateTo('portfolio')" data-tip="Portfolio">
-          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></span>
-          <span class="nav-label">Portfolio</span>
-        </div>
-
         <div class="nav-item" id="nav-priceAlerts" onclick="navigateTo('priceAlerts')" data-tip="Price Alerts">
           <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/><line x1="12" y1="5" x2="12" y2="3"/></svg></span>
           <span class="nav-label">Price Alerts</span>
@@ -2848,10 +2758,6 @@
           <span class="nav-label">Inbox</span>
           <span class="nav-badge" id="inboxBadgeSidebar">3</span>
         </div>
-        <div class="nav-item" id="nav-shareHub" onclick="navigateTo('shareHub')" data-tip="Share &amp; Referral">
-          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></span>
-          <span class="nav-label">Share &amp; Refer</span>
-        </div>
         <div id="nav-settings" class="nav-item" onclick="navigateTo('settings')" data-tip="Settings">
           <span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></span>
           <span class="nav-label">Settings</span>
@@ -2907,29 +2813,6 @@
       <button class="btn" onclick="skipOnboarding()" style="background:transparent;color:var(--muted);">Skip</button>
       <button class="btn btn-primary" id="onboardingNextBtn" onclick="nextOnboardingStep()">Next →</button>
     </div>
-  </div>
-</div>
-
-<button class="chat-btn" id="chatBtn" onclick="toggleChat()" title="AI Market Assistant">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-</button>
-<div class="chat-panel" id="chatPanel">
-  <div class="chat-panel-header">
-    <div class="chat-panel-title"><span class="live-dot"></span> AI Market Assistant <span class="badge badge-accent">PRO</span></div>
-    <button class="close-btn" onclick="toggleChat()" style="width:28px;height:28px;">✕</button>
-  </div>
-  <div class="chat-messages" id="chatMessages">
-    <div class="chat-msg bot">Welcome! I'm your AI Market Assistant powered by on-chain data and news intelligence. Ask me about tokens, wallets, or market trends.</div>
-  </div>
-  <div class="chat-suggestions" id="chatSuggestions">
-    <span class="chat-suggestion" onclick="sendChatPreset('whats_sol')">What's happening with SOL?</span>
-    <span class="chat-suggestion" onclick="sendChatPreset('whale_jup')">Which wallets are accumulating JUP?</span>
-    <span class="chat-suggestion" onclick="sendChatPreset('latest_news')">Summarize latest high-impact news</span>
-    <span class="chat-suggestion" onclick="sendChatPreset('compare')">Compare WIF vs BONK performance</span>
-  </div>
-  <div class="chat-input-area">
-    <input type="text" class="chat-input" id="chatInput" placeholder="Ask about any token, wallet, or trend…" onkeydown="if(event.key==='Enter')sendChat()">
-    <button class="btn btn-primary btn-sm" onclick="sendChat()">Send</button>
   </div>
 </div>
 
@@ -3219,7 +3102,6 @@ const widgetTypes = [
   {id:'wt-heatmap',name:'Fund Flow Heatmap',desc:'Color-coded flow visualization',icon:'<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>'},
   {id:'wt-feed',name:'News Feed',desc:'AI-enriched market intelligence',icon:'<svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M4 9h16M9 4v16"/></svg>'},
   {id:'wt-signals',name:'Live Signals',desc:'Real-time buy/sell alerts',icon:'<svg viewBox="0 0 24 24"><path d="M2 12h4l3-9 6 18 3-9h4"/></svg>'},
-  {id:'wt-chatbot',name:'AI Chatbot',desc:'RAG-powered market assistant',icon:'<svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>'},
   {id:'wt-portfolio',name:'Portfolio Summary',desc:'Copy trading dashboard',icon:'<svg viewBox="0 0 24 24"><path d="M3 7h6l2 3h10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/></svg>'},
   {id:'wt-discovery',name:'Token Discovery',desc:'Newly minted tokens feed',icon:'<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>'}
 ];
@@ -3633,7 +3515,7 @@ const chatResponses = {
 
 appState.widgetPages = [
   {name:'My Dashboard', widgets:['wt-leaderboard','wt-tokens','wt-signals']},
-  {name:'Research', widgets:['wt-feed','wt-heatmap','wt-chatbot']}
+  {name:'Research', widgets:['wt-feed','wt-heatmap']}
 ];
 appState.activeWidgetPage = 0;
 
@@ -3880,7 +3762,6 @@ function renderSidebarAvatar(){
       <span class="acct-caret">▾</span>
     </div>
     <div class="dropdown" id="authDropdown">
-      <div class="dropdown-item" onclick="navigateTo('settings')">Settings</div>
       ${appState.authState === 'walletConnected' ? '<div class="dropdown-item" onclick="disconnectWallet()">Disconnect wallet</div>' : ''}
       <div class="dropdown-item danger" onclick="signOut()">Sign out</div>
     </div>`;
@@ -3979,7 +3860,7 @@ function renderProUpsellPage(featureName){
       </div>
       <div style="font-size:18px;font-weight:700;margin-bottom:8px;letter-spacing:-0.02em;">Pro plan required</div>
       <div style="color:var(--muted);font-size:13px;margin-bottom:22px;line-height:1.6;">
-        <strong>${featureName}</strong> is a Pro-only feature. Upgrade your plan to unlock smart money tracking, copy trading, token discovery, custom widgets, and the AI market assistant.
+        <strong>${featureName}</strong> is a Pro-only feature. Upgrade your plan to unlock smart money tracking, copy trading, token discovery, and custom widgets.
       </div>
       <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
         ${!isAuth
@@ -4124,9 +4005,9 @@ function navigateTo(page){
   else if (page==='overview'){    setCrumbs(['Home']); renderOverview(); }
   else if (page==='top100'){      setCrumbs(['Tokens']); renderTop100(); }
   else if (page==='smartMoney'){  setCrumbs(['Whales']); renderSmartMoney(); }
-  else if (page==='feed'){        setCrumbs(['Insights']); renderFeed(); }
+  else if (page==='feed'){        setCrumbs(['News']); renderFeed(); }
   else if (page==='copyTrading'){ setCrumbs(['Portfolio']); renderCopyTrading(); }
-  else if (page==='signals'){     setCrumbs(['Alerts']); renderSignalsPage(); }
+  else if (page==='signals'){     setCrumbs(['Trade Signals']); renderSignalsPage(); }
   else if (page==='discovery'){   setCrumbs(['Discover']); renderDiscovery(); }
   else if (page==='heatmap'){     setCrumbs(['Heatmap']); renderHeatmap(); }
   else if (page==='widgets'){     setCrumbs(['Widgets']); renderWidgetBuilder(); }
@@ -4221,10 +4102,9 @@ function renderWelcome(){
         ${[
           {title:'Smart Money Leaderboard', desc:'Track top-performing Solana wallets by PnL and win rate.', icon:'<svg viewBox="0 0 24 24"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>'},
           {title:'AI Intelligence Feed', desc:'On-chain correlated news enriched by LLM predictions.', icon:'<svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M4 9h16M9 4v16"/></svg>'},
-          {title:'Live Elite Signals', desc:'Real-time buy/sell signals via WebSocket, sub-5s latency.', icon:'<svg viewBox="0 0 24 24"><path d="M2 12h4l3-9 6 18 3-9h4"/></svg>'},
+          {title:'Live Trade Signals', desc:'Real-time buy/sell signals via WebSocket, sub-5s latency.', icon:'<svg viewBox="0 0 24 24"><path d="M2 12h4l3-9 6 18 3-9h4"/></svg>'},
           {title:'Token Discovery', desc:'Live feed of newly minted tokens with risk classification.', icon:'<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>'},
-          {title:'Fund Flow Heatmap', desc:'Color-coded visualization of capital movement across Top 100 tokens.', icon:'<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>'},
-          {title:'AI Market Assistant', desc:'RAG chatbot powered by on-chain data and news intelligence.', icon:'<svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>'}
+          {title:'Fund Flow Heatmap', desc:'Color-coded visualization of capital movement across Top 100 tokens.', icon:'<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>'}
         ].map(f => `
           <div class="locked-card">
             <span class="lock-pill">SIGN IN</span>
@@ -5513,7 +5393,6 @@ function renderMyDashboard(){
     ];
     const lockedWidgets = [
       {id:'wt-leaderboard', name:'Smart Money Leaderboard'},
-      {id:'wt-chatbot',     name:'AI Market Assistant'},
       {id:'wt-portfolio',   name:'Portfolio Summary'},
       {id:'wt-discovery',   name:'Token Discovery'}
     ];
@@ -5606,46 +5485,6 @@ function resetWidgetPage(){
   saveWidgetPages();
   renderWidgetBuilder();
   showToast('Page reset to default layout');
-}
-
-// ==================== AI CHATBOT (IS-367) ====================
-function toggleChat(){
-  if (!_isPro()){
-    const isAuth = appState.authState !== 'unauthenticated';
-    if (!isAuth) { showToast('Sign up and upgrade to Pro to use the AI Market Assistant'); return; }
-    showToast('Upgrade to Pro to use the AI Market Assistant');
-    appState.currentTab = 'billing'; appState._settingsTabSet = true;
-    navigateTo('settings'); return;
-  }
-  const panel = document.getElementById('chatPanel');
-  panel.classList.toggle('active');
-  feedState.chatOpen = panel.classList.contains('active');
-  if (feedState.chatOpen) document.getElementById('chatInput').focus();
-}
-function sendChat(){
-  const input = document.getElementById('chatInput');
-  const msg = input.value.trim();
-  if (!msg) return;
-  input.value = '';
-  const msgs = document.getElementById('chatMessages');
-  msgs.innerHTML += `<div class="chat-msg user">${msg}</div>`;
-
-  setTimeout(()=>{
-    let response = "I can help with token analysis, wallet tracking, and market intelligence. Try asking about a specific token, wallet, or market trend. <span class=\"chat-ref\" onclick=\"navigateTo('top100')\">View tokens →</span>";
-    const lower = msg.toLowerCase();
-    if (lower.includes('sol') || lower.includes('solana')) response = chatResponses.whats_sol;
-    else if (lower.includes('jup') || lower.includes('accumulating') || lower.includes('whale')) response = chatResponses.whale_jup;
-    else if (lower.includes('news') || lower.includes('impact') || lower.includes('summarize')) response = chatResponses.latest_news;
-    else if (lower.includes('compare') || lower.includes('wif') || lower.includes('bonk') || lower.includes('vs')) response = chatResponses.compare;
-    else if (lower.includes('discovery') || lower.includes('new token')) response = "I've detected 10 new tokens in the past 24h. 3 are verified, 4 unverified, and 3 flagged as suspicious. The most promising new token is PIPPIN with $2.4M initial liquidity. <span class=\"chat-ref\" onclick=\"navigateTo('discovery')\">View discovery →</span>";
-    else if (lower.includes('heatmap') || lower.includes('flow') || lower.includes('fund')) response = "Current heatmap shows strong inflows into BONK (+$5.2M) and ORCA (+$3.1M), while WIF faces outflows (-$3.8M). Overall market sentiment is Greed (72/100). <span class=\"chat-ref\" onclick=\"navigateTo('heatmap')\">View heatmap →</span>";
-    msgs.innerHTML += `<div class="chat-msg bot">${response}</div>`;
-    msgs.scrollTop = msgs.scrollHeight;
-  }, 600);
-}
-function sendChatPreset(key){
-  document.getElementById('chatInput').value = key === 'whats_sol' ? 'What is happening with SOL today?' : key === 'whale_jup' ? 'Which wallets are accumulating JUP?' : key === 'latest_news' ? 'Summarize the latest high-impact news' : key === 'compare' ? 'Compare WIF vs BONK performance' : '';
-  sendChat();
 }
 
 // ==================== DRAWERS ====================
@@ -6127,29 +5966,7 @@ function switchTab(tab){
 
 // ----- Account tab -----
 function renderAccountTab(){
-  const isWalletConnected = appState.authState === 'walletConnected';
   return `
-    <div class="scard">
-      <div class="scard-title">Linked wallet</div>
-      <div class="scard-body">
-        <div class="scard-row">
-          <div>
-            <div class="meta-label" style="margin-bottom:4px;">Wallet address</div>
-            <div class="wallet-addr-mono">${appState.user.walletAddress || 'No wallet connected'}</div>
-            ${isWalletConnected ? `<div style="font-size:12px;color:var(--muted);margin-top:4px;">Balance: <strong class="mono">${appState.user.balance} SOL</strong></div>` : ''}
-          </div>
-          <div>
-            ${isWalletConnected
-              ? `<button class="btn btn-danger" onclick="disconnectWallet()">Disconnect</button>`
-              : `<button class="btn btn-accent" onclick="connectWallet(event)" style="display:none">Connect wallet</button>`}
-          </div>
-        </div>
-        <div style="font-size:12px;color:var(--muted);margin-top:6px;">
-          Connecting a wallet enables on-chain PnL tracking and smart money correlation.
-        </div>
-      </div>
-    </div>
-
     <div class="scard" style="border-color:var(--neg-soft);">
       <div class="scard-title">Account actions</div>
       <div class="scard-body">
@@ -6343,7 +6160,6 @@ function renderBillingTab(){
               <li class="pf-unavail"><span class="pf-icon lock">—</span> Copy Trading &amp; Portfolio</li>
               <li class="pf-unavail"><span class="pf-icon lock">—</span> Token Discovery Feed</li>
               <li class="pf-unavail"><span class="pf-icon lock">—</span> Custom Widget Dashboard</li>
-              <li class="pf-unavail"><span class="pf-icon lock">—</span> AI Market Assistant</li>
               <li class="pf-unavail"><span class="pf-icon lock">—</span> Sub-5s WebSocket signals</li>
             </ul>
             <div class="plan-card-cta">
@@ -6365,7 +6181,6 @@ function renderBillingTab(){
               <li><span class="pf-icon check">✓</span> Copy Trading &amp; Portfolio mirroring</li>
               <li><span class="pf-icon check">✓</span> Token Discovery Feed (live)</li>
               <li><span class="pf-icon check">✓</span> Custom Widget Dashboard builder</li>
-              <li><span class="pf-icon check">✓</span> AI Market Assistant (RAG chatbot)</li>
               <li><span class="pf-icon check">✓</span> Sub-5s signals via WebSocket</li>
               <li><span class="pf-icon check">✓</span> 90-day data history</li>
               <li><span class="pf-icon check">✓</span> Unlimited wallet tracking</li>
@@ -6641,39 +6456,7 @@ function renderNotificationsTab(){
       <div class="scard-title">In-App Alerts</div>
       <div class="scard-body">
         ${row('priceAlerts','Price Alerts','Trigger when a watched token crosses your set price threshold.')}
-        ${row('whaleActivity','Whale Activity','Elite wallet trades above $50K notified in real-time.')}
-        ${row('consensus','Smart Money Consensus','Alert when 3+ elite wallets accumulate the same token.')}
         ${row('newsHighImpact','High-Impact News','AI-scored news with impact ≥ 7/10 from the intelligence feed.')}
-        ${row('portfolioUpdates','Portfolio Updates','Notify on significant P&L changes in your tracked portfolio.')}
-      </div>
-    </div>
-    <div class="scard">
-      <div class="scard-title">Email Digest</div>
-      <div class="scard-body">
-        ${row('emailSummary','Daily Summary Email','Receive a morning digest of overnight signals and top movers.')}
-        <div class="scard-row" style="border:none;padding-top:0;">
-          <div style="font-size:12px;color:var(--muted);">Email delivery requires a verified email address linked to your account.</div>
-          <button class="btn" style="white-space:nowrap;" onclick="showToast('Email settings coming soon')">Manage email →</button>
-        </div>
-      </div>
-    </div>
-    <div class="scard">
-      <div class="scard-title">Notification History</div>
-      <div class="scard-body">
-        ${notifications.length === 0 ? '<div style="color:var(--muted);font-size:13px;">No recent notifications.</div>' :
-          notifications.slice(0,5).map(n=>`
-            <div class="scard-row" style="align-items:flex-start;gap:10px;cursor:pointer;" onclick="navigateTo('${n.page}')">
-              <div style="font-size:18px;">${n.icon}</div>
-              <div style="flex:1;">
-                <div style="font-weight:500;font-size:13px;${n.unread?'color:var(--ink)':''}">${n.title}</div>
-                <div style="font-size:11px;color:var(--muted);">${n.body}</div>
-              </div>
-              <div style="font-size:11px;color:var(--muted);white-space:nowrap;">${n.time}</div>
-            </div>`).join('')
-        }
-        <div style="margin-top:12px;text-align:center;">
-          <button class="btn" onclick="toggleNotifDropdown()">View all notifications </button>
-        </div>
       </div>
     </div>`;
 }
