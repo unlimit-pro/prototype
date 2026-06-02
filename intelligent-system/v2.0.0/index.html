@@ -2673,12 +2673,7 @@
 
     <div class="sidebar-scroll">
 
-      <!-- Sidebar Search -->
-      <div class="sidebar-search-bar" onclick="openSearchPalette()" title="Search (Ctrl+K)">
-        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <span class="sidebar-search-label">Search tokens, pages…</span>
-        <span class="sidebar-search-kbd">⌘K</span>
-      </div>
+      
 
       <!-- ======== FREE PLAN ======== -->
       <div class="nav-group-label">Overview</div>
@@ -2862,6 +2857,13 @@
       <div style="display:flex;align-items:center;gap:8px;">
         <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleMobileSidebar()" title="Menu">☰</button>
         <div class="crumbs" id="crumbs"><strong>Home</strong></div>
+      </div>
+      <div class="topbar-search" style="display:flex;align-items:center;flex:1;justify-content:flex-end;margin-right:16px;">
+        <div class="sidebar-search-bar" onclick="openSearchPalette()" title="Search (Ctrl+K)" style="margin:0;">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <span class="sidebar-search-label">Search tokens, pages…</span>
+          <span class="sidebar-search-kbd">⌘K</span>
+        </div>
       </div>
       <div class="topbar-actions">
         <div id="authContainer" style="display:flex;align-items:center;gap:8px;"></div>
