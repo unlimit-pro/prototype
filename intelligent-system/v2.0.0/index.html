@@ -2641,7 +2641,7 @@
     pointer-events: none;
     opacity: 0;
     transition: opacity .15s;
-    z-index: 9999;
+    z-index: 99999;
     font-family: 'Inter', sans-serif;
     letter-spacing: 0;
     text-transform: none;
@@ -2656,7 +2656,7 @@
     pointer-events: none;
     opacity: 0;
     transition: opacity .15s;
-    z-index: 9999;
+    z-index: 99999;
   }
   .gloss-icon:hover::after,
   .gloss-icon:hover::before { opacity: 1; }
@@ -6188,18 +6188,16 @@ function renderSettings(){
   document.getElementById('content').innerHTML = `
     <div class="hero">
       <h1>Settings</h1>
-      <p class="sub">Manage your account, billing, API keys, and notification preferences.</p>
+      <p class="sub">Manage your account, billing, and notification preferences.</p>
     </div>
     <div class="settings-tabs">
       <button class="stab ${tab==='account'?'active':''}" onclick="switchTab('account')">Account</button>
       <button class="stab ${tab==='billing'?'active':''}" onclick="switchTab('billing')">Billing & Subscriptions</button>
-      <button class="stab ${tab==='api'?'active':''}" onclick="switchTab('api')">API Keys</button>
       <button class="stab ${tab==='profile'?'active':''}" onclick="switchTab('profile')">Profile</button>
       <button class="stab ${tab==='notifications'?'active':''}" onclick="switchTab('notifications')">Notifications</button>
     </div>
     <div id="accountTab" class="tab-content ${tab==='account'?'active':''}">${renderAccountTab()}</div>
     <div id="billingTab" class="tab-content ${tab==='billing'?'active':''}">${renderBillingTab()}</div>
-    <div id="apiTab" class="tab-content ${tab==='api'?'active':''}">${renderAPITab()}</div>
     <div id="profileTab" class="tab-content ${tab==='profile'?'active':''}">${renderProfileTab()}</div>
     <div id="notificationsTab" class="tab-content ${tab==='notifications'?'active':''}">${renderNotificationsTab()}</div>`;
   appState.currentPage = 'settings';
@@ -10324,6 +10322,8 @@ const GLOSSARY = {
   'Per-Wallet Breakdown':        'Copy trading performance broken down by each wallet you follow.',
   'Top Mirrored Tokens':         'Tokens most frequently traded through copy trading from your followed wallets.',
   'Realised Gains / Losses':     'Breakdown of realized profits and losses for tax reporting purposes.',
+  'Compute Unit (Fee Market)':   'Solana fee market data showing compute unit usage, priority fees, and congestion levels.',
+  'Quick Add — Top 10 Tokens':   'One-click add tokens from the top 10 by market cap to your comparison view.',
   'Code Snippet':                'Pre-generated code examples in curl, Python, and JavaScript for the selected API endpoint.',
   'Response':                    'API response payload with status code, headers, and formatted JSON body.',
 
@@ -10356,7 +10356,7 @@ const GLOSSARY = {
 
 function applyGlossary(root) {
   root = root || document;
-  const selectors = '.stat-label, .lbl, .pnl-box .lbl, h1, h2, h3, .card-title';
+  const selectors = '.stat-label, .lbl, .pnl-box .lbl, h1, h2, h3, .card-title, .heatmap-stat-label, .net-stat-label, .strategy-stat-label, .pf-stat-label, .profiler-stat-label, .scard-title';
   root.querySelectorAll(selectors).forEach(el => {
     if (el.querySelector('.gloss-icon')) return;
     const raw = el.textContent.replace(/·.*$/, '').trim();
