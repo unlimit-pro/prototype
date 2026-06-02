@@ -2541,9 +2541,8 @@
   .gloss-icon::after {
     content: attr(data-gloss);
     position: absolute;
-    bottom: calc(100% + 8px);
-    left: 50%;
-    transform: translateX(-50%) translateY(4px);
+    top: calc(100% + 8px);
+    left: calc(100% + 8px);
     background: var(--ink-2);
     color: #fff;
     font-size: 11px;
@@ -2556,7 +2555,7 @@
     box-shadow: var(--shadow-3);
     pointer-events: none;
     opacity: 0;
-    transition: opacity .15s, transform .15s;
+    transition: opacity .15s;
     z-index: 9999;
     font-family: 'Inter', sans-serif;
     letter-spacing: 0;
@@ -2565,11 +2564,10 @@
   .gloss-icon::before {
     content: '';
     position: absolute;
-    bottom: calc(100% + 4px);
-    left: 50%;
-    transform: translateX(-50%);
-    border: 5px solid transparent;
-    border-top-color: var(--ink-2);
+    top: calc(100% + 10px);
+    left: calc(100% + 2px);
+    border: 6px solid transparent;
+    border-right-color: var(--ink-2);
     pointer-events: none;
     opacity: 0;
     transition: opacity .15s;
@@ -2577,7 +2575,6 @@
   }
   .gloss-icon:hover::after,
   .gloss-icon:hover::before { opacity: 1; }
-  .gloss-icon:hover::after { transform: translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
@@ -9959,11 +9956,116 @@ const GLOSSARY = {
   'Live signals':             'Real-time AI-generated buy/sell signals based on on-chain and market data.',
   'Most active token':        'The token generating the highest number of signals in the current session.',
   'Avg Spread (filtered)':    'Average bid-ask spread (bps) for the currently filtered set of market makers.',
+
+  'Fund Flow Heatmap':           'Color-coded visualization showing net fund flow direction for top Solana tokens. Green cells = net capital inflow, Red cells = net outflow, Gray = neutral.',
+  'Live Elite Signals':          'Real-time buy/sell trade signals from top-performing elite wallets. Delivered via WebSocket with sub-5 second latency.',
+  'Smart Money Leaderboard':     'Ranked list of top-performing Solana wallet addresses tracked by on-chain activity, win rate, and realized PnL over 7/30/90 day periods.',
+  'AI Intelligence Feed':        'On-chain correlated news articles enriched by LLM predictions, sentiment analysis, and market impact scoring.',
+  'Strategy Backtesting':        'Test trading strategies against historical market data to evaluate performance, drawdowns, and risk-adjusted returns before deploying live capital.',
+  'Wallet Profiler':             'Deep-dive analytics for individual wallet addresses — trade history, PnL breakdown, risk score, and behavioral patterns.',
+  'KOL Feed':                    'Curated feed of activity from Key Opinion Leaders on Solana — social media posts, on-chain moves, and market commentary.',
+  'Copy Trading Report':         'Comprehensive performance report for your copy trading activity — PnL breakdown, win rate, top copied wallets, and risk metrics.',
+  'Smart Alerts History':        'Full audit log of all triggered alert events — price targets, whale movements, consensus signals, and custom conditions.',
+  'Token Discovery':             'Real-time feed of newly minted SPL tokens on Solana with risk scoring, liquidity assessment, and early whale interest detection.',
+  'New Token Discovery':         'Real-time live feed of newly minted SPL tokens on Solana with risk scoring, liquidity assessment, and early signal detection.',
+  'Social sentiment':            'AI-scored sentiment analysis aggregated from Twitter/X, Telegram, and Reddit mentions. Correlated with on-chain price action for individual tokens.',
+  'Trade Signals':               'Real-time buy and sell alerts generated from elite wallet on-chain activity. Delivered via WebSocket with low latency.',
+  'Top 100 Token Flow':          'Real-time net fund flow heatmap across the top 100 Solana tokens. Green cells = net capital inflow, Red cells = net outflow, Gray = neutral.',
+
+  'Anomaly Detection':           'Machine learning model that identifies unusual on-chain patterns such as wash trading, abnormal volume spikes, or wallet clustering.',
+  'Portfolio Rebalancer':        'Automated tool that rebalances your portfolio to target allocations using DCA or ladder execution strategies.',
+  'DEX Pool Analytics':          'Detailed analytics for Solana DEX liquidity pools — Raydium, Orca, Jupiter, Meteora metrics on depth, volume, fees, and impermanent loss.',
+  'AI News Curator':             'AI-powered news curation that filters, scores, and summarizes crypto news based on market impact and relevance.',
+  'Market Maker Tracker':        'Monitor market maker buy and sell wall activity, order flow patterns, and bid-ask spread behavior in real-time.',
+  'Widget Builder':              'Drag-and-drop dashboard builder to create custom layouts with live data widgets, charts, heatmaps, and signal feeds.',
+  'Multi-Wallet Dashboard':      'Manage and monitor multiple wallet addresses in a single unified view with aggregated PnL and activity alerts.',
+  'AI Strategy Advisor':         'AI-powered system that analyzes your portfolio, risk profile, and market conditions to recommend personalized strategies.',
+  'Whale Consensus Scanner':     'Detects when multiple elite whale wallets accumulate or distribute the same token, signaling potential coordinated market moves.',
+  'Sentiment Heatmap':           'Color-grid visualization of community and on-chain sentiment scores for top Solana tokens. Green = positive, Red = negative.',
+  'Strategies':                  'Configure and manage automated trading strategies including DCA, Ladder orders, and price-triggered execution rules.',
+
+  'Overview':                    'Main dashboard with a summary of your portfolio, market stats, and key signals at a glance.',
+  'Settings':                    'Configure your account settings, billing, security, API keys, and notification preferences.',
+  'Watchlist':                   'Your personalized watchlist of tokens and wallets you are monitoring.',
+  'Token screener':              'Filter and screen tokens by market cap, volume, price change, and on-chain metrics.',
+  'Network analytics':           'Solana network health metrics including TPS, validator stats, epoch progress, and fee market.',
+  'Alert rules':                 'Create and manage price alert rules, whale alerts, and consensus signal notifications.',
+  'Auto-DCA strategies':         'Set up automated Dollar Cost Averaging and ladder strategies for your chosen tokens.',
+  'Whale consensus':             'Track when multiple elite whales accumulate or distribute the same token simultaneously.',
+  'Portfolio Tracker':           'Detailed portfolio tracking with P&L, cost basis, unrealized gains, and asset allocation.',
+  'Token Comparison':            'Side-by-side comparison of multiple tokens by price, market cap, volume, and on-chain data.',
+  'Token Launches':              'Upcoming and recently launched token events, IDOs, and airdrop calendar.',
+  'API Playground':              'Interactive API testing environment to explore Unlimit API endpoints and SDKs.',
+  'Notification Inbox':          'Centralized inbox for all system alerts, signal notifications, and account updates.',
+  'Share & Refer':               'Invite friends and earn rewards through the Unlimit referral program.',
+  'Strategy Comparison':         'Compare performance of different trading strategies side by side.',
+  'Trade Journal':               'Log and track your trades with entry/exit prices, notes, and performance metrics.',
+  'Token Research Hub':          'Deep-dive token research with supply metrics, audit status, liquidity data, and risk scores.',
+  'Price Alerts':                'Configure price-based alert rules triggered when a token crosses a price threshold.',
+  'Community Leaderboard':       'Top-ranked community members by referral count, PnL, and trading activity.',
+  'Tax Summary':                 'Summary of taxable events, realized gains/losses, and transaction history for tax reporting.',
+  'Whales Intelligence':         'Aggregated whale wallet activity dashboard showing tracked whales, net buy volume, and accumulation patterns.',
+  'Intelligence feed':           'On-chain correlated news articles enriched by LLM predictions, sentiment analysis, and market impact scoring.',
+  'KOL Social Feed':             'Curated feed of activity from Key Opinion Leaders on Solana — social media posts, on-chain moves, and market commentary.',
+
+  'Elite wallets to copy':       'Curated list of top-performing elite wallets available for copy trading.',
+  'Recent copied trades':        'History of recently executed trades that were mirrored from your followed wallets.',
+  'Featured Wallets':            'Editor-picked elite wallets with exceptional performance and consistency.',
+  'Your rules':                  'Alert rules you have created and configured for your account.',
+  'Your strategies':             'Automated DCA and ladder strategies you have deployed and currently active.',
+
+  'Live Trade Signals':          'Real-time buy/sell signals from elite wallets delivered via WebSocket with low latency.',
+
+  'Intelligence Feed':           'On-chain correlated news articles enriched by LLM predictions, sentiment analysis, and market impact scoring.',
+  'Top Solana assets':           'Current top-performing Solana tokens ranked by market cap, volume, and price movement.',
+  'Discovery Feed':              'Live feed of newly minted SPL tokens with risk scoring, liquidity data, and whale interest.',
+  'Price chart':                 'Interactive price chart with candlestick data, volume profile, and technical indicators.',
+  'Related news':                'News articles and social media mentions related to the selected token.',
+  'Epoch Progress':              'Current Solana epoch progress, time remaining, and staking reward statistics.',
+  'Transaction Success Rate':    'Percentage of Solana transactions that successfully landed in the current epoch.',
+  'DEX Volume Trend':            'DEX trading volume trend over the selected time period with volume breakdown by pool.',
+  'DCA Execution History':       'History of all DCA executions including amount, price, and status.',
+  'Metric Comparison':           'Side-by-side comparison of key metrics across selected tokens.',
+  'Referral Programme':          'Earn rewards by referring friends to Unlimit. Track your referrals and rewards here.',
+  'Your Referral Stats':         'Personal referral statistics including total referrals, active subscribers, and rewards earned.',
+  'Reward Milestones':           'Earn bonus rewards at each referral milestone. Track your progress to the next tier.',
+  '30-Day Copy P&L':             'Profit and loss from copy trading over the last 30 days across all followed wallets.',
+  'Per-Wallet Breakdown':        'Copy trading performance broken down by each wallet you follow.',
+  'Top Mirrored Tokens':         'Tokens most frequently traded through copy trading from your followed wallets.',
+  'Realised Gains / Losses':     'Breakdown of realized profits and losses for tax reporting purposes.',
+  'Code Snippet':                'Pre-generated code examples in curl, Python, and JavaScript for the selected API endpoint.',
+  'Response':                    'API response payload with status code, headers, and formatted JSON body.',
+
+  'Live mints':                  'Number of new SPL tokens minted on Solana in the last 24 hours.',
+  'Total Inflow':                'Total capital flowing into top Solana tokens from tracked wallets in the selected period.',
+  'Total Outflow':               'Total capital flowing out of top Solana tokens from tracked wallets in the selected period.',
+  'Net Flow':                    'Net capital flow (inflow minus outflow) across all tracked tokens.',
+  'Tokens Tracked':              'Number of Solana tokens currently being monitored in the fund flow heatmap.',
+  'Executions':                  'Number of DCA execution orders that have been placed for this strategy.',
+  'Deployed':                    'Total capital currently deployed and active in this strategy.',
+  'Avg Buy':                     'Average purchase price per execution across all DCA buys for this strategy.',
+  'Total Copy P&L':              'Aggregate profit and loss from all copy trading activity across all followed wallets.',
+  'Total Trades Mirrored':       'Total number of trades automatically replicated from tracked wallets.',
+  'Best Wallet':                 'The followed wallet that has generated the highest copy trading returns.',
+  'Total Stake':                 'Total SOL staked across the network in the current epoch.',
+  'Active stake':                'Total SOL actively staked and earning rewards.',
+  'Delinquent':                  'Number of validators that are behind on block production.',
+  'Circulating Supply':          'The total number of tokens currently in circulation and available to trade.',
+  'Total Supply':                'The total number of tokens that have been minted, including locked and reserved tokens.',
+  'Max Supply':                  'The maximum number of tokens that will ever exist for this cryptocurrency.',
+  'Audit Status':                'Whether the token contract has been audited by a reputable security firm.',
+  'Liquidity Lock':              'Whether the token liquidity pool is locked, preventing rug pulls by the dev team.',
+  'Rug-Pull Risk':               'Heuristic risk score assessing the likelihood of a rug pull based on contract and liquidity analysis.',
+  'Most Active Rule':            'The alert rule that has triggered the most frequently in the selected period.',
+  'Top Triggered Token':         'The token that has triggered the most alerts across all your active rules.',
+  'Tracked Whales':              'Number of elite whale wallets currently being tracked for on-chain activity.',
+  'Whale Net Buy Volume':        'Net buying volume (buy minus sell) from tracked whale wallets in the selected period.',
+  'Most Accumulated Token':      'The token with the highest net accumulation by tracked whales in the selected period.',
 };
 
 function applyGlossary(root) {
   root = root || document;
-  const selectors = '.stat-label, .lbl, .pnl-box .lbl';
+  const selectors = '.stat-label, .lbl, .pnl-box .lbl, h1, h2, h3, .card-title';
   root.querySelectorAll(selectors).forEach(el => {
     if (el.querySelector('.gloss-icon')) return;
     const raw = el.textContent.replace(/·.*$/, '').trim();

@@ -2626,9 +2626,8 @@
   .gloss-icon::after {
     content: attr(data-gloss);
     position: absolute;
-    bottom: calc(100% + 8px);
-    left: 50%;
-    transform: translateX(-50%) translateY(4px);
+    top: calc(100% + 8px);
+    left: calc(100% + 8px);
     background: var(--ink-2);
     color: #fff;
     font-size: 11px;
@@ -2641,7 +2640,7 @@
     box-shadow: var(--shadow-3);
     pointer-events: none;
     opacity: 0;
-    transition: opacity .15s, transform .15s;
+    transition: opacity .15s;
     z-index: 9999;
     font-family: 'Inter', sans-serif;
     letter-spacing: 0;
@@ -2650,11 +2649,10 @@
   .gloss-icon::before {
     content: '';
     position: absolute;
-    bottom: calc(100% + 4px);
-    left: 50%;
-    transform: translateX(-50%);
-    border: 5px solid transparent;
-    border-top-color: var(--ink-2);
+    top: calc(100% + 10px);
+    left: calc(100% + 2px);
+    border: 6px solid transparent;
+    border-right-color: var(--ink-2);
     pointer-events: none;
     opacity: 0;
     transition: opacity .15s;
@@ -2662,7 +2660,6 @@
   }
   .gloss-icon:hover::after,
   .gloss-icon:hover::before { opacity: 1; }
-  .gloss-icon:hover::after { transform: translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
@@ -2816,9 +2813,9 @@
           <span class="nav-label">Strategies</span>
           
         </div>
-        <div class="nav-item" id="nav-alertrules" onclick="navigateTo('alertrules')" data-tip="Alert Rules">
+        <div class="nav-item" id="nav-alertrules" onclick="navigateTo('alertrules')" data-tip="Rules">
           <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/><line x1="12" y1="3" x2="12" y2="1"/><line x1="3" y1="16" x2="1" y2="18"/><line x1="21" y1="16" x2="23" y2="18"/></svg></span>
-          <span class="nav-label">Alert Rules</span>
+          <span class="nav-label">Rules</span>
           
         </div>
         <div class="nav-item" id="nav-aiCurator" onclick="navigateTo('aiCurator')" data-tip="AI News Curator">
@@ -8703,11 +8700,12 @@ function renderApiPlayground(){
 
   document.getElementById('content').innerHTML = `
     <div class="hero">
-      <div>
-        <h1>API <span class="serif">Playground</span></h1>
-        <p class="sub">Test Unlimit API endpoints interactively. Responses are simulated mock data reflecting the live production schema.</p>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end;">
+      <div class="hero-row">
+        <div>
+          <h1>API <span class="serif">Playground</span></h1>
+          <p class="sub">Test Unlimit API endpoints interactively. Responses are simulated mock data reflecting the live production schema.</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end;">
         <div style="display:flex;align-items:center;gap:8px;padding:7px 12px;background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r-sm);">
           <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--muted)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
           <span style="font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;">https://api.unlimit.io/v1</span>
@@ -8718,6 +8716,7 @@ function renderApiPlayground(){
           <button class="btn btn-sm btn-ghost" onclick="navigateTo('settings');setTimeout(()=>switchTab('api'),50)">Manage keys</button>
         </div>
       </div>
+  </div>
     </div>
 
     <div class="api-playground-grid">
@@ -8735,34 +8734,38 @@ function renderApiPlayground(){
       <div>
         <!-- Request builder card -->
         <div class="card" style="margin-bottom:12px;">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;padding-bottom:12px;border-bottom:1px solid var(--line);">
-            <span class="api-method-badge ${ep.method.toLowerCase()}" style="font-size:11px;padding:4px 10px;">${ep.method}</span>
-            <span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${ep.path}</span>
+          <div class="card-header">
+            <div style="display:flex;align-items:center;gap:10px;flex:1;">
+              <span class="api-method-badge ${ep.method.toLowerCase()}" style="font-size:11px;padding:4px 10px;">${ep.method}</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${ep.path}</span>
+            </div>
             <button class="btn btn-sm btn-ghost" onclick="showToast('URL copied to clipboard')">Copy URL</button>
           </div>
-          <div style="font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.6;">${ep.desc}</div>
+          <div class="card-body">
+            <div style="font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.6;">${ep.desc}</div>
 
-          <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">Parameters</div>
-          <div class="api-params-grid" style="margin-bottom:14px;">${paramInputs}</div>
+            <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">Parameters</div>
+            <div class="api-params-grid" style="margin-bottom:14px;">${paramInputs}</div>
 
-          <div style="display:flex;gap:8px;">
-            <button class="btn btn-accent" onclick="sendApiRequest('${sel}')">
-              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-              Send Request
-            </button>
-            <button class="btn btn-ghost" onclick="feedState.apiLastResponse=null;renderApiPlayground()">Clear</button>
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-accent" onclick="sendApiRequest('${sel}')">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                Send Request
+              </button>
+              <button class="btn btn-ghost" onclick="feedState.apiLastResponse=null;renderApiPlayground()">Clear</button>
+            </div>
           </div>
         </div>
 
         <!-- Code snippet card -->
         <div class="card" style="margin-bottom:12px;">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-            <div style="font-size:12px;font-weight:700;">Code Snippet</div>
+          <div class="card-header">
+            <div class="card-title">Code Snippet</div>
             <div style="display:flex;gap:4px;">
               ${['curl','python','js'].map(lang=>`<button class="pill ${snippetLang===lang?'active':''}" style="font-size:10px;padding:3px 9px;" onclick="feedState.apiSnippetLang='${lang}';renderApiPlayground()">${lang==='js'?'JS':lang.charAt(0).toUpperCase()+lang.slice(1)}</button>`).join('')}
             </div>
           </div>
-          <div style="background:var(--ink);border-radius:var(--r-md);padding:14px 16px;position:relative;">
+          <div class="card-body" style="padding:14px 16px;background:var(--ink);border-radius:0 0 var(--r-lg) var(--r-lg);position:relative;">
             <pre style="margin:0;font-family:'JetBrains Mono',monospace;font-size:10px;line-height:1.7;color:#e2e8f0;white-space:pre-wrap;overflow-x:auto;">${snippetCode}</pre>
             <button class="btn btn-sm" style="position:absolute;top:10px;right:10px;background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.2);color:#fff;font-size:10px;" onclick="showToast('Code snippet copied to clipboard')">Copy</button>
           </div>
@@ -8770,11 +8773,13 @@ function renderApiPlayground(){
 
         <!-- Response card -->
         <div class="card">
-          <div style="font-size:12px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px;">
-            Response
-            ${resp ? `<span class="live-dot" style="display:inline-block;"></span>` : '<span style="font-size:11px;font-weight:400;color:var(--muted);">–</span>'}
+          <div class="card-header">
+            <div class="card-title">
+              Response
+              ${resp ? `<span class="live-dot" style="display:inline-block;"></span>` : '<span style="font-size:11px;font-weight:400;color:var(--muted);">–</span>'}
+            </div>
           </div>
-          ${responseHtml}
+          <div class="card-body">${responseHtml}</div>
         </div>
       </div>
     </div>`;
@@ -10276,11 +10281,37 @@ const GLOSSARY = {
   'Live signals':             'Real-time AI-generated buy/sell signals based on on-chain and market data.',
   'Most active token':        'The token generating the highest number of signals in the current session.',
   'Avg Spread (filtered)':    'Average bid-ask spread (bps) for the currently filtered set of market makers.',
+
+  'Fund Flow Heatmap':           'Color-coded visualization showing net fund flow direction for top Solana tokens. Green cells = net capital inflow, Red cells = net outflow, Gray = neutral.',
+  'Live Elite Signals':          'Real-time buy/sell trade signals from top-performing elite wallets. Delivered via WebSocket with sub-5 second latency.',
+  'Smart Money Leaderboard':     'Ranked list of top-performing Solana wallet addresses tracked by on-chain activity, win rate, and realized PnL over 7/30/90 day periods.',
+  'AI Intelligence Feed':        'On-chain correlated news articles enriched by LLM predictions, sentiment analysis, and market impact scoring.',
+  'Anomaly Detection':           'Machine learning model that identifies unusual on-chain patterns such as wash trading, abnormal volume spikes, or wallet clustering.',
+  'Strategy Backtesting':        'Test trading strategies against historical market data to evaluate performance, drawdowns, and risk-adjusted returns before deploying live capital.',
+  'Portfolio Rebalancer':        'Automated tool that rebalances your portfolio to target allocations using DCA or ladder execution strategies.',
+  'DEX Pool Analytics':          'Detailed analytics for Solana DEX liquidity pools — Raydium, Orca, Jupiter, Meteora metrics on depth, volume, fees, and impermanent loss.',
+  'Wallet Profiler':             'Deep-dive analytics for individual wallet addresses — trade history, PnL breakdown, risk score, and behavioral patterns.',
+  'KOL Feed':                    'Curated feed of activity from Key Opinion Leaders on Solana — social media posts, on-chain moves, and market commentary.',
+  'AI News Curator':             'AI-powered news curation that filters, scores, and summarizes crypto news based on market impact and relevance to your portfolio.',
+  'Market Maker Tracker':        'Monitor market maker buy and sell wall activity, order flow patterns, and bid-ask spread behavior in real-time across major DEXs.',
+  'Copy Trading Report':         'Comprehensive performance report for your copy trading activity — PnL breakdown, win rate, top copied wallets, and risk metrics.',
+  'Widget Builder':              'Drag-and-drop dashboard builder to create custom layouts with live data widgets including charts, leaderboards, heatmaps, and signal feeds.',
+  'Multi-Wallet Dashboard':      'Manage and monitor multiple wallet addresses in a single unified view — aggregated PnL, cross-wallet holdings, and activity alerts.',
+  'AI Strategy Advisor':         'AI-powered system that analyzes your portfolio, risk profile, and market conditions to recommend personalized trading strategies.',
+  'Smart Alerts History':        'Full audit log of all triggered alert events — price targets, whale movements, consensus signals, and custom conditions.',
+  'Whale Consensus Scanner':     'Detects when multiple elite whale wallets accumulate or distribute the same token, signaling potential coordinated market moves.',
+  'Token Discovery':             'Real-time feed of newly minted SPL tokens on Solana with risk scoring, liquidity assessment, and early whale interest detection.',
+  'New Token Discovery':         'Real-time live feed of newly minted SPL tokens on Solana with risk scoring, liquidity assessment, and early signal detection.',
+  'Social sentiment':            'AI-scored sentiment analysis aggregated from Twitter/X, Telegram, and Reddit mentions. Correlated with on-chain price action for individual tokens.',
+  'Sentiment Heatmap':           'Color-grid visualization of community and on-chain sentiment scores for top Solana tokens. Green = positive sentiment, Red = negative.',
+  'Trade Signals':               'Real-time buy and sell alerts generated from elite wallet on-chain activity. Delivered via WebSocket with low latency.',
+  'Top 100 Token Flow':          'Real-time net fund flow heatmap across the top 100 Solana tokens. Green cells = net capital inflow, Red cells = net outflow, Gray = neutral.',
+  'Strategies':                  'Configure and manage automated trading strategies including DCA (Dollar Cost Averaging), Ladder orders, and price-triggered execution rules.',
 };
 
 function applyGlossary(root) {
   root = root || document;
-  const selectors = '.stat-label, .lbl, .pnl-box .lbl';
+  const selectors = '.stat-label, .lbl, .pnl-box .lbl, h1, h2, h3, .card-title';
   root.querySelectorAll(selectors).forEach(el => {
     if (el.querySelector('.gloss-icon')) return;
     const raw = el.textContent.replace(/·.*$/, '').trim();
