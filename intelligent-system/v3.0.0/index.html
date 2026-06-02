@@ -2623,11 +2623,8 @@
     transition: background .15s;
   }
   .gloss-icon:hover { background: var(--accent); color: #fff; }
-  .gloss-icon::after {
-    content: attr(data-gloss);
-    position: absolute;
-    top: calc(100% + 8px);
-    left: calc(100% + 8px);
+  .gloss-tooltip {
+    position: fixed;
     background: var(--ink-2);
     color: #fff;
     font-size: 11px;
@@ -2646,20 +2643,18 @@
     letter-spacing: 0;
     text-transform: none;
   }
-  .gloss-icon::before {
+  .gloss-tooltip.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .gloss-tooltip::before {
     content: '';
     position: absolute;
-    top: calc(100% + 10px);
-    left: calc(100% + 2px);
+    top: 6px;
+    left: -10px;
     border: 6px solid transparent;
     border-right-color: var(--ink-2);
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity .15s;
-    z-index: 99999;
   }
-  .gloss-icon:hover::after,
-  .gloss-icon:hover::before { opacity: 1; }
 </style>
 </head>
 <body>
@@ -10338,6 +10333,8 @@ function applyGlossary(root) {
       icon.className = 'gloss-icon';
       icon.setAttribute('data-gloss', GLOSSARY[matched]);
       icon.textContent = 'i';
+      icon.addEventListener('mouseenter', showGlossTooltip);
+      icon.addEventListener('mouseleave', hideGlossTooltip);
       el.appendChild(icon);
     }
   });
@@ -10364,9 +10361,43 @@ function applyGlossary(root) {
   });
 })();
 
+(function(){
+  const tooltip = document.getElementById('glossTooltip');
+  if (!tooltip) return;
+  tooltip.addEventListener('mouseenter', function() {
+    clearTimeout(tooltip._hideTimeout);
+  });
+  tooltip.addEventListener('mouseleave', function() {
+    tooltip.classList.remove('visible');
+  });
+})();
+
+function showGlossTooltip(e) {
+  const tooltip = document.getElementById('glossTooltip');
+  if (!tooltip) return;
+  const icon = e.currentTarget;
+  const text = icon.getAttribute('data-gloss');
+  if (!text) return;
+  clearTimeout(tooltip._hideTimeout);
+  tooltip.textContent = text;
+  const rect = icon.getBoundingClientRect();
+  tooltip.style.top = (rect.bottom + 8) + 'px';
+  tooltip.style.left = (rect.right + 8) + 'px';
+  tooltip.classList.add('visible');
+}
+function hideGlossTooltip(e) {
+  const tooltip = document.getElementById('glossTooltip');
+  if (!tooltip) return;
+  if (e.relatedTarget && e.relatedTarget.closest('#glossTooltip')) return;
+  tooltip._hideTimeout = setTimeout(function() {
+    tooltip.classList.remove('visible');
+  }, 80);
+}
+
 init();
 </script>
 
 
 
+<div id="glossTooltip" class="gloss-tooltip"></div>
 </body></html>
