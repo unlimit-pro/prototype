@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unlimit Wallet</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#fff;color:#000;line-height:1.5;min-height:100vh}
+
+/* HEADER — production quality */
+.app-header{background:#fff;border-bottom:1px solid #ddd;box-shadow:0 2px 12px rgba(0,0,0,0.06);padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;gap:12px}
+.wallet-zone{display:flex;align-items:center;position:relative}
+.wallet-btn{display:flex;align-items:center;gap:8px;padding:6px 12px;background:#fff;border:1px solid #ddd;border-radius:8px;cursor:pointer;font-size:13px;font-weight:700;transition:all 0.15s}
+.wallet-btn:hover{background:#f8f8f8;border-color:#bbb}
+.wallet-avatar{width:28px;height:28px;background:#000;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.wallet-caret{font-size:10px;color:#999;margin-left:2px}
+.wallet-dropdown{display:none;position:absolute;top:calc(100% + 8px);left:0;width:280px;background:#fff;border:1px solid #e0e0e0;border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,0.12);z-index:300;overflow:hidden}
+.wallet-dropdown.open{display:block}
+.wd-header{padding:12px 16px;font-size:10px;font-weight:700;text-transform:uppercase;color:#999;letter-spacing:0.5px;border-bottom:1px solid #f0f0f0}
+.wd-item{display:flex;align-items:center;gap:10px;padding:12px 16px;cursor:pointer;border-bottom:1px solid #f8f8f8;transition:background 0.1s}
+.wd-item:hover{background:#fafafa}.wd-item.active{background:#f5f5f5}
+.wd-info{flex:1}.wd-name{font-size:13px;font-weight:700}.wd-addr{font-size:11px;color:#999;font-family:'Courier New',monospace}
+.wd-footer{border-top:1px solid #f0f0f0}
+.wd-footer a{display:flex;align-items:center;gap:8px;padding:12px 16px;font-size:12px;font-weight:600;color:#000;text-decoration:none;border-bottom:1px solid #f8f8f8;transition:background 0.1s}
+.wd-footer a:hover{background:#fafafa}
+.wd-footer a:last-child{border-bottom:none}
+.header-actions{display:flex;align-items:center;gap:6px}
+.header-action-btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;font-size:12px;font-weight:600;color:#444;background:#fff;border:1px solid #ddd;border-radius:8px;cursor:pointer;text-decoration:none;transition:all 0.15s}
+.header-action-btn:hover{color:#000;background:#f8f8f8;border-color:#bbb;transform:translateY(-1px);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.header-action-btn:active{transform:translateY(0)}
+.header-action-btn .icon{font-size:14px;line-height:1}
+.cluster-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;background:#fff;border:1px solid #ddd;font-size:11px;font-weight:700;color:#000}
+.cluster-dot{width:6px;height:6px;border-radius:50%;background:#000}
+.version-badge{font-size:10px;color:#999;font-weight:600;padding:2px 8px;border:1px solid #e0e0e0;border-radius:4px;background:#fafafa;letter-spacing:0.3px;margin-left:6px}
+
+/* TABS */
+.main-tabs{display:flex;border-bottom:1px solid #ddd;background:#fff;position:sticky;top:56px;z-index:150;padding:0 20px}
+.main-tab{flex:none;padding:14px 20px;background:transparent;border:none;cursor:pointer;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#666;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all 0.15s}
+.main-tab:hover{color:#000}.main-tab.active{color:#000;border-bottom-color:#000;background:transparent}
+.tab-view{display:none}.tab-view.active{display:block}
+
+/* CONTAINER & CARDS */
+.container{max-width:1000px;margin:0 auto;padding:28px 20px 48px}
+.balance-card{background:#fff;border:1px solid #e0e0e0;border-radius:12px;padding:28px;margin-bottom:20px;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.bal-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#999;margin-bottom:6px}
+.bal-value{font-size:34px;font-weight:700;font-family:'Courier New',monospace;margin-bottom:4px;letter-spacing:-0.5px}
+.bal-change{font-size:13px;margin-bottom:16px}
+.addr-row{display:flex;align-items:center;gap:8px;padding:10px 14px;background:#f8f8f8;border:1px solid #e8e8e8;border-radius:8px;font-family:'Courier New',monospace;font-size:11px;color:#666;margin-bottom:20px}
+.addr-row span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.action-row{display:flex;gap:10px;flex-wrap:wrap}
+.action-btn{flex:1;min-width:90px;padding:14px 10px;background:#fff;border:1px solid #ddd;border-radius:10px;cursor:pointer;font-size:12px;font-weight:700;text-align:center;transition:all 0.15s}
+.action-btn:hover:not(:disabled){background:#f8f8f8;border-color:#bbb;transform:translateY(-1px);box-shadow:0 2px 8px rgba(0,0,0,0.06)}
+.action-btn:active{transform:translateY(0)}
+.action-btn .ab-icon{font-size:20px;display:block;margin-bottom:4px}
+.auto-prov-banner{padding:10px 14px;background:#fafafa;border:1px solid #eee;border-radius:4px;margin-bottom:16px;display:flex;align-items:center;gap:10px;font-size:11px;color:#666}
+.auto-prov-banner .ap-icon{font-size:16px;color:#000}
+.auto-prov-banner strong{color:#000}
+.section-card{background:#fff;border:1px solid #e0e0e0;border-radius:10px;overflow:hidden;margin-bottom:20px;box-shadow:0 1px 4px rgba(0,0,0,0.03)}
+.section-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid #eee;background:#fafafa}
+.section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#444}
+
+/* ASSETS TABLE */
+.asset-tbl{width:100%;border-collapse:collapse;font-size:12px}
+.asset-tbl th{background:#f8f8f8;border-bottom:1px solid #e0e0e0;padding:10px 16px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;color:#666;white-space:nowrap}
+.asset-tbl td{padding:13px 16px;border-bottom:1px solid #f0f0f0}
+.asset-tbl tr:last-child td{border-bottom:none}.asset-tbl tr:hover td{background:#fafafa}
+.asset-name{font-weight:700}.asset-ticker{font-size:10px;color:#999;display:block}
+.btn-small{padding:7px 14px;background:#000;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:11px;font-weight:700;transition:background 0.15s}.btn-small:hover{background:#333}
+.btn-small-outline{padding:7px 14px;background:#fff;color:#000;border:1px solid #ddd;border-radius:6px;cursor:pointer;font-size:11px;font-weight:600;transition:all 0.15s}.btn-small-outline:hover{background:#f5f5f5}
+
+/* FILTER ZONE */
+.filter-zone{padding:16px 20px;border-bottom:1px solid #eee;background:#fafafa;display:flex;flex-direction:column;gap:10px}
+.filter-pill-row{display:flex;gap:6px;flex-wrap:wrap}
+.filter-pill{padding:6px 16px;background:#fff;border:1px solid #ddd;border-radius:20px;cursor:pointer;font-size:11px;font-weight:700;white-space:nowrap;color:#666;transition:all 0.15s}
+.filter-pill.active{background:#000;color:#fff;border-color:#000}
+.filter-pill:hover:not(.active){background:#f0f0f0;border-color:#bbb}
+.filter-inputs{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.filter-input{padding:7px 10px;border:1px solid #ddd;border-radius:6px;font-size:11px;font-family:inherit;background:#fff;color:#000;transition:border-color 0.15s}
+.filter-input:focus{outline:none;border-color:#000}
+
+/* TX TABLE */
+.tx-table{width:100%;border-collapse:collapse;font-size:12px}
+.tx-table th{background:#f8f8f8;border-bottom:1px solid #e0e0e0;padding:10px 16px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;color:#666;white-space:nowrap}
+.tx-table td{padding:13px 16px;border-bottom:1px solid #f0f0f0;vertical-align:middle}
+.tx-table tr:last-child td{border-bottom:none}.tx-table tr:hover td{background:#fafafa;cursor:pointer}
+.tx-type-badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700;border:1px solid;white-space:nowrap}
+.badge-sent{background:#f5f5f5;border-color:#666;color:#333}
+.badge-received{background:#fff;border-color:#000;color:#000}
+.badge-swap{background:#f0f0f0;border-color:#888;color:#444}
+.badge-pending{background:#fff;border-color:#000;color:#000;font-style:italic}
+.tx-hash-cell{font-family:'Courier New',monospace;font-size:10px;color:#999}
+
+/* PRE-SIGN SIM */
+.pre-sign-sim{background:#fff;border:1px solid #e0e0e0;border-radius:12px;padding:24px;margin-bottom:20px;box-shadow:0 1px 4px rgba(0,0,0,0.03)}
+.pss-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:8px;font-size:11px;font-weight:700;margin-bottom:12px;border:1px solid}
+.pss-badge-risk-medium{background:#fffbf0;border-color:#fbbf24;color:#92400e}
+.pss-plain{font-size:14px;font-weight:600;line-height:1.7;margin-bottom:14px}
+.pss-detail{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.pss-item{padding:10px 14px;background:#fafafa;border:1px solid #eee;border-radius:6px}
+.pss-item-label{font-size:10px;color:#999;text-transform:uppercase;font-weight:700;margin-bottom:3px}
+.pss-item-value{font-size:13px;font-weight:700}
+
+/* SETTINGS */
+.settings-grid{display:grid;grid-template-columns:210px 1fr;margin-bottom:16px}
+.settings-sidebar{border:1px solid #e0e0e0;border-radius:10px;background:#fff;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.03)}
+.settings-content{border:1px solid #e0e0e0;border-radius:10px;background:#fff;padding:28px;margin-left:20px;min-height:400px;box-shadow:0 1px 4px rgba(0,0,0,0.03)}
+.settings-nav{list-style:none}
+.settings-nav li{padding:13px 20px;cursor:pointer;font-size:13px;font-weight:600;color:#666;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;gap:8px;transition:all 0.1s}
+.settings-nav li:hover{background:#fafafa;color:#000}
+.settings-nav li.active{background:#f5f5f5;color:#000;border-left:3px solid #000;padding-left:17px}
+.settings-panel{display:none}.settings-panel.active{display:block}
+.settings-panel-title{font-size:18px;font-weight:700;margin-bottom:20px}
+
+/* TOGGLES */
+.toggle-sw{display:inline-flex;align-items:center;width:44px;height:24px;border-radius:12px;background:#ccc;cursor:pointer;position:relative;transition:background 0.2s;vertical-align:middle}
+.toggle-sw.on{background:#000}
+.toggle-sw .knob{width:18px;height:18px;border-radius:50%;background:#fff;position:absolute;left:3px;top:3px;transition:left 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.2)}.toggle-sw.on .knob{left:23px}
+
+/* MODALS */
+.modal{display:none;position:fixed;z-index:1000;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.4);backdrop-filter:blur(2px)}
+.modal.active{display:flex;align-items:center;justify-content:center;padding:20px}
+.modal-content{background:#fff;border:1px solid #e0e0e0;border-radius:12px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;box-shadow:0 12px 40px rgba(0,0,0,0.15)}
+.modal-header{display:flex;justify-content:space-between;align-items:center;padding:20px 24px 16px;border-bottom:1px solid #eee}
+.modal-title{font-weight:700;font-size:17px}
+.modal-close{background:none;border:none;font-size:20px;cursor:pointer;color:#999;width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;transition:all 0.1s}.modal-close:hover{color:#000;background:#f5f5f5}
+.modal-body{padding:24px}
+
+/* FORMS */
+.text-center{text-align:center}
+.form-group{margin-bottom:16px}
+.form-label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#444;margin-bottom:6px}
+.form-input,.form-select{width:100%;padding:10px 14px;border:1px solid #ddd;border-radius:8px;font-size:13px;font-family:inherit;background:#fff;color:#000;transition:border-color 0.15s}
+.form-input:focus,.form-select:focus{outline:none;border-color:#000}
+.qr-grid{display:grid;grid-template-columns:repeat(21,1fr);gap:2px;margin:0 auto;width:180px;height:180px}
+.qr-cell{aspect-ratio:1;border-radius:2px}.qr-cell.b{background:#000}
+.btn-primary{width:100%;padding:12px;background:#000;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;transition:background 0.15s}.btn-primary:hover{background:#222}
+.btn-secondary{width:100%;padding:12px;background:#fff;color:#000;border:1px solid #ddd;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.15s}.btn-secondary:hover{background:#f5f5f5;border-color:#bbb}
+.btn-danger{width:100%;padding:12px;background:#fff;color:#000;border:1px solid #ddd;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.15s}.btn-danger:hover{background:#f5f5f5;border-color:#bbb;color:#c00}
+.btn-row{display:flex;gap:10px}.btn-row .btn-primary,.btn-row .btn-secondary{flex:1}
+.nav-links{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.nav-link{padding:6px 12px;background:#fff;border:1px solid #ddd;border-radius:6px;font-size:11px;font-weight:600;color:#000;text-decoration:none;transition:all 0.15s}.nav-link:hover{background:#f5f5f5}
+
+/* WHALE */
+.whale-token-card{display:flex;align-items:center;gap:12px;padding:12px 16px;background:#fafafa;border:1px solid #eee;border-radius:8px;margin-bottom:8px;transition:background 0.1s}
+.whale-token-card:hover{background:#f5f5f5}
+.whale-token-symbol{font-weight:700}.whale-token-price{font-size:11px;margin-left:auto;font-weight:700}
+.whale-token-badge{font-size:10px;padding:3px 8px;border-radius:4px;background:#000;color:#fff;font-weight:700}
+.whale-token-wallets{font-size:11px;color:#666}
+.whale-tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.whale-tag{display:flex;align-items:center;gap:6px;padding:8px 16px;background:#fff;border:1px solid #ddd;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;color:#000;transition:all 0.15s}
+.whale-tag:hover{background:#f5f5f5;border-color:#bbb}
+.whale-tag.active{background:#f0f0f0;border-color:#000}
+.whale-tag-count{font-size:10px;color:#999;font-weight:700}
+
+/* LOCK OVERLAY */
+.lock-overlay{display:none;position:fixed;z-index:9999;inset:0;background:rgba(255,255,255,0.95);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:20px}
+.lock-overlay.active{display:flex}
+.lock-card{width:100%;max-width:360px;border:1px solid #e0e0e0;border-radius:12px;padding:36px 32px;background:#fff;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.08)}
+.lock-card .form-group{text-align:left}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#ddd;border-radius:3px}::-webkit-scrollbar-thumb:hover{background:#bbb}
+
+/* ANIMATIONS */
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.tab-view.active{animation:fadeIn 0.2s ease}
+.modal.active .modal-content{animation:fadeIn 0.2s ease}
+</style>
+</head>
+<body>
+
+<header class="app-header">
+<div class="wallet-zone">
+<button class="wallet-btn" onclick="document.getElementById('walletDropdown').classList.toggle('open')">
+<div class="wallet-avatar">🧠</div><span>Unlimit Wallet</span><span class="wallet-caret">▾</span>
+</button>
+<span class="version-badge">🧠 v3.0.0</span>
+<div class="wallet-dropdown" id="walletDropdown">
+<div class="wd-header">👛 My Wallets</div>
+<div class="wd-item active"><div class="wallet-avatar">🧠</div><div class="wd-info"><div class="wd-name">Unlimit Wallet</div><div class="wd-addr">DRos...xk8r</div></div><span>✓</span></div>
+<div class="wd-footer">
+<a href="../v1.0.0/index.html">➕ Add / Import Wallet</a>
+<a href="#" onclick="lockWallet();document.getElementById('walletDropdown').classList.remove('open')">🔒 Lock Wallet</a>
+<a href="#" onclick="showToast('🔔 0 new alerts');document.getElementById('walletDropdown').classList.remove('open')">🔔 Alerts</a>
+<a href="#" onclick="switchMainTabFromHeader('settings');document.getElementById('walletDropdown').classList.remove('open')">⚙️ Settings</a>
+<a href="#" onclick="disconnectWallet();document.getElementById('walletDropdown').classList.remove('open')">🚪 Disconnect</a>
+
+
+</div>
+</div>
+</div>
+</header>
+
+<div class="main-tabs">
+<button class="main-tab active" onclick="switchMainTab('portfolio')">💰 Portfolio</button>
+<button class="main-tab" onclick="switchMainTab('transactions')">📋 Transactions</button>
+<button class="main-tab" onclick="switchMainTab('intelligence')">🧠 Intelligence</button>
+<button class="main-tab" onclick="switchMainTab('settings')">⚙️ Settings</button>
+</div>
+
+<!-- TAB: Portfolio -->
+<div class="tab-view active" id="tab-portfolio"><div class="container">
+<div class="balance-card">
+<div class="bal-label">💰 Total Balance</div>
+<div class="bal-value">24.42 SOL</div>
+<div class="bal-change">📈 +2.4% (24h) · 💵 $4,135.37</div>
+<div class="addr-row"><span>DRosGtEVv9XPxXBk8rPJmGgqGPY4dWUXa3YEeUUkxK8r</span><button style="background:none;border:none;cursor:pointer;color:#999" onclick="navigator.clipboard.writeText('DRosGtEVv9XPxXBk8rPJmGgqGPY4dWUXa3YEeUUkxK8r');showToast('Copied')">⎘</button></div>
+<div class="action-row">
+<button class="action-btn" onclick="openModal('sendModal')"><span class="ab-icon">⬆</span>Send</button>
+<button class="action-btn" onclick="openModal('receiveModal')"><span class="ab-icon">⬇</span>Receive</button>
+<button class="action-btn" onclick="openModal('swapModal')"><span class="ab-icon">🔄</span>Swap</button>
+
+</div>
+</div>
+<div class="auto-prov-banner">
+<span class="ap-icon">◉</span>
+<div><strong>✨ Auto-Provisioning Active</strong> — New tokens are detected and ATA is created instantly. No "Add Token" button needed.</div>
+</div>
+<div class="section-card">
+<div class="section-header"><span class="section-title">📊 Assets</span></div>
+<table class="asset-tbl">
+<thead><tr><th>🪙 Asset</th><th style="text-align:right">💰 Balance</th><th style="text-align:right">💵 Value</th><th style="text-align:right">📈 24h</th></tr></thead>
+<tbody>
+<tr><td><span class="asset-name">Solana</span><span class="asset-ticker">SOL</span></td><td style="text-align:right;font-weight:700">24.42</td><td style="text-align:right;font-weight:700">$4,135.37</td><td style="text-align:right">+2.4%</td></tr>
+<tr><td><span class="asset-name">USD Coin</span><span class="asset-ticker">USDC</span></td><td style="text-align:right;font-weight:700">1,250.00</td><td style="text-align:right;font-weight:700">$1,250.00</td><td style="text-align:right">0.0%</td></tr>
+<tr><td><span class="asset-name">Bonk</span><span class="asset-ticker">BONK</span></td><td style="text-align:right;font-weight:700">25M</td><td style="text-align:right;font-weight:700">$412.50</td><td style="text-align:right">+8.3%</td></tr>
+<tr><td><span class="asset-name">Jito</span><span class="asset-ticker">JTO</span></td><td style="text-align:right;font-weight:700">45.00</td><td style="text-align:right;font-weight:700">$315.00</td><td style="text-align:right">-2.1%</td></tr>
+<tr><td><span class="asset-name">Pyth Network</span><span class="asset-ticker">PYTH</span></td><td style="text-align:right;font-weight:700">520.00</td><td style="text-align:right;font-weight:700">$208.00</td><td style="text-align:right">+5.7%</td></tr>
+</tbody>
+</table>
+</div>
+<div class="section-card">
+<div class="section-header"><span class="section-title">🏦 DeFi Positions</span></div>
+<div style="padding:14px 16px;cursor:pointer;display:flex;align-items:center;gap:10px;border-bottom:1px solid #f0f0f0" onclick="var b=this.nextElementSibling;b.style.display=b.style.display==='block'?'none':'block'">
+<span>🌊 Pool</span><span style="font-weight:700">SOL-USDC LP</span><span style="font-size:10px;color:#999;margin-left:auto">Raydium</span>
+</div>
+<div style="display:none;padding:12px 16px;font-size:12px;border-bottom:1px solid #f0f0f0">Pooled: 5.0 SOL + 846.00 USDC · Value: $1,690.00 · APR: 24.5%</div>
+<div style="padding:14px 16px;cursor:pointer;display:flex;align-items:center;gap:10px" onclick="var b=this.nextElementSibling;b.style.display=b.style.display==='block'?'none':'block'">
+<span>🔒 Stake</span><span style="font-weight:700">Staked SOL</span><span style="font-size:10px;color:#999;margin-left:auto">Marinade</span>
+</div>
+<div style="display:none;padding:12px 16px;font-size:12px">Staked: 10.0 mSOL · Value: 10.42 SOL · APR: 6.8%</div>
+</div>
+</div></div>
+
+<!-- TAB: Transactions -->
+<div class="tab-view" id="tab-transactions"><div class="container">
+<div class="section-card">
+<div class="filter-zone">
+<div class="filter-pill-row">
+<button class="filter-pill active" onclick="filterTx(this)">📋 All</button>
+<button class="filter-pill" onclick="filterTx(this)">⬆ Sent</button>
+<button class="filter-pill" onclick="filterTx(this)">⬇ Received</button>
+<button class="filter-pill" onclick="filterTx(this)">🔄 Swaps</button>
+<button class="filter-pill" onclick="filterTx(this)">⏳ Pending</button>
+</div>
+<div class="filter-inputs">
+<input type="text" class="filter-input" placeholder="Search by signature" style="width:240px">
+<span style="font-size:11px;color:#999">Showing 7 transactions</span>
+</div>
+</div>
+<table class="tx-table">
+<thead><tr><th>📅 Date</th><th>📌 Type</th><th>📝 Details</th><th style="text-align:right">💲 Amount</th><th>🔑 Signature</th></tr></thead>
+<tbody>
+<tr onclick="openPreSignDemo('swap')"><td>May 1</td><td><span class="tx-type-badge badge-swap">Swap</span></td><td>SOL -> USDC (Jupiter)</td><td style="text-align:right;font-weight:700">1 SOL -> 169.44 USDC</td><td class="tx-hash-cell">5k2X...p9m</td></tr>
+<tr onclick="openPreSignDemo('received')"><td>Apr 30</td><td><span class="tx-type-badge badge-received">Received</span></td><td>From 8xGtYm... (auto-detected)</td><td style="text-align:right;font-weight:700">+500 USDC</td><td class="tx-hash-cell">3a7B...k2q</td></tr>
+<tr onclick="openPreSignDemo('sent')"><td>Apr 29</td><td><span class="tx-type-badge badge-sent">Sent</span></td><td>To 3kLpNq... (auto-ATA created)</td><td style="text-align:right;font-weight:700">-0.5 SOL</td><td class="tx-hash-cell">9fD4...r8x</td></tr>
+<tr onclick="openPreSignDemo('received')"><td>Apr 28</td><td><span class="tx-type-badge badge-received">Received</span></td><td>Auto-detected JTO airdrop</td><td style="text-align:right;font-weight:700">+45 JTO</td><td class="tx-hash-cell">2mP7...w3z</td></tr>
+<tr onclick="openPreSignDemo('swap')"><td>Apr 27</td><td><span class="tx-type-badge badge-swap">Swap</span></td><td>USDC -> BONK (Jupiter)</td><td style="text-align:right;font-weight:700">100 USDC -> 2.78M BONK</td><td class="tx-hash-cell">7hT1...y5n</td></tr>
+<tr onclick="openPreSignDemo('pending')"><td>Apr 26</td><td><span class="tx-type-badge badge-pending">Pending</span></td><td>Reclaim rent</td><td style="text-align:right;font-weight:700">+0.05 SOL</td><td class="tx-hash-cell">1xW9...v6c</td></tr>
+<tr onclick="openPreSignDemo('sent')"><td>Apr 25</td><td><span class="tx-type-badge badge-sent">Sent</span></td><td>To 6qRsNf... (Zero-Failure)</td><td style="text-align:right;font-weight:700">-100 USDC</td><td class="tx-hash-cell">8yP3...a7k</td></tr>
+</tbody>
+</table>
+</div>
+</div></div>
+
+<!-- TAB: Intelligence -->
+<div class="tab-view" id="tab-intelligence"><div class="container">
+
+<div class="pre-sign-sim">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+<span style="font-size:24px">?</span>
+<div>
+<div style="font-size:16px;font-weight:700">Pre-Sign Simulation</div>
+<div style="font-size:11px;color:#666">Plain English explanation <strong>before</strong> signing any transaction</div>
+</div>
+</div>
+<div class="pss-badge pss-badge-risk-medium" style="margin-bottom:10px">! Medium Risk — Site created 12 days ago</div>
+<div class="pss-plain">
+You are sending <strong>10 SOL</strong> (~$1,690) in exchange for approximately <strong>5,000,000 $BONK</strong>. The dApp <strong>pump.fun</strong> requests this transfer. This site was created <strong>12 days ago</strong> (Medium Risk). No suspicious code detected.
+</div>
+<div class="pss-detail">
+<div class="pss-item"><div class="pss-item-label">You Give</div><div class="pss-item-value">10.0 SOL</div></div>
+<div class="pss-item"><div class="pss-item-label">You Receive</div><div class="pss-item-value">5M BONK</div></div>
+<div class="pss-item"><div class="pss-item-label">dApp</div><div class="pss-item-value">pump.fun</div></div>
+<div class="pss-item"><div class="pss-item-label">Site Age</div><div class="pss-item-value">12 days</div></div>
+<div class="pss-item"><div class="pss-item-label">Slippage</div><div class="pss-item-value">3.0%</div></div>
+</div>
+<div style="margin-top:14px;display:flex;gap:10px">
+<button class="btn-secondary" style="flex:1" onclick="showToast('Simulation refreshed')">Reset Simulate Again</button>
+<button class="btn-primary" style="flex:1" onclick="showToast('Transaction approved!')">Approve -></button>
+</div>
+</div>
+
+<div class="section-card" style="margin-bottom:16px">
+<div class="section-header"><span class="section-title">Whale Activity — Smart Money Tracker</span></div>
+<div style="padding:16px">
+<div style="font-size:12px;color:#666;margin-bottom:12px">Tokens being accumulated by high-win-rate wallets</div>
+<div class="whale-tags">
+<span class="whale-tag active" onclick="showWhaleTokens('sol',this)">SOL Ecosystem<span class="whale-tag-count">12</span></span>
+<span class="whale-tag" onclick="showWhaleTokens('meme',this)">Meme<span class="whale-tag-count">8</span></span>
+<span class="whale-tag" onclick="showWhaleTokens('defi',this)">DeFi<span class="whale-tag-count">5</span></span>
+<span class="whale-tag" onclick="showWhaleTokens('ai',this)">AI Agents<span class="whale-tag-count">3</span></span>
+</div>
+<div id="whale-tokens">
+<div class="whale-token-card"><span style="font-size:18px">Coin</span><div><div class="whale-token-symbol">$BONK</div><div class="whale-token-wallets">Bought by 5 smart-money wallets</div></div><span class="whale-token-badge">Bullish</span><div class="whale-token-price">+8.3%</div></div>
+<div class="whale-token-card"><span style="font-size:18px">Brain</span><div><div class="whale-token-symbol">$WIF</div><div class="whale-token-wallets">Bought by 3 smart-money wallets</div></div><span class="whale-token-badge">Accumulating</span><div class="whale-token-price">+12.1%</div></div>
+<div class="whale-token-card"><span style="font-size:18px">Bot</span><div><div class="whale-token-symbol">$JTO</div><div class="whale-token-wallets">Sold by 2 smart-money wallets</div></div><span style="font-size:10px;padding:3px 8px;border-radius:4px;background:#f5f5f5;font-weight:700">Bearish</span><div class="whale-token-price">-2.1%</div></div>
+</div>
+</div>
+</div>
+</div></div>
+
+<!-- TAB: Settings -->
+<div class="tab-view" id="tab-settings"><div class="container"><div class="settings-grid">
+<div class="settings-sidebar"><ul class="settings-nav">
+<li class="active" onclick="switchSettings(this,'security')">🔒 Security</li>
+<li onclick="switchSettings(this,'account')">👤 Account</li>
+<li onclick="switchSettings(this,'preferences')">⚙️ Preferences</li>
+</ul></div>
+<div class="settings-content">
+<div class="settings-panel active" id="panel-security">
+<div class="settings-panel-title">Security</div>
+<div class="form-group"><label class="form-label">Auto-Lock Timer</label><select class="form-input"><option>5 minutes</option><option selected>15 minutes</option><option>1 hour</option></select></div>
+<div class="form-group"><label class="form-label">Pre-Sign Simulations</label><span style="font-size:11px;margin-left:8px">ON</span><div onclick="this.classList.toggle('on');var s=this.previousElementSibling;s.textContent=this.classList.contains('on')?'ON':'OFF'" class="toggle-sw on"><div class="knob"></div></div></div>
+<div class="form-group"><label class="form-label">Whale Alerts</label><span style="font-size:11px;margin-left:8px">ON</span><div onclick="this.classList.toggle('on');var s=this.previousElementSibling;s.textContent=this.classList.contains('on')?'ON':'OFF'" class="toggle-sw on"><div class="knob"></div></div></div>
+<div class="form-group"><label class="form-label">Phishing Detection</label><span style="font-size:11px;margin-left:8px">ON</span><div onclick="this.classList.toggle('on');var s=this.previousElementSibling;s.textContent=this.classList.contains('on')?'ON':'OFF'" class="toggle-sw on"><div class="knob"></div></div></div>
+</div>
+<div class="settings-panel" id="panel-account">
+<div class="settings-panel-title">Account</div>
+<div class="form-group"><label class="form-label">Wallet Name</label><input class="form-input" value="Unlimit Wallet"></div>
+<div class="form-group"><label class="form-label">Solana Domain</label><input class="form-input" placeholder="yourname.sol"></div>
+<div style="display:flex;gap:10px"><button class="btn-secondary" style="flex:1">Export Backup</button><button class="btn-danger" style="flex:1">Remove Wallet</button></div>
+</div>
+<div class="settings-panel" id="panel-preferences">
+<div class="settings-panel-title">Preferences</div>
+<div class="form-group"><label class="form-label">Currency</label><select class="form-input"><option>USD</option><option>EUR</option><option>GBP</option></select></div>
+<div class="form-group"><label class="form-label">Language</label><select class="form-input"><option>English</option><option>Chinese</option><option>Spanish</option></select></div>
+</div>
+</div>
+</div></div></div>
+
+<!-- MODAL: Send -->
+<div class="modal" id="sendModal"><div class="modal-content">
+<div class="modal-header"><div class="modal-title" id="sendTitle">Send — Step 1 of 3</div><button class="modal-close" onclick="closeModal('sendModal');resetSend()">X</button></div>
+<div class="modal-body">
+<div id="send-step1">
+<div class="form-group"><label class="form-label">Recipient Address</label><input type="text" class="form-input" id="send-addr" placeholder="Solana address or .sol domain"></div>
+<div class="form-group"><label class="form-label">Asset</label><select class="form-select" id="send-asset"><option>SOL</option><option>USDC</option><option>USDT</option><option>BONK</option></select></div>
+<div class="form-group"><label class="form-label">Amount</label><input type="text" class="form-input" id="send-amount" placeholder="0.00"></div>
+<div class="zero-failure-info"><strong>✨ Zero-Failure Guarantee</strong> — If recipient doesn't have a token box, we auto-create one. Your transfer will never fail due to missing ATA.</div>
+</div>
+<div id="send-step2" style="display:none">
+<label class="form-label">Choose Priority</label>
+<div class="gas-tiers">
+<div class="gas-tier" onclick="selectGas(this,'Slow')"><div class="gas-tier-name">🐢 Slow</div><div class="gas-tier-time">~15s</div><div class="gas-tier-cost">0.000005 SOL</div></div>
+<div class="gas-tier selected best" onclick="selectGas(this,'Medium')"><div class="gas-tier-name">⚡ Medium</div><div class="gas-tier-time">~5s</div><div class="gas-tier-cost">0.00001 SOL</div></div>
+<div class="gas-tier" onclick="selectGas(this,'Fast')"><div class="gas-tier-name">🚀 Fast</div><div class="gas-tier-time">~1s</div><div class="gas-tier-cost">0.00005 SOL</div></div>
+</div>
+</div>
+<div id="send-step3" style="display:none">
+<div class="text-center" style="margin-bottom:16px">
+<div style="font-size:24px;font-weight:700;margin-bottom:4px" id="confirm-amount">0.5 SOL</div>
+<div style="font-size:12px;color:#666">To: <span id="confirm-addr" style="font-family:'Courier New',monospace"></span></div>
+</div>
+<div style="padding:10px 14px;background:#f5f5f5;border-radius:4px;margin-bottom:12px;font-size:12px">
+<div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="color:#666">Gas Fee</span><span id="confirm-gas-cost">0.00001 SOL</span></div>
+<div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="color:#666">Priority</span><span id="confirm-gas-label">Medium</span></div>
+<div style="display:flex;justify-content:space-between"><span style="color:#666">ATA Check</span><span>✅ Auto-create if needed</span></div>
+</div>
+</div>
+<div id="send-broadcasting" style="display:none"><div class="broadcast-anim"><div class="broadcast-spinner"></div><div class="broadcast-text">Broadcasting transaction...</div><div style="font-size:10px;color:#999;margin-top:4px">Checking recipient ATA · Bundling create if needed</div></div></div>
+<div id="send-success" style="display:none"><div class="text-center"><div class="success-icon" style="font-size:20px;font-weight:700">✅</div><div style="font-size:16px;font-weight:700;margin-bottom:4px">Sent Successfully</div><div style="font-size:12px;color:#666">Transaction confirmed on Solana</div></div></div>
+<div class="btn-row" style="margin-top:16px" id="sendFoot">
+<button class="btn-secondary" id="sendBack" style="display:none" onclick="sendPrev()"><- Back</button>
+<button class="btn-primary" id="sendNext" onclick="sendNext()">Continue -></button>
+</div>
+</div></div></div>
+
+<!-- MODAL: Receive -->
+<div class="modal" id="receiveModal"><div class="modal-content">
+<div class="modal-header"><div class="modal-title">📥 Receive</div><button class="modal-close" onclick="closeModal('receiveModal')">X</button></div>
+<div class="modal-body" style="text-align:center">
+<div class="qr-grid" id="qrGrid"></div>
+<div style="margin-top:16px;padding:10px 14px;background:#f5f5f5;border:1px solid #e0e0e0;border-radius:4px;font-family:'Courier New',monospace;font-size:12px;color:#666;word-break:break-all">DRosGtEVv9XPxXBk8rPJmGgqGPY4dWUXa3YEeUUkxK8r</div>
+<button class="btn-small" style="margin-top:12px" onclick="navigator.clipboard.writeText('DRosGtEVv9XPxXBk8rPJmGgqGPY4dWUXa3YEeUUkxK8r');showToast('Address copied')">📋 Copy Address</button>
+<div style="margin-top:10px;font-size:11px;color:#999">Any token sent here is auto-detected. No setup needed.</div>
+</div></div></div>
+
+<!-- MODAL: Swap -->
+<div class="modal" id="swapModal"><div class="modal-content">
+<div class="modal-header"><div class="modal-title">🔄 Swap</div><button class="modal-close" onclick="closeModal('swapModal')">X</button></div>
+<div class="modal-body">
+<div class="form-group"><label class="form-label">You Pay</label>
+<div style="display:flex;gap:8px"><input type="text" class="form-input" id="swap-amount" placeholder="0.00" oninput="updateSwapRate()" style="flex:3"><select class="form-select" id="swap-from" onchange="updateSwapRate()" style="flex:2"><option>SOL</option><option>USDC</option><option>USDT</option><option>BONK</option></select></div></div>
+<div class="text-center" style="margin:8px 0"><button class="btn-small-outline" onclick="swapDirection()">⇄</button></div>
+<div class="form-group"><label class="form-label">You Receive</label>
+<div style="display:flex;gap:8px"><input type="text" class="form-input" id="swap-receive" placeholder="0.00" readonly style="flex:3"><select class="form-select" id="swap-to" onchange="updateSwapRate()" style="flex:2"><option>USDC</option><option>SOL</option><option>USDT</option><option>BONK</option></select></div></div>
+<div style="padding:10px 12px;background:#f5f5f5;border-radius:4px;margin-bottom:12px;font-size:12px">
+<div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="color:#666">Rate</span><span id="swap-rate">1 SOL ~ 169.44 USDC</span></div>
+<div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="color:#666">Slippage</span><span>0.5%</span></div>
+<div style="display:flex;justify-content:space-between"><span style="color:#666">Powered by</span><span style="font-weight:700">Jupiter ☁️</span></div>
+</div>
+<button class="btn-primary" onclick="doSwap()">Review Swap -></button>
+</div></div></div>
+
+<!-- Lock Overlay -->
+<div class="lock-overlay" id="lockOverlay">
+<div class="lock-card">
+<div style="font-size:36px;margin-bottom:8px;font-weight:200">U</div>
+<div style="font-size:20px;font-weight:700;margin-bottom:4px">Unlimit Wallet</div>
+<div style="font-size:13px;color:#666;margin-bottom:20px">Wallet Locked</div>
+<div class="form-group"><label class="form-label">Password</label><input type="password" class="form-input" id="lock-password" placeholder="Enter your password" onkeydown="if(event.key==='Enter')unlockWallet()"></div>
+<button class="btn-primary" onclick="unlockWallet()">Unlock -></button>
+<div style="margin-top:14px;padding-top:14px;border-top:1px solid #eee">
+<button class="btn-secondary" style="font-size:12px" onclick="disconnectWallet()">Disconnect Wallet</button>
+</div>
+</div>
+</div>
+
+<!-- Pre-Sign Modal -->
+<div class="modal" id="preSignModal"><div class="modal-content">
+<div class="modal-header"><div class="modal-title">Pre-Sign Simulation</div><button class="modal-close" onclick="closeModal('preSignModal')">X</button></div>
+<div class="modal-body">
+<div class="pss-plain" id="pss-modal-text"></div>
+<div class="pss-detail" id="pss-modal-detail"></div>
+<div style="margin-top:14px;display:flex;gap:10px">
+<button class="btn-secondary" style="flex:1" onclick="closeModal('preSignModal')">Close</button>
+<button class="btn-primary" style="flex:1" onclick="closeModal('preSignModal');showToast('Transaction approved!')">Approve -></button>
+</div>
+</div></div></div>
+
+<script>
+function switchMainTabFromHeader(name){switchMainTab(name)}
+function switchMainTab(name){document.querySelectorAll('.main-tab').forEach(function(t){t.classList.remove('active')});document.querySelectorAll('.main-tab').forEach(function(t){if(t.getAttribute('onclick')&&t.getAttribute('onclick').indexOf(name)>-1)t.classList.add('active')});document.querySelectorAll('.tab-view').forEach(function(v){v.classList.remove('active')});document.getElementById('tab-'+name).classList.add('active')}
+function switchSettings(el,name){el.parentElement.querySelectorAll('li').forEach(function(li){li.classList.remove('active')});el.classList.add('active');document.querySelectorAll('.settings-panel').forEach(function(p){p.classList.remove('active')});document.getElementById('panel-'+name).classList.add('active')}
+function filterTx(el){el.parentElement.querySelectorAll('.filter-pill').forEach(function(p){p.classList.remove('active')});el.classList.add('active')}
+function openPreSignDemo(type){
+var texts={swap:'You swapped <strong>1 SOL</strong> (~$169) for approximately <strong>169.44 USDC</strong> via Jupiter aggregator. No additional risks detected.',sent:'You sent <strong>0.5 SOL</strong> (~$84.67) to <strong>3kLpNq...</strong>. The recipient\u2019s ATA was auto-created by Unlimit. Transaction confirmed.',received:'You received funds. Your ATA was auto-detected by Unlimit Account Indexer. No action needed.',pending:'This rent reclaim transaction is pending. You are recovering <strong>0.05 SOL</strong> from empty token accounts.'};
+document.getElementById('pss-modal-text').innerHTML=texts[type]||texts.swap;
+document.getElementById('pss-modal-detail').innerHTML='<div class="pss-item"><div class="pss-item-label">Status</div><div class="pss-item-value">Confirmed</div></div><div class="pss-item"><div class="pss-item-label">Risk</div><div class="pss-item-value">Low</div></div>';
+openModal('preSignModal')
+}
+function openModal(id){var m=document.getElementById(id);m.style.display='flex';m.classList.add('active')}
+function closeModal(id){var m=document.getElementById(id);m.style.display='none';m.classList.remove('active')}
+window.addEventListener('click',function(e){if(e.target.classList.contains('modal')){e.target.style.display='none';e.target.classList.remove('active')}if(!e.target.closest('.wallet-zone')){var d=document.getElementById('walletDropdown');if(d)d.classList.remove('open')}});
+function showToast(msg){var t=document.getElementById('toast');if(!t){t=document.createElement('div');t.id='toast';Object.assign(t.style,{position:'fixed',bottom:'24px',left:'50%',transform:'translateX(-50%)',background:'#000',color:'#fff',padding:'8px 16px',borderRadius:'4px',fontSize:'12px',fontWeight:'700',zIndex:'9999',transition:'opacity 0.3s',pointerEvents:'none'});document.body.appendChild(t)}t.textContent=msg;t.style.opacity='1';clearTimeout(t._t);t._t=setTimeout(function(){t.style.opacity='0'},2500)}
+function showWhaleTokens(cat,btn){document.querySelectorAll('.whale-tag').forEach(function(t){t.classList.remove('active')});btn.classList.add('active');showToast('Showing '+cat+' whale activity')}
+function lockWallet(){document.getElementById('walletDropdown').classList.remove('open');document.getElementById('lockOverlay').classList.add('active');document.getElementById('lock-password').value='';document.getElementById('lock-password').focus()}
+function unlockWallet(){var pw=document.getElementById('lock-password').value;if(!pw){showToast('Please enter your password');return};document.getElementById('lockOverlay').classList.remove('active');document.getElementById('lock-password').value='';showToast('Wallet unlocked')}
+function disconnectWallet(){try{localStorage.removeItem('onboarding_complete');localStorage.removeItem('wallet_type');localStorage.removeItem('wallet_name')}catch(e){};document.getElementById('lockOverlay').classList.remove('active');window.location.href='../v1.0.0/index.html'}
+
+var sendStep=1,selectedGas='Medium',selectedGasCost='0.00001 SOL';
+function sendNext(){
+if(sendStep===1){var a=document.getElementById('send-addr').value.trim(),m=document.getElementById('send-amount').value.trim();if(!a||!m){showToast('Fill in recipient and amount');return};showStep(2)}
+else if(sendStep===2){var m=document.getElementById('send-amount').value,a=document.getElementById('send-addr').value,as=document.getElementById('send-asset').value;document.getElementById('confirm-amount').textContent=m+' '+as;document.getElementById('confirm-addr').textContent=a.slice(0,8)+'...'+a.slice(-4);document.getElementById('confirm-gas-label').textContent=selectedGas;document.getElementById('confirm-gas-cost').textContent=selectedGasCost;showStep(3)}
+else if(sendStep===3)broadcast()}
+function sendPrev(){if(sendStep===2)showStep(1);else if(sendStep===3)showStep(2)}
+function showStep(n){
+sendStep=n;document.getElementById('send-step1').style.display=n===1?'':'none';document.getElementById('send-step2').style.display=n===2?'':'none';document.getElementById('send-step3').style.display=n===3?'':'none';document.getElementById('send-broadcasting').style.display='none';document.getElementById('send-success').style.display='none';document.getElementById('sendFoot').style.display='';document.getElementById('sendBack').style.display=n>1?'':'none';document.getElementById('sendNext').textContent=n===3?'Confirm & Send':'Continue ->';document.getElementById('sendTitle').textContent='Send — Step '+n+' of 3'}
+function selectGas(card,tier){document.querySelectorAll('.gas-tier').forEach(function(c){c.classList.remove('selected')});card.classList.add('selected');selectedGas=tier;selectedGasCost=card.querySelector('.gas-tier-cost').textContent}
+function broadcast(){document.getElementById('send-step3').style.display='none';document.getElementById('sendFoot').style.display='none';document.getElementById('send-broadcasting').style.display='';setTimeout(function(){document.getElementById('send-broadcasting').style.display='none';document.getElementById('send-success').style.display='';var f=document.getElementById('sendFoot');f.style.display='';f.innerHTML='<button class="btn-primary" style="flex:1" onclick="closeModal(\'sendModal\');resetSend()">Close</button>'},2000)}
+function resetSend(){sendStep=1;showStep(1);document.getElementById('sendFoot').innerHTML='<button class="btn-secondary" id="sendBack" style="display:none" onclick="sendPrev()"><- Back</button><button class="btn-primary" id="sendNext" onclick="sendNext()">Continue -></button>'}
+
+var rates={SOL_USDC:169.44,SOL_USDT:169.31,SOL_BONK:4720000,USDC_SOL:0.00590,USDC_USDT:0.9998,USDC_BONK:27800,USDT_SOL:0.00591,USDT_USDC:1.0002,BONK_SOL:0.0000002118,BONK_USDC:0.0000360};
+function updateSwapRate(){var f=document.getElementById('swap-from').value,t=document.getElementById('swap-to').value,k=f+'_'+t,r=rates[k]||'--';document.getElementById('swap-rate').textContent='1 '+f+' ~ '+r+' '+t;var a=parseFloat(document.getElementById('swap-amount').value)||0;document.getElementById('swap-receive').value=a?(a*r).toFixed(2)+' '+t:''}
+function swapDirection(){var fe=document.getElementById('swap-from'),te=document.getElementById('swap-to'),tmp=fe.value;for(var i=0;i<fe.options.length;i++){if(fe.options[i].value===te.value){fe.selectedIndex=i;break}}for(var i=0;i<te.options.length;i++){if(te.options[i].value===tmp){te.selectedIndex=i;break}}updateSwapRate()}
+function doSwap(){showToast('Swap submitted! Check activity.');closeModal('swapModal')}
+
+(function buildQR(){var g=document.getElementById('qrGrid');if(!g)return;var s=[1,0,1,1,0,1,0,1,1,0,1,0,0,1,1,0,1,0,1,1,0,1,0,0,1,0,1,1,0,1,0,0,1,1,0,1,0,1,0,1,1,0,0,1,0,1,1,0,1,0,1,1,0,1,0,0,1,1,0,1,0,1,0,0,1,0,1,0,1,1,0,1,1,0,0,1,0,1,0,1,1,0,1,0,1,1,0,0,1,0,0,1,1,0,1,0,1,1,0,1,1,0,0,1,0,1,1,0,1,0,0,1,1,0,1,0,1,1,0,0,1,0,1,1,0,1,0,0,1,1,0,1,0,1,0,1,1,0,0,1,1,0,1,0,0,1,1,0,1,0,1,1,0,0,1,0,1,1,0,1,0,0,1,1,0,1,0,1,0,1,1,0,0,1,0,1,1,0,1,0,1,1,0,0,1,0,0,1,1,0,1,0,1,1,0,1,1,0,0,1,0,1,1,0,1,0,0,1,1,0,1,0,1,1,0,0,1,0,1,1,0,1,0,0,1,1,0,1,0,1,0,1,1,0,0,1,1,0,1,0,0,1,1,0,1,0,1,1,0,0,1,0,1,1,0,1,0,0,1,1,0,1,0,1,0,1,1,0,0,1,0,1,1,0,1,0,1,1,0,0,1,0,0,1,1,0,1,0,1,1,0,1,1,0,0,1,0,1,1,0,1,0,0,1,1,0,1,0,1,1,0,0,1,0,1,1,0,1,0,0,1,1,0,1,0,1,0,1,1,0,0,1,1,0,1,0,0,1,1,0,1,0,1,1,0,0,1,0,1,1,0,1,0,0,1,1,0,1,0,1,0,1,1,0,0,1,0,1,1,0,1,0,1,1,0,0,1,0,0,1,1,0,1,0,1,1,0,1,1,0,0,1,0,1,1,0,1,0,0,1];s.forEach(function(v){var c=document.createElement('div');c.className='qr-cell'+(v?' b':'');g.appendChild(c)})})();
+
+(function init(){try{var n=localStorage.getItem('wallet_name');if(n&&document.querySelectorAll){document.querySelectorAll('.wd-name').forEach(function(e){e.textContent=n});var bt=document.querySelector('.wallet-btn');if(bt){var sp=bt.querySelector('span:not(.wallet-caret):not(.wallet-avatar)');if(sp)sp.textContent=n}}}catch(e){}try{if(localStorage.getItem('onboarding_complete')!=='true')window.location.href='../v1.0.0/index.html'}catch(e){}})();
+</script>
+</body>
+</html>

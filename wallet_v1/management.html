@@ -97,97 +97,99 @@ footer { background: #f0f0f0; border-top: 1px solid #ccc; padding: 16px 24px; te
 </head>
 <body>
 <header>
-<div class="logo">🔮 Unlimit<span>Project Management Board · Solana</span></div>
+<div class="logo">🚀 Unlimit<span> 📋 Project Management Board · Solana</span></div>
 <div class="nav-links">
-<a href="sprint1.html" class="nav-link">S1: Wealth Recovery</a>
-<a href="sprint2.html" class="nav-link">S2: Invisible Tokens</a>
-<a href="sprint3.html" class="nav-link">S3: Intelligence</a>
-<a href="sprint4.html" class="nav-link">S4: Social Trading</a>
+<select id="versionSelector" style="padding:5px 10px;border:1px solid #ccc;border-radius:4px;font-size:11px;font-weight:600;background:#fff;color:#000" onchange="switchVersion(this.value)"></select>
+<a href="index.html" class="nav-link" style="background:#000;color:#fff;border-color:#000">🏠 Versions</a>
+<a id="nav-sprint1" href="v1.0.0/index.html" class="nav-link">🔐 v1.0.0</a>
+<a id="nav-sprint2" href="v2.0.0/index.html" class="nav-link">💰 v2.0.0</a>
+<a id="nav-sprint3" href="v3.0.0/index.html" class="nav-link">🧠 v3.0.0</a>
+<a id="nav-sprint4" href="v4.0.0/index.html" class="nav-link">🌟 v4.0.0</a>
+<a href="README.md" class="nav-link">📖 README</a>
 </div>
 </header>
 
 <div class="container">
-<h1>Unlimit Wallet — Project Dashboard</h1>
-<p class="subtitle">Solana Wallet · 4 Sprints · Zero-to-One Roadmap · Solflare / Phantom–inspired Prototypes</p>
+<h1>🚀 Unlimit Wallet — Project Dashboard</h1>
+<p class="subtitle">⛓️ Solana Wallet · 4 Sprints · Zero-to-One Roadmap · Solflare / Phantom–inspired Prototypes</p>
 <div class="status-banner">
-<span style="font-size:16px;">🚀</span>
-<div><strong>Sprint 1 — Wealth Recovery</strong> &nbsp;·&nbsp; Active &nbsp;·&nbsp; Scans old wallets for locked SOL rent &nbsp;·&nbsp; Free value for every import</div>
+<span style="font-size:16px;font-weight:700">🏁</span>
+<div><strong>Sprint 1 — Wealth Recovery</strong> &nbsp;·&nbsp; ✅ Active &nbsp;·&nbsp; Scans old wallets for locked SOL rent &nbsp;·&nbsp; 💰 Free value for every import</div>
 </div>
 
-<h2>Sprint Overview</h2>
-<div class="sprint-nav">
+<h2>🏃 Sprint Overview</h2>
 <div class="sprint-card active-sprint">
-<div class="sc-header"><span class="sc-badge sc-active">Active</span><span class="sc-num">Sprint 1</span></div>
-<div class="sc-title">Wealth Recovery — The "Free SOL" Hook</div>
+<div class="sc-header"><span class="sc-badge sc-active">🟢 Active</span><span class="sc-num">Sprint 1</span></div>
+<div class="sc-title">🔐 Wealth Recovery — The "Free SOL" Hook</div>
 <div class="sc-desc">Landing page showcases "We found X SOL locked in your old accounts." Import wallet → Account Indexer scans every ATA → Reclaim rent SOL from empty token boxes. BIP-39 seed generation + encrypted local storage. Establish trust with immediate value.</div>
 <div class="sc-progress">
 <div style="font-size:10px;color:#999;margin-bottom:2px;">In Progress</div>
-<div class="sc-progress-bar"><div class="sc-progress-fill" style="width:10%"></div></div>
+<div class="sc-progress-bar"><div class="sc-progress-fill" style="width:100%"></div></div>
 </div>
 <div class="sc-meta"><span>Foundation</span><span>Weeks 1–2</span></div>
-<a href="sprint1.html" class="sc-btn">Open Prototype →</a>
+<a href="v1.0.0/index.html" class="sc-btn">🔐 Open v1.0.0 →</a>
 </div>
 <div class="sprint-card">
-<div class="sc-header"><span class="sc-badge sc-backlog">Backlog</span><span class="sc-num">Sprint 2</span></div>
-<div class="sc-title">Invisible Token Manager</div>
+<div class="sc-header"><span class="sc-badge sc-done">✅ Done</span><span class="sc-num">Sprint 2</span></div>
+<div class="sc-title">💰 Invisible Token Manager</div>
 <div class="sc-desc">No "Add Token" button. Auto-provisioning: detect incoming tokens, create ATA in background. Zero-Failure Transfers: bundle "Create Box" with every send so transactions never fail. Send/Receive SOL & SPL tokens. Jupiter swap integration.</div>
 <div class="sc-progress">
-<div style="font-size:10px;color:#999;margin-bottom:2px;">Backlog</div>
-<div class="sc-progress-bar"><div class="sc-progress-fill" style="width:0%"></div></div>
+<div style="font-size:10px;color:#999;margin-bottom:2px;">Completed</div>
+<div class="sc-progress-bar"><div class="sc-progress-fill" style="width:100%"></div></div>
 </div>
 <div class="sc-meta"><span>Make ATA invisible</span><span>Weeks 3–4</span></div>
-<a href="sprint2.html" class="sc-btn sc-btn-outline">Preview Prototype →</a>
+<a href="v2.0.0/index.html" class="sc-btn">💰 Open v2.0.0 →</a>
 </div>
 <div class="sprint-card">
-<div class="sc-header"><span class="sc-badge sc-backlog">Backlog</span><span class="sc-num">Sprint 3</span></div>
-<div class="sc-title">Intelligence & Security Layer</div>
+<div class="sc-header"><span class="sc-badge sc-done">✅ Done</span><span class="sc-num">Sprint 3</span></div>
+<div class="sc-title">🧠 Intelligence & Security Layer</div>
 <div class="sc-desc">Pre-Sign Simulation: plain English explanation of every transaction before approval. Risk scoring (site age, suspicious code). Whale Tags: "Being bought by 5 Smart-Money Wallets" badges. Jupiter swap with pre-sign review. Settings: 2FA, RPC, auto-lock.</div>
 <div class="sc-progress">
-<div style="font-size:10px;color:#999;margin-bottom:2px;">Backlog</div>
-<div class="sc-progress-bar"><div class="sc-progress-fill" style="width:0%"></div></div>
+<div style="font-size:10px;color:#999;margin-bottom:2px;">Completed</div>
+<div class="sc-progress-bar"><div class="sc-progress-fill" style="width:100%"></div></div>
 </div>
 <div class="sc-meta"><span>Beat MetaMask & Phantom</span><span>Weeks 5–6</span></div>
-<a href="sprint3.html" class="sc-btn sc-btn-outline">Preview Prototype →</a>
+<a href="v3.0.0/index.html" class="sc-btn">🧠 Open v3.0.0 →</a>
 </div>
 <div class="sprint-card">
-<div class="sc-header"><span class="sc-badge sc-backlog">Backlog</span><span class="sc-num">Sprint 4</span></div>
-<div class="sc-title">Social Trading & Turbo Game</div>
+<div class="sc-header"><span class="sc-badge sc-active">🌟 Latest</span><span class="sc-num">Sprint 4</span></div>
+<div class="sc-title">🌟 Social Trading & Turbo Game</div>
 <div class="sc-desc">Copy-Trading: one-click mirror any trade in the social feed. TURBO Toggle: gamified priority-fee button to land first on meme launches. Blinks: shareable X/Discord links that let anyone buy tokens directly. Viral "Lead Trader" referral loop.</div>
 <div class="sc-progress">
-<div style="font-size:10px;color:#999;margin-bottom:2px;">Backlog</div>
-<div class="sc-progress-bar"><div class="sc-progress-fill" style="width:0%"></div></div>
+<div style="font-size:10px;color:#999;margin-bottom:2px;">Completed</div>
+<div class="sc-progress-bar"><div class="sc-progress-fill" style="width:100%"></div></div>
 </div>
 <div class="sc-meta"><span>Viral growth</span><span>Weeks 7–8</span></div>
-<a href="sprint4.html" class="sc-btn sc-btn-outline">Preview Prototype →</a>
+<a href="v4.0.0/index.html" class="sc-btn">🌟 Open v4.0.0 →</a>
 </div>
 </div>
 
-<h2>Task Board</h2>
+<h2>📋 Task Board</h2>
 <div class="filter-bar">
-<span class="filter-label">Filter by sprint:</span>
-<button class="filter-btn active" onclick="filterTasks('all',this)">All 55</button>
-<button class="filter-btn" onclick="filterTasks('Sprint 1',this)">Sprint 1</button>
-<button class="filter-btn" onclick="filterTasks('Sprint 2',this)">Sprint 2</button>
-<button class="filter-btn" onclick="filterTasks('Sprint 3',this)">Sprint 3</button>
-<button class="filter-btn" onclick="filterTasks('Sprint 4',this)">Sprint 4</button>
+<span class="filter-label">🔍 Filter by sprint:</span>
+<button class="filter-btn active" onclick="filterTasks('all',this)">📋 All 55</button>
+<button class="filter-btn" onclick="filterTasks('Sprint 1',this)">🔐 Sprint 1</button>
+<button class="filter-btn" onclick="filterTasks('Sprint 2',this)">💰 Sprint 2</button>
+<button class="filter-btn" onclick="filterTasks('Sprint 3',this)">🧠 Sprint 3</button>
+<button class="filter-btn" onclick="filterTasks('Sprint 4',this)">🌟 Sprint 4</button>
 </div>
 <div class="task-table-wrap">
 <table class="task-table">
 <thead>
-<tr><th>ID</th><th>Title / Component</th><th>Sprint</th><th>Category</th><th>Priority</th><th>Status</th></tr>
+<tr><th>🆔 ID</th><th>📝 Title / Component</th><th>🏃 Sprint</th><th>📂 Category</th><th>⭐ Priority</th><th>📊 Status</th></tr>
 </thead>
 <tbody id="taskBody"></tbody>
 </table>
 </div>
 
-<h2>Project Summary</h2>
+<h2>📊 Project Summary</h2>
 <div class="summary-grid">
-<div class="summary-card"><div class="sum-value">4</div><div class="sum-label">Sprints</div><div class="sum-sub">Zero-to-One Roadmap</div></div>
-<div class="summary-card active-card"><div class="sum-value">🔮</div><div class="sum-label">The Edge</div><div class="sum-sub">Wealth Recovery · Auto-ATA · Pre-Sign · Copy-Trade</div></div>
-<div class="summary-card"><div class="sum-value">4</div><div class="sum-label">Prototypes</div><div class="sum-sub">Sprint 1–4 HTML wireframes</div></div>
-<div class="summary-card active-card"><div class="sum-value">∞</div><div class="sum-label">Unlimit</div><div class="sum-sub">No limits. No boundaries.</div></div>
-<div class="summary-card"><div class="sum-value">Solana</div><div class="sum-label">Chain</div><div class="sum-sub">Ed25519 · SPL · ATA</div></div>
-<div class="summary-card"><div class="sum-value">v1.0</div><div class="sum-label">Version</div><div class="sum-sub">May 2025</div></div>
+<div class="summary-card active-card"><div class="sum-value">4</div><div class="sum-label">🏃 Sprints</div><div class="sum-sub">0→1 Roadmap</div></div>
+<div class="summary-card"><div class="sum-value">U</div><div class="sum-label">⚡ The Edge</div><div class="sum-sub">Wealth Recovery · Auto-ATA · Pre-Sign · Copy-Trade</div></div>
+<div class="summary-card active-card"><div class="sum-value">4</div><div class="sum-label">📱 Prototypes</div><div class="sum-sub">Sprint 1–4 HTML wireframes</div></div>
+<div class="summary-card"><div class="sum-value">∞</div><div class="sum-label">🚀 Unlimit</div><div class="sum-sub">No limits. No boundaries.</div></div>
+<div class="summary-card active-card"><div class="sum-value">⛓️</div><div class="sum-label">Chain</div><div class="sum-sub">Solana · SPL · ATA</div></div>
+<div class="summary-card"><div class="sum-value">v4.0</div><div class="sum-label">📌 Latest</div><div class="sum-sub">June 2025</div></div>
 </div>
 </div>
 
@@ -205,18 +207,81 @@ footer { background: #f0f0f0; border-top: 1px solid #ccc; padding: 16px 24px; te
 </div>
 
 <footer>
-<p>🔮 Unlimit Wallet · Project Management Board · Sprint 1 Active · May 2025</p>
+<p>🚀 Unlimit Wallet · 📋 Project Management Board · ⛓️ Solana</p>
 <div class="footer-links">
-<a href="sprint1.html">S1: Wealth Recovery</a>
-<a href="sprint2.html">S2: Invisible Tokens</a>
-<a href="sprint3.html">S3: Intelligence</a>
-<a href="sprint4.html">S4: Social Trading</a>
+<a href="index.html">🏠 Version Browser</a>
+<a id="footer-sprint1" href="v1.0.0/index.html">🔐 v1.0.0</a>
+<a id="footer-sprint2" href="v2.0.0/index.html">💰 v2.0.0</a>
+<a id="footer-sprint3" href="v3.0.0/index.html">🧠 v3.0.0</a>
+<a id="footer-sprint4" href="v4.0.0/index.html">🌟 v4.0.0</a>
 </div>
 </footer>
 
 <script>
+/* ═══════════════════ VERSION MANAGEMENT ══════════════════ */
+const VERSIONS = [
+ { id: 'v1.0.0', label: '🔐 v1.0.0 — Foundation & Wealth Recovery', current: true },
+ { id: 'v2.0.0', label: '💰 v2.0.0 — Invisible Token Manager', current: false },
+ { id: 'v3.0.0', label: '🧠 v3.0.0 — Intelligence & Security', current: false },
+ { id: 'v4.0.0', label: '🌟 v4.0.0 — Social Trading & TURBO', current: false }
+];
+
+function getActiveVersion() {
+ return localStorage.getItem('activeVersion') || 'v1.0.0';
+}
+
+function getVersionPath() {
+ const v = getActiveVersion();
+ return v === 'root' ? '' : v + '/';
+}
+
+function switchVersion(versionId) {
+ localStorage.setItem('activeVersion', versionId);
+ localStorage.setItem('targetVersion', versionId);
+ updateNavLinks();
+ window.location.href = versionId + '/index.html';
+}
+
+function initVersionSelector() {
+ const sel = document.getElementById('versionSelector');
+ if (!sel) return;
+ const active = getActiveVersion();
+ VERSIONS.forEach(v => {
+ const opt = document.createElement('option');
+ opt.value = v.id;
+ opt.textContent = v.label;
+ if (v.id === active) opt.selected = true;
+ sel.appendChild(opt);
+ });
+}
+
+function updateNavLinks() {
+ const prefix = getVersionPath();
+ const links = [
+ { id: 'nav-sprint1', path: prefix + 'index.html' },
+ { id: 'nav-sprint2', path: prefix + 'index.html' },
+ { id: 'nav-sprint3', path: prefix + 'index.html' },
+ { id: 'nav-sprint4', path: prefix + 'index.html' },
+ { id: 'footer-sprint1', path: prefix + 'index.html' },
+ { id: 'footer-sprint2', path: prefix + 'index.html' },
+ { id: 'footer-sprint3', path: prefix + 'index.html' },
+ { id: 'footer-sprint4', path: prefix + 'index.html' }
+ ];
+ links.forEach(l => {
+ const el = document.getElementById(l.id);
+ if (el) el.href = l.path;
+ });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+ initVersionSelector();
+ updateNavLinks();
+ renderTasks();
+});
+
+/* ═══════════════════ TASK BOARD DATA ══════════════════ */
 const tasks = [
-/* ═══════════════════  SPRINT 1 — ONBOARDING (12)  ══════════════════ */
+/* ═══════════════════ SPRINT 1 — ONBOARDING (12) ══════════════════ */
 {id:'WLT-001',title:'Splash Screen & App Entry',comp:'UI Shell',sprint:'Sprint 1',priority:'High',status:'In Progress',category:'Frontend',
 ux:'Branded entry point modeled on Phantom\'s animated logo reveal and Solflare\'s clean full-screen welcome. Centered layout on 100vh canvas: 80×80px bordered app-mark tile, product name at 36px bold, tagline "Your Solana Wallet", version badge. Single primary CTA "Get Started →". Zero-distraction principle — no nav, no links. Purple/black Solana-brand palette optional for production; prototype keeps B&W wireframe fidelity.',
 tech:'Pure CSS layout. `window.addEventListener("DOMContentLoaded")` checks `localStorage.getItem("onboarding_complete") === "true"` → `window.location.href = "sprint2.html"` to skip repeat onboarding. Screen state via `.screen { display:none }` / `.screen.active { display:flex }` toggled by `go(id)`. Scroll reset via `window.scrollTo(0,0)` on every transition.'},
@@ -242,7 +307,7 @@ ux:'Step 3 of 5 (Create). 12 words from BIP-39 wordlist in a 3×4 numbered grid.
 tech:'Prototype: hardcoded `WORDS[12]`. Production: `window.crypto.getRandomValues(new Uint8Array(16))` → 128-bit entropy → BIP-39 checksum adds 4 bits → 12 indices into 2048-word wordlist → 12 mnemonic words. Key derivation: BIP-44 path `m/44\'/501\'/0\'/0\'` using `ed25519` curve (SLIP-0010) → 32-byte seed → `nacl.sign.keyPair.fromSeed(seed)` → 64-byte Ed25519 keypair. Public key base58-encoded = Solana address (32 bytes = 44 base58 chars). `toggleReveal()` toggles `seed-grid.classList.toggle("blur", !seedVisible)`.'},
 
 {id:'WLT-007',title:'Seed Phrase Backup — Blur / Reveal & Anti-Screenshot',comp:'Security',sprint:'Sprint 1',priority:'High',status:'In Progress',category:'Frontend',
-ux:'Security layer on WLT-006. Blur overlay is a positioned `::before` element covering the grid — not just a CSS filter — so screen-recording software captures the blur. "Make sure no one is looking" note. After reveal button changes to "🙈 Hide phrase" for re-blur on demand. Recommendation bar: "Write on paper — never save digitally or take a screenshot." Not auto-fillable.',
+ux:'Security layer on WLT-006. Blur overlay is a positioned `::before` element covering the grid — not just a CSS filter — so screen-recording software captures the blur. "Make sure no one is looking" note. After reveal button changes to " Hide phrase" for re-blur on demand. Recommendation bar: "Write on paper — never save digitally or take a screenshot." Not auto-fillable.',
 tech:'`seed-wrap` is `position:relative`. Overlay `position:absolute` replaces itself with hide-only button on reveal. `document.addEventListener("visibilitychange")` auto-re-blurs when tab hidden: `if(document.hidden && seedVisible) toggleReveal()`. Copy button `disabled` until revealed to prevent clipboard sniffing before user consciously acts.'},
 
 {id:'WLT-008',title:'Seed Phrase Confirmation — Word-Picker Challenge',comp:'Onboarding',sprint:'Sprint 1',priority:'High',status:'In Progress',category:'Frontend',
@@ -265,14 +330,14 @@ tech:'`populateCreateSummary()` reads `wallet-name.value`, `wallet-net.options[s
 ux:'Invisible infrastructure. On every sprint1.html load: if `localStorage.onboarding_complete === "true"`, immediately redirect to sprint2.html. `restartOnboarding()` clears the flag (exposed via "Reset Onboarding" link in sprint2 header for testing). State machine: splash → choose → terms → [create: setup→pwd→seed→confirm→success | import: phrase→pwd→success | secretkey: phrase(secretkey tab)→pwd→success] → dashboard.',
 tech:'`go(id)`: `querySelectorAll(".screen").forEach(s => s.classList.remove("active"))` → `el.classList.add("active")`. `purpose` is module-level `let`. `seedVisible` auto-resets via MutationObserver on `scr-c-seed.active`. `localStorage` keys: `onboarding_complete` ("true"), `wallet_type` ("create"|"import"|"secretkey"), `wallet_name` (string), `wallet_network` ("mainnet"|"devnet"|"testnet").'},
 
-/* ═══════════════════  SPRINT 2 — CORE WALLET (15)  ════════════════ */
+/* ═══════════════════ SPRINT 2 — CORE WALLET (15) ════════════════ */
 {id:'WLT-101',title:'App Header — Wallet Selector, Cluster Pill, Action Icons',comp:'UI Shell',sprint:'Sprint 2',priority:'High',status:'Backlog',category:'Frontend',
 ux:'Sticky 52px header — persistent chrome on all post-onboarding screens. Left: identicon avatar (26px circle, initials) + wallet name + caret → opens wallet dropdown. Center: cluster pill "● Solana Mainnet ▾" → opens cluster switcher (Mainnet / Devnet / Testnet / Custom RPC). Right: notification bell (pulsing badge when pending signatures > 0), settings gear. Phantom and Solflare both use this exact 3-zone header layout. Header reads `localStorage.wallet_name` on DOMContentLoaded.',
 tech:'`position:sticky; top:0; z-index:200`. Wallet dropdown `position:absolute; top:calc(100%+6px); left:0; width:260px` toggled via `dropdown.classList.toggle("open")`. Global `document.addEventListener("click", e => { if(!e.target.closest(".wallet-zone")) closeWalletDropdown() })` for outside-click dismissal. Cluster dot color: `{mainnet:"#000", devnet:"#555", testnet:"#aaa"}`. Bell badge: `<span class="notif-badge">` hidden when count===0.'},
 
 {id:'WLT-102',title:'Balance Card — SOL + USD, 24h Change, Quick Actions',comp:'Dashboard',sprint:'Sprint 2',priority:'High',status:'Backlog',category:'Frontend',
 ux:'Hero card at top of portfolio view. Hierarchy: "TOTAL PORTFOLIO VALUE" eyebrow → "$12,547.32" at 34px bold monospace → "▲ +$234.50 (+1.90%) past 24 hours" at 12px. Below: base58 wallet address in monospace with copy button. Quick actions: Send (↑), Receive (↓), Swap (⇄), Stake (◎), Buy (disabled "Coming soon"). Stake button is Solana-specific — both Phantom and Solflare surface SOL staking as a top-level action. Bridge removed (Solana-only wallet).',
-tech:'USD balance: sum of `token.qty * token.price_usd`. SOL displayed in SOL units + USD equivalent. Address: `addr.slice(0,4) + "…" + addr.slice(-4)` (Solana base58 convention). Copy: `navigator.clipboard.writeText(fullAddress)`. Stake action: `go("view-staking")` or opens stake modal (WLT-305). In production: `connection.getBalance(publicKey)` returns lamports; divide by 1e9 for SOL.'},
+tech:'USD balance: sum of `token qty * token.price_usd`. SOL displayed in SOL units + USD equivalent. Address: `addr.slice(0,4) + "…" + addr.slice(-4)` (Solana base58 convention). Copy: `navigator.clipboard.writeText(fullAddress)`. Stake action: `go("view-staking")` or opens stake modal (WLT-305). In production: `connection.getBalance(publicKey)` returns lamports; divide by 1e9 for SOL.'},
 
 {id:'WLT-103',title:'SPL Token List — Token Accounts, Sortable with Filter',comp:'Dashboard',sprint:'Sprint 2',priority:'High',status:'Backlog',category:'Frontend',
 ux:'Sortable table: Asset (name + ticker), Balance (token amount), Value (USD), 24h Change. Column headers clickable to sort. Live filter input above: real-time case-insensitive filter on name + ticker. "＋ Add Token" button → Add SPL Token modal (WLT-110). Default rows: SOL, USDC, USDT, BONK. Each row has ★ star for watchlist (WLT-210) and ⋮ menu: "Hide Token", "View on Solscan". Empty state: "No tokens found."',
@@ -311,22 +376,22 @@ ux:'Clicking center cluster pill opens 220px dropdown: Solana Mainnet (mainnet-b
 tech:'`setActiveCluster(name)` updates `currentCluster`, re-initializes `Connection` with new endpoint, triggers `renderAll()`. Clusters: `{mainnet:{rpc:"mainnet.helius-rpc.com",ws:"...",explorer:"solscan.io"},devnet:{rpc:"api.devnet.solana.com",explorer:"explorer.solana.com?cluster=devnet"}}`. Devnet airdrop: `connection.requestAirdrop(publicKey, LAMPORTS_PER_SOL)`. `localStorage.activeCluster` persists selection.'},
 
 {id:'WLT-112',title:'Multi-Wallet Selector & Context Switch',comp:'Architecture',sprint:'Sprint 2',priority:'Medium',status:'Backlog',category:'Backend',
-ux:'Clicking wallet name zone opens dropdown listing all wallets: identicon, display name, truncated base58 address, active ✓ check. Switching wallet: brief "switching…" state, swaps balance + tokens + TX history to new wallet context. Footer: "＋ Create New Wallet", "↓ Import Wallet", "👁 Watch an Address". Each row ⋮ menu: Rename, Copy Address, View on Solscan, Export Private Key (danger warning), Remove Wallet.',
+ux:'Clicking wallet name zone opens dropdown listing all wallets: identicon, display name, truncated base58 address, active ✓ check. Switching wallet: brief "switching…" state, swaps balance + tokens + TX history to new wallet context. Footer: "＋ Create New Wallet", "↓ Import Wallet", " Watch an Address". Each row ⋮ menu: Rename, Copy Address, View on Solscan, Export Private Key (danger warning), Remove Wallet.',
 tech:'`wallets[]`: `[{id, name, address, cluster, balance, tokens}]`. `activeWalletId` tracks current. `switchWallet(id)`: `activeWalletId = id`, `renderAll()`. Export: confirmation modal "Type DELETE to confirm" before revealing keypair. Remove: `wallets.length > 1` check. Context switch animation: `opacity:0.5` on main content during 200ms transition.'},
 
 {id:'WLT-113',title:'Lock Screen & Wallet Auto-lock',comp:'Security',sprint:'Sprint 2',priority:'High',status:'Backlog',category:'Frontend',
-ux:'When locked (idle timeout or manual lock), full-screen overlay replaces all content: app-mark, "Wallet Locked", password input, "Unlock →". Optional biometric shortcut where WebAuthn available. Auto-lock timer configurable in Settings (1 / 5 / 15 min / 1 hr / Never). Manual lock via "🔒 Lock Wallet" in wallet dropdown. Wrong password: red border + shake animation. After 5 wrong attempts: 30s countdown cooldown. Phantom locks on every app close; Solflare auto-locks after idle timeout.',
+ux:'When locked (idle timeout or manual lock), full-screen overlay replaces all content: app-mark, "Wallet Locked", password input, "Unlock →". Optional biometric shortcut where WebAuthn available. Auto-lock timer configurable in Settings (1 / 5 / 15 min / 1 hr / Never). Manual lock via "Lock Wallet" in wallet dropdown. Wrong password: red border + shake animation. After 5 wrong attempts: 30s countdown cooldown. Phantom locks on every app close; Solflare auto-locks after idle timeout.',
 tech:'`let lockTimer = setTimeout(lockWallet, autoLockMs)`. Timer reset on `["mousemove","keydown","touchstart"]`. `lockWallet()`: `lockScreen.classList.add("active")`, `sessionStorage.walletLocked="true"`, `filter:blur(4px)` on content. `unlockWallet(password)`: re-derive AES-GCM key via PBKDF2 + stored salt, decrypt test blob — success → dismiss overlay, fail → increment `failCount`. Cooldown at 5 fails: 30s `setInterval` countdown.'},
 
 {id:'WLT-114',title:'Watch-only Wallet — Address Tracking Mode',comp:'Dashboard',sprint:'Sprint 2',priority:'Medium',status:'Backlog',category:'Frontend',
-ux:'"👁 Watch an Address" in wallet dropdown. Single input: paste a base58 Solana address (44 chars) or .sol domain. Watch wallet appears in list with 👁 badge. Full dashboard renders — balance, tokens, TX history — all read-only. All write actions (Send, Swap, Stake) disabled with tooltip "Watch-only — import keys to transact." Receive shows address QR. Useful for cold wallet monitoring, portfolio tracking, tax accounting.',
+ux:'" Watch an Address" in wallet dropdown. Single input: paste a base58 Solana address (44 chars) or .sol domain. Watch wallet appears in list with badge. Full dashboard renders — balance, tokens, TX history — all read-only. All write actions (Send, Swap, Stake) disabled with tooltip "Watch-only — import keys to transact." Receive shows address QR. Useful for cold wallet monitoring, portfolio tracking, tax accounting.',
 tech:'Watch wallet: `{id, name, address, type:"watch", cluster}` — no `encryptedSeed`, no `privateKey`. `const isWatch = activeWallet.type==="watch"`. Action buttons receive `disabled + title="Watch-only"` when `isWatch`. Balance + tokens: fetched via `connection.getBalance()` + `getParsedTokenAccountsByOwner()` as read-only RPC calls. .sol domain resolution: Bonfida SNS `resolveToAddress(connection, domainName)`.'},
 
 {id:'WLT-115',title:'SPL Token Spam Detection & Hiding',comp:'Tokens',sprint:'Sprint 2',priority:'Medium',status:'Backlog',category:'Frontend',
-ux:'Three tiers in asset list: (1) Verified — on Jupiter top-token list or Metaplex Certified Collections, shown normally. (2) Unverified — imported but unknown — shown with ⚠ "Unverified" badge in collapsible dimmed section. (3) Hidden — user-dismissed. Row ⋮ menu: "Hide Token", "Report as Spam". Collapsible "Hidden Tokens (N)" section for recovery. Settings toggle: "Auto-hide tokens worth less than $0.01" (default on). Solana is particularly prone to spam airdrops (dust attacks) — this is critical UX.',
-tech:'`tokenFlags = JSON.parse(localStorage.getItem("tokenFlags") || "{}")`. Schema: `{[mintAddress]: "verified"|"unverified"|"hidden"}`. Classification: `verifiedMints = new Set(jupiterTopTokenList.map(t => t.address))`. At render: `const tier = verifiedMints.has(mint) ? "verified" : tokenFlags[mint] || "unverified"`. Auto-hide: `if(token.usdValue < 0.01 && tier !== "verified") tokenFlags[mint] = "hidden"`. Spam badge: `<span class="unverified-badge">⚠ Unverified</span>`.'},
+ux:'Three tiers in asset list: (1) Verified — on Jupiter top-token list or Metaplex Certified Collections, shown normally. (2) Unverified — imported but unknown — shown with ! "Unverified" badge in collapsible dimmed section. (3) Hidden — user-dismissed. Row ⋮ menu: "Hide Token", "Report as Spam". Collapsible "Hidden Tokens (N)" section for recovery. Settings toggle: "Auto-hide tokens worth less than $0.01" (default on). Solana is particularly prone to spam airdrops (dust attacks) — this is critical UX.',
+tech:'`tokenFlags = JSON.parse(localStorage.getItem("tokenFlags") || "{}")`. Schema: `{[mintAddress]: "verified"|"unverified"|"hidden"}`. Classification: `verifiedMints = new Set(jupiterTopTokenList.map(t => t.address))`. At render: `const tier = verifiedMints.has(mint) ? "verified" : tokenFlags[mint] || "unverified"`. Auto-hide: `if(token.usdValue < 0.01 && tier !== "verified") tokenFlags[mint] = "hidden"`. Spam badge: `<span class="unverified-badge">! Unverified</span>`.'},
 
-/* ═══════════════════  SPRINT 3 — TX HISTORY & ANALYTICS (14)  ════ */
+/* ═══════════════════ SPRINT 3 — TX HISTORY & ANALYTICS (14) ════ */
 {id:'WLT-201',title:'Transaction History — Solana Signature Log',comp:'Transactions',sprint:'Sprint 3',priority:'High',status:'Backlog',category:'Frontend',
 ux:'Full-screen Transactions tab. Columns: Date/Time, Type (badge: Sent / Received / Swap / Stake / Program / Failed), Asset + Amount (±), USD Value, Status (Confirmed ✓ / Pending ⏳ / Failed ✗), Signature (truncated + Solscan link). Sorted newest-first. Click row → TX Detail modal (WLT-203). Pagination: 20 rows/page. Empty state: "No transactions yet. Send or receive to see activity here." Note: Solana transactions can contain multiple instructions — type shown is the primary instruction type.',
 tech:'`connection.getSignaturesForAddress(publicKey, {limit:20})` returns `[{signature, slot, blockTime, confirmationStatus, err}]`. For each signature: `connection.getParsedTransaction(signature, {maxSupportedTransactionVersion:0})` returns full instruction data. Type classification: parse `transaction.message.instructions[0].programId` — `SystemProgram` = transfer; `TokenProgram` = SPL transfer; `JupiterProgram` = swap. Hash display: `sig.slice(0,4)+"…"+sig.slice(-4)`. Solscan URL: `https://solscan.io/tx/${sig}`.'},
@@ -380,16 +445,16 @@ ux:'Primary way Solana wallets connect to dApps (Jupiter, Magic Eden, Tensor, Ka
 tech:'Wallet Standard: implement `StandardWalletAdapter` from `@wallet-standard/wallet`. Register: `registerWallet(wallet)`. Events: `wallet.features["standard:connect"].connect()` → approval UI → return `{accounts:[{address, publicKey}]}`. `wallet.features["solana:signTransaction"].signTransaction({transaction})` → sign with keypair. `wallet.features["solana:signAllTransactions"]` for batches. Disconnect: `wallet.features["standard:disconnect"].disconnect()`. Sessions persisted in `localStorage.walletConnectSessions`. MWA: `@solana-mobile/wallet-adapter-mobile` handles `solana-wallet://` deep-links.'},
 
 {id:'WLT-214',title:'Sign & Simulate Transaction / Message UI',comp:'Web3',sprint:'Sprint 3',priority:'High',status:'Backlog',category:'Frontend',
-ux:'Two request types from connected dApps: (1) Sign Transaction — dApp submits a partially-built `Transaction`. Wallet shows approval modal: dApp identity header (icon, name, URL), instruction summary table (program name, accounts affected, SOL/token balance changes), "simulation preview" (run `simulateTransaction` and show pre/post balance deltas). "Approve" / "Reject" buttons. (2) Sign Message — arbitrary UTF-8 message for Sign-In With Solana (SIWS / off-chain auth). Shows decoded message in scrollable `<pre>`. If message contains "transfer", "delegate", "revoke", "approve" → ⚠ yellow danger banner. Both Phantom and Solflare show transaction simulation previews — a key UX differentiator vs EVM wallets.',
+ux:'Two request types from connected dApps: (1) Sign Transaction — dApp submits a partially-built `Transaction`. Wallet shows approval modal: dApp identity header (icon, name, URL), instruction summary table (program name, accounts affected, SOL/token balance changes), "simulation preview" (run `simulateTransaction` and show pre/post balance deltas). "Approve" / "Reject" buttons. (2) Sign Message — arbitrary UTF-8 message for Sign-In With Solana (SIWS / off-chain auth). Shows decoded message in scrollable `<pre>`. If message contains "transfer", "delegate", "revoke", "approve" → ! yellow danger banner. Both Phantom and Solflare show transaction simulation previews — a key UX differentiator vs EVM wallets.',
 tech:'`signTransaction(tx)`: `nacl.sign.detached(tx.serializeMessage(), secretKey)`. Simulation: `connection.simulateTransaction(tx, [signers], {commitment:"confirmed"})` → `{value:{err, logs, accounts, unitsConsumed}}`. Balance delta: `accounts[i].lamports - preBalance[i]`. Instruction decode: `@solana/web3.js` known program decoders. Sign-In With Solana: `@solana/wallet-standard-features` `SolanaSignInFeature`. Message signing: `nacl.sign.detached(new TextEncoder().encode(message), secretKey)`. Danger keyword scan: `["transfer","delegate","revoke","approve"].some(k => msg.toLowerCase().includes(k))`.'},
 
-/* ═══════════════════  SPRINT 4 — SETTINGS & ADVANCED (14)  ════════ */
+/* ═══════════════════ SPRINT 4 — SETTINGS & ADVANCED (14) ════════ */
 {id:'WLT-301',title:'Settings Panel — 7-Tab Sidebar Layout',comp:'Settings',sprint:'Sprint 4',priority:'High',status:'Backlog',category:'Frontend',
-ux:'Full-width settings view via ⚙ gear icon. 7-tab sidebar (left 180px, desktop): Account · Security · Staking · Networks · Preferences · API Keys · Activity Log. Desktop: CSS grid `180px 1fr`. Mobile: horizontal scroll tabs above content. Active tab: bold + 3px right-border + white bg (same as Solflare). "Saved" toast (2s) on every save. Staking tab is Solana-specific — placed early in tab order to reflect its prominence in the Solana ecosystem.',
+ux:'Full-width settings view via Settings gear icon. 7-tab sidebar (left 180px, desktop): Account · Security · Staking · Networks · Preferences · API Keys · Activity Log. Desktop: CSS grid `180px 1fr`. Mobile: horizontal scroll tabs above content. Active tab: bold + 3px right-border + white bg (same as Solflare). "Saved" toast (2s) on every save. Staking tab is Solana-specific — placed early in tab order to reflect its prominence in the Solana ecosystem.',
 tech:'`switchSettings(panel, el)`: hide all `.settings-tab` divs → show `#st-${panel}`. Sidebar items: remove all `.active` → add to clicked item. `@media(max-width:640px)`: sidebar becomes `display:flex; overflow-x:auto; border-right:none; border-bottom:1px solid #eee`.'},
 
 {id:'WLT-302',title:'Account Profile — Name, .sol Domain, Wallet Management',comp:'Settings',sprint:'Sprint 4',priority:'Medium',status:'Backlog',category:'Frontend',
-ux:'Account tab. Sections: (1) Wallet Profile: display name + Save, .sol domain (read-only, linked from Bonfida SNS registry), resolver + expiry date. (2) Primary Wallet: dropdown for default wallet. (3) Account Actions: "⬇ Download Account Data" (JSON of names, addresses, clusters, settings — no keys), "✕ Delete Account" (type "DELETE" + 5s countdown).',
+ux:'Account tab. Sections: (1) Wallet Profile: display name + Save, .sol domain (read-only, linked from Bonfida SNS registry), resolver + expiry date. (2) Primary Wallet: dropdown for default wallet. (3) Account Actions: "↓ Download Account Data" (JSON of names, addresses, clusters, settings — no keys), "✕ Delete Account" (type "DELETE" + 5s countdown).',
 tech:'"Download Account Data": `JSON.stringify(exportData, (key,val) => ["privateKey","secretKey","seed","mnemonic"].includes(key) ? undefined : val, 2)`. Delete: `localStorage.clear(); sessionStorage.clear(); window.location.href = "sprint1.html"`. .sol domain: `reverseLookup(connection, address)` on load.'},
 
 {id:'WLT-303',title:'Two-Factor Authentication — TOTP Setup & Backup Codes',comp:'Security',sprint:'Sprint 4',priority:'High',status:'Backlog',category:'Backend',
@@ -417,7 +482,7 @@ ux:'Networks tab in Settings. Table: Cluster name, Endpoint type (mainnet-beta/d
 tech:'"Test Connection": `const conn = new Connection(rpcUrl); const [health, slot] = await Promise.all([conn.getHealth(), conn.getSlot()])`. `showToast("Connected — Slot: " + slot + " — " + latency + "ms")`. URL validation: `/^https:\\/\\//.test(rpcUrl) && /^wss:\\/\\//.test(wssUrl)`. Custom endpoints: `localStorage.customEndpoints`. Switching: re-instantiates `Connection` with new URL, re-fetches all balances.'},
 
 {id:'WLT-309',title:'Data Export & Privacy Controls (GDPR / CCPA)',comp:'Privacy',sprint:'Sprint 4',priority:'Medium',status:'Backlog',category:'Backend',
-ux:'Account tab, "Data & Privacy" section. (1) "⬇ Download All My Data" — JSON of wallet names + addresses, clusters config, contacts, settings, TX history. Explicit note: "This export NEVER includes your private key, seed phrase, or passwords." (2) "🗑 Delete All Data" — type "DELETE" + 5s countdown button. (3) Analytics opt-in toggle (off by default). Privacy notice listing exactly what is and is not transmitted.',
+ux:'Account tab, "Data & Privacy" section. (1) "↓ Download All My Data" — JSON of wallet names + addresses, clusters config, contacts, settings, TX history. Explicit note: "This export NEVER includes your private key, seed phrase, or passwords." (2) "🗑 Delete All Data" — type "DELETE" + 5s countdown button. (3) Analytics opt-in toggle (off by default). Privacy notice listing exactly what is and is not transmitted.',
 tech:'"Download": `JSON.stringify(exportData, (key,val) => ["privateKey","secretKey","seed","mnemonic"].includes(key) ? undefined : val, 2)`. "Delete": `localStorage.clear(); sessionStorage.clear(); window.location.href="sprint1.html"`. Analytics: `localStorage.setItem("analyticsOptIn", toggle.classList.contains("on"))`.'},
 
 {id:'WLT-310',title:'Notification Preferences — Per-Event Channel Config',comp:'Settings',sprint:'Sprint 4',priority:'Low',status:'Backlog',category:'Frontend',
@@ -425,7 +490,7 @@ ux:'Preferences tab, Notifications section. Toggle rows: TX Confirmed (on) / Inc
 tech:'Toggle: `btn.classList.toggle("on"); localStorage.setItem("notif_"+key, btn.classList.contains("on"))`. Low SOL threshold: 0.05 SOL = rent-exempt minimum for many programs — relevant default for Solana. Push: `Notification.requestPermission()`. Epoch reward notification: subscribe to `connection.onAccountChange(stakeAccount)` for reward detection.'},
 
 {id:'WLT-311',title:'Developer Mode — Debug Console & Feature Flags',comp:'Developer',sprint:'Sprint 4',priority:'Low',status:'Backlog',category:'QA',
-ux:'Easter egg: click footer version badge 5× within 2s. Toast "🛠 Developer Mode enabled". When active: (1) Debug console (200px bottom panel, dark bg, monospace) logging all RPC calls, signatures, navigation events. (2) "Copy JSON" on each TX row. (3) Fees shown in lamports + SOL + USD. (4) "Reset All State" button. (5) Feature flags JSON editor. (6) Current slot + TPS shown next to cluster pill. Deactivate: same 5-click gesture.',
+ux:'Easter egg: click footer version badge 5× within 2s. Toast " Developer Mode enabled". When active: (1) Debug console (200px bottom panel, dark bg, monospace) logging all RPC calls, signatures, navigation events. (2) "Copy JSON" on each TX row. (3) Fees shown in lamports + SOL + USD. (4) "Reset All State" button. (5) Feature flags JSON editor. (6) Current slot + TPS shown next to cluster pill. Deactivate: same 5-click gesture.',
 tech:'`footerClicks++; if(footerClicks>=5){toggleDevMode()}`. Console: `<div id="devConsole" style="position:fixed;bottom:0;width:100%;height:200px;background:#111;color:#0f0;font-family:monospace;">`. `devLog(msg)`: append + `scrollTop = scrollHeight`. Slot/TPS: `connection.getRecentPerformanceSamples(1)` → `{numTransactions/samplePeriodSecs}`. Feature flags: `{featureId:bool}` in localStorage.'},
 
 {id:'WLT-312',title:'Accessibility & Internationalization Settings',comp:'i18n / A11y',sprint:'Sprint 4',priority:'Low',status:'Backlog',category:'Design',
@@ -433,76 +498,74 @@ ux:'Preferences tab. Accessibility: Font Size (S/M/L/XL), High Contrast toggle, 
 tech:'Font: `document.documentElement.style.setProperty("--font-base", size+"px")`. High contrast: `document.body.classList.toggle("high-contrast")`. Reduced motion: `.reduced-motion * { transition:none!important; animation:none!important }`. Lamports toggle: `formatAmount(lamports) = devMode ? lamports + " lamports" : (lamports/1e9).toFixed(9) + " SOL"`.'},
 
 {id:'WLT-313',title:'SPL Token Delegate Manager — View & Revoke Delegations',comp:'Security',sprint:'Sprint 4',priority:'High',status:'Backlog',category:'Frontend',
-ux:'Security tab, "Token Delegates" section. Unlike Ethereum ERC-20 approvals, Solana SPL tokens use a delegate pattern: a delegated authority can transfer up to `delegatedAmount` tokens from your token account. This surfaces every active SPL delegation. Table: Token (name + symbol), Delegated To (truncated base58 + Solscan ↗), Delegated Amount (exact or "Unlimited ∞"), Date Observed, Risk Level badge (🟢 Known Protocol / 🟡 Unverified / 🔴 High Risk). "Revoke" button per row (sends `revoke()` instruction). "Revoke All Unverified" bulk action. Unlimited delegation to unknown address = persistent red warning row.',
+ux:'Security tab, "Token Delegates" section. Unlike Ethereum ERC-20 approvals, Solana SPL tokens use a delegate pattern: a delegated authority can transfer up to `delegatedAmount` tokens from your token account. This surfaces every active SPL delegation. Table: Token (name + symbol), Delegated To (truncated base58 + Solscan ↗), Delegated Amount (exact or "Unlimited ∞"), Date Observed, Risk Level badge ( Known Protocol / Unverified / High Risk). "Revoke" button per row (sends `revoke()` instruction). "Revoke All Unverified" bulk action. Unlimited delegation to unknown address = persistent red warning row.',
 tech:'Fetch delegated token accounts: `connection.getParsedTokenAccountsByOwner(pubkey, {programId:TOKEN_PROGRAM_ID})` → filter where `account.data.parsed.info.delegatedAmount > 0`. Each row: `{mint, delegate, delegatedAmount, tokenName}`. Risk scoring: `knownDelegates = {jupiterV6:"Jupiter V6", marinade:"Marinade"}`. Revoke: `createRevokeInstruction(tokenAccountAddress, ownerPubkey)` from `@solana/spl-token` → sign + broadcast. Unlimited: `delegatedAmount === U64_MAX`. Display: `isUnlimited ? "Unlimited ∞" : formatAmount(delegatedAmount, decimals)`.'},
 
 {id:'WLT-314',title:'Phishing Detection & Address Poisoning Protection (Solana)',comp:'Security',sprint:'Sprint 4',priority:'High',status:'Backlog',category:'Backend',
-ux:'Two real-world attacks on Solana: (1) Phishing Site Detection: when a dApp connection is initiated (WLT-213), the domain is checked against a blocklist. If flagged: full-screen red takeover — "⛔ Phishing Site Detected — [domain] is a known scam. Do not connect." Single "← Go back to safety" button. No bypass. (2) Address Poisoning: scammers send $0-value transactions from an address sharing the first 4 and last 4 base58 characters of a known contact (more dangerous on Solana due to 44-char addresses). In TX History and Send modal: any such address shows ⚠ "Possible poison address — verify all characters" with address shown FULL (never truncated). Phantom added Solana address poison warnings in 2024.',
+ux:'Two real-world attacks on Solana: (1) Phishing Site Detection: when a dApp connection is initiated (WLT-213), the domain is checked against a blocklist. If flagged: full-screen red takeover — " Phishing Site Detected — [domain] is a known scam. Do not connect." Single "← Go back to safety" button. No bypass. (2) Address Poisoning: scammers send $0-value transactions from an address sharing the first 4 and last 4 base58 characters of a known contact (more dangerous on Solana due to 44-char addresses). In TX History and Send modal: any such address shows ! "Possible poison address — verify all characters" with address shown FULL (never truncated). Phantom added Solana address poison warnings in 2024.',
 tech:'Phishing blocklist: maintain a Solana-specific blocklist JSON (community-curated, hosted via CDN). Fallback: fetch MetaMask\'s `eth-phishing-detect` list for EVM overlap and fuzzy domain matching (`levenshtein(hostname, knownScam) < 2`). Cache in `localStorage.phishingList` (TTL: 24h). `isPhishing(url)`: `config.blacklist.some(d => hostname.endsWith(d))`. Address poisoning: `contactAddrs = [...txHistoryFromAddrs, ...addressBook]`. `isPoisonAddr(a)` = `contactAddrs.some(k => k !== a && k.slice(0,4)===a.slice(0,4) && k.slice(-4)===a.slice(-4))`. In Send modal: if `isPoisonAddr(value)` → red inline warning + force full address display.'}
 ];
 
 
 function renderTasks() {
-  let h = '';
-  tasks.forEach(t => {
-    const b = t.status === 'Done' ? 'badge-done' : t.status === 'In Progress' ? 'badge-inprogress' : 'badge-backlog';
-    const m = t.sprint === 'Sprint 1' ? 's1-marker' : t.sprint === 'Sprint 2' ? 's2-marker' : t.sprint === 'Sprint 3' ? 's3-marker' : 's4-marker';
-    const p = t.priority === 'High' ? 'priority-high' : t.priority === 'Medium' ? 'priority-medium' : 'priority-low';
-    const catClass = t.category === 'Frontend' ? 'cat-frontend' : t.category === 'Backend' ? 'cat-backend' : t.category === 'QA' ? 'cat-qa' : 'cat-design';
-    h += `<tr class="task-row ${m}" data-sprint="${t.sprint}" onclick="openModal('${t.id}')">
-      <td class="task-id">${t.id}</td>
-      <td class="task-title-cell"><strong>${t.title}</strong><span>${t.comp}</span></td>
-      <td>${t.sprint}</td>
-      <td><span class="cat-badge ${catClass}">${t.category}</span></td>
-      <td><span class="${p}">${t.priority}</span></td>
-      <td><span class="badge ${b}">${t.status}</span></td>
-    </tr>`;
-  });
-  document.getElementById('taskBody').innerHTML = h;
+ let h = '';
+ tasks.forEach(t => {
+ const b = t.status === 'Done' ? 'badge-done' : t.status === 'In Progress' ? 'badge-inprogress' : 'badge-backlog';
+ const m = t.sprint === 'Sprint 1' ? 's1-marker' : t.sprint === 'Sprint 2' ? 's2-marker' : t.sprint === 'Sprint 3' ? 's3-marker' : 's4-marker';
+ const p = t.priority === 'High' ? 'priority-high' : t.priority === 'Medium' ? 'priority-medium' : 'priority-low';
+ const catClass = t.category === 'Frontend' ? 'cat-frontend' : t.category === 'Backend' ? 'cat-backend' : t.category === 'QA' ? 'cat-qa' : 'cat-design';
+ h += `<tr class="task-row ${m}" data-sprint="${t.sprint}" onclick="openModal('${t.id}')">
+ <td class="task-id">${t.id}</td>
+ <td class="task-title-cell"><strong>${t.title}</strong><span>${t.comp}</span></td>
+ <td>${t.sprint}</td>
+ <td><span class="cat-badge ${catClass}">${t.category}</span></td>
+ <td><span class="${p}">${t.priority}</span></td>
+ <td><span class="badge ${b}">${t.status}</span></td>
+ </tr>`;
+ });
+ document.getElementById('taskBody').innerHTML = h;
 }
 
 function openModal(id) {
-  const t = tasks.find(x => x.id === id);
-  if (!t) return;
-  document.getElementById('modalId').textContent = t.id;
-  document.getElementById('modalTitle').textContent = t.title;
-  const b = t.status === 'Done' ? 'badge-done' : t.status === 'In Progress' ? 'badge-inprogress' : 'badge-backlog';
-  const p = t.priority === 'High' ? 'priority-high' : t.priority === 'Medium' ? 'priority-medium' : 'priority-low';
-  document.getElementById('modalBody').innerHTML = `
-    <div class="meta-grid">
-      <div class="meta-item"><span class="meta-label">Sprint</span><span class="meta-value">${t.sprint}</span></div>
-      <div class="meta-item"><span class="meta-label">Status</span><span class="meta-value"><span class="badge ${b}">${t.status}</span></span></div>
-      <div class="meta-item"><span class="meta-label">Priority</span><span class="meta-value"><span class="${p}">${t.priority}</span></span></div>
-      <div class="meta-item"><span class="meta-label">Component</span><span class="meta-value">${t.comp}</span></div>
-    </div>
-    <div class="desc-section">
-      <div class="desc-section-title">UX Design Rationale</div>
-      <p class="desc-text">${t.ux}</p>
-    </div>
-    <div class="desc-section">
-      <div class="desc-section-title">Technical Implementation</div>
-      <div class="tech-box">${t.tech}</div>
-    </div>`;
-  document.getElementById('taskModal').classList.add('active');
+ const t = tasks.find(x => x.id === id);
+ if (!t) return;
+ document.getElementById('modalId').textContent = t.id;
+ document.getElementById('modalTitle').textContent = t.title;
+ const b = t.status === 'Done' ? 'badge-done' : t.status === 'In Progress' ? 'badge-inprogress' : 'badge-backlog';
+ const p = t.priority === 'High' ? 'priority-high' : t.priority === 'Medium' ? 'priority-medium' : 'priority-low';
+ document.getElementById('modalBody').innerHTML = `
+ <div class="meta-grid">
+ <div class="meta-item"><span class="meta-label">Sprint</span><span class="meta-value">${t.sprint}</span></div>
+ <div class="meta-item"><span class="meta-label">Status</span><span class="meta-value"><span class="badge ${b}">${t.status}</span></span></div>
+ <div class="meta-item"><span class="meta-label">Priority</span><span class="meta-value"><span class="${p}">${t.priority}</span></span></div>
+ <div class="meta-item"><span class="meta-label">Component</span><span class="meta-value">${t.comp}</span></div>
+ </div>
+ <div class="desc-section">
+ <div class="desc-section-title">UX Design Rationale</div>
+ <p class="desc-text">${t.ux}</p>
+ </div>
+ <div class="desc-section">
+ <div class="desc-section-title">Technical Implementation</div>
+ <div class="tech-box">${t.tech}</div>
+ </div>`;
+ document.getElementById('taskModal').classList.add('active');
 }
 
 function closeModal() {
-  document.getElementById('taskModal').classList.remove('active');
+ document.getElementById('taskModal').classList.remove('active');
 }
 
 function filterTasks(sprint, btn) {
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  document.querySelectorAll('.task-row').forEach(r => {
-    r.style.display = (sprint === 'all' || r.dataset.sprint === sprint) ? '' : 'none';
-  });
+ document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+ btn.classList.add('active');
+ document.querySelectorAll('.task-row').forEach(r => {
+ r.style.display = (sprint === 'all' || r.dataset.sprint === sprint) ? '' : 'none';
+ });
 }
 
 window.onclick = function(e) {
-  if (e.target.classList.contains('modal')) closeModal();
+ if (e.target.classList.contains('modal')) closeModal();
 };
-
-document.addEventListener('DOMContentLoaded', renderTasks);
 </script>
 </body>
 </html>

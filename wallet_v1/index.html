@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unlimit Wallet — Version Browser</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #fff; color: #000; line-height: 1.6; }
+header { background: #f0f0f0; border-bottom: 2px solid #000; padding: 14px 24px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+.logo { font-size: 20px; font-weight: 700; }
+.logo span { font-size: 13px; color: #666; margin-left: 8px; font-weight: 400; }
+.nav-links { display: flex; gap: 8px; flex-wrap: wrap; }
+.nav-link { padding: 6px 12px; background: #fff; border: 1px solid #ccc; border-radius: 4px; font-size: 11px; font-weight: 600; color: #000; text-decoration: none; }
+.nav-link:hover { background: #f0f0f0; }
+.container { max-width: 1000px; margin: 0 auto; padding: 48px 24px; }
+h1 { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
+.subtitle { font-size: 13px; color: #666; margin-bottom: 32px; }
+.versions-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-bottom: 48px; }
+.version-card { border: 1px solid #ccc; border-radius: 6px; padding: 24px; background: #fff; transition: box-shadow 0.15s; }
+.version-card:hover { box-shadow: 0 3px 12px rgba(0,0,0,0.1); }
+.version-card.active { border-color: #000; border-width: 2px; }
+.vc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.vc-tag { font-size: 13px; font-weight: 300; color: #999; }
+.vc-badge { display: inline-block; padding: 3px 10px; border-radius: 3px; font-size: 10px; font-weight: 700; background: #000; color: #fff; }
+.vc-title { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+.vc-desc { font-size: 12px; color: #555; margin-bottom: 14px; line-height: 1.5; }
+.vc-actions { display: flex; gap: 8px; }
+.vc-btn { flex: 1; padding: 8px 0; background: #000; color: #fff; text-decoration: none; font-size: 11px; font-weight: 700; border-radius: 4px; text-align: center; }
+.vc-btn:hover { background: #333; }
+.vc-btn-outline { background: #fff; color: #000; border: 1px solid #ccc; }
+.vc-btn-outline:hover { background: #f5f5f5; }
+.project-board-link { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 16px 24px; background: #fafafa; border: 1px solid #ccc; border-radius: 6px; margin-bottom: 40px; text-decoration: none; color: #000; }
+.project-board-link:hover { background: #f0f0f0; }
+.project-board-link .pbl-icon { font-size: 24px; }
+.project-board-link .pbl-title { font-size: 15px; font-weight: 700; }
+.project-board-link .pbl-desc { font-size: 12px; color: #666; }
+footer { background: #f0f0f0; border-top: 1px solid #ccc; padding: 16px 24px; text-align: center; font-size: 11px; color: #666; margin-top: 48px; }
+</style>
+</head>
+<body>
+<header>
+<div class="logo">🚀 Unlimit<span> 🧪 Prototype Versions</span></div>
+<div class="nav-links">
+<a href="management.html" class="nav-link">📋 Project Board</a>
+<a href="README.md" class="nav-link">📖 README</a>
+<a href="v1.0.0/index.html" class="nav-link">🔐 v1.0.0</a>
+<a href="v2.0.0/index.html" class="nav-link">💰 v2.0.0</a>
+<a href="v3.0.0/index.html" class="nav-link">🧠 v3.0.0</a>
+<a href="v4.0.0/index.html" class="nav-link">🌟 v4.0.0</a>
+</div>
+</header>
+
+<div class="container">
+<h1>🚀 Unlimit Wallet — Prototype Versions</h1>
+<p class="subtitle">📱 Browse different iterations of the Unlimit wallet clickable prototype. Select a version to explore its sprint-by-sprint wireframes.</p>
+
+<a href="management.html" class="project-board-link">
+<div><div class="pbl-title">📋 Open Project Management Board</div><div class="pbl-desc">📊 Full task tracking, sprint overview, and roadmap across all versions</div></div>
+<span style="font-size:18px">→</span>
+</a>
+
+<h2 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#555;margin-bottom:16px">📦 Available Versions</h2>
+
+<div class="versions-grid" id="versionsGrid">
+<!-- Versions are populated dynamically by JS -->
+</div>
+
+<div style="border-top:1px solid #eee;padding-top:24px;text-align:center">
+<p style="font-size:12px;color:#999">Versions are discovered automatically. Add a new folder like <code style="background:#f0f0f0;padding:1px 4px;border-radius:2px">v1.1.0/</code> with the same sprint files to have it appear here.</p>
+</div>
+</div>
+
+<footer>
+<p>🚀 Unlimit Wallet · 🧪 Prototype Version Browser · ⛓️ Solana</p>
+</footer>
+
+<script>
+const VERSIONS = [
+ {
+ id: 'v1.0.0',
+ label: '🔐 v1.0.0',
+ title: 'Foundation & Wealth Recovery',
+ desc: '🔐 Onboarding flow: splash, wallet creation/import, BIP-39 seed generation, password encryption, recovery scanning. 💰 Establishes trust by finding locked SOL rent in old token accounts.',
+ current: false,
+ date: 'June 2025'
+ },
+ {
+ id: 'v2.0.0',
+ label: '💰 v2.0.0',
+ title: 'Foundation + Invisible Token Manager',
+ desc: '💰 Core wallet dashboard, balance card, SPL token list, Send/Receive/Swap flows, Jupiter integration, auto-ATA provisioning, ✨ zero-failure transfers, multi-wallet support, lock screen.',
+ current: false,
+ date: 'June 2025'
+ },
+ {
+ id: 'v3.0.0',
+ label: '🧠 v3.0.0',
+ title: 'Foundation + Token Manager + Intelligence',
+ desc: '🧠 Pre-sign transaction simulation, risk scoring, whale tags, Jupiter swap with pre-sign review, ⚙️ settings panel, transaction history with filters.',
+ current: false,
+ date: 'June 2025'
+ },
+ {
+ id: 'v4.0.0',
+ label: '🌟 v4.0.0',
+ title: 'Complete Wallet — All Sprints',
+ desc: '🌟 Copy-trade feed, trader profiles, TURBO priority-fee toggle, shareable Blinks, referral loop, staking, token delegate manager, phishing detection — the full Unlimit experience.',
+ current: true,
+ date: 'June 2025'
+function renderVersions() {
+ const grid = document.getElementById('versionsGrid');
+ const html = VERSIONS.map(v => {
+ return `
+ <div class="version-card ${v.current ? 'active' : ''}">
+ <div class="vc-header">
+ <span class="vc-tag">${v.date || ''}</span>
+ <span class="vc-badge">${v.current ? 'Latest' : v.id}</span>
+ </div>
+ <div class="vc-title">${v.label} — ${v.title}</div>
+ <div class="vc-desc">${v.desc}</div>
+ <div class="vc-actions">
+ <a href="${v.id}/index.html" class="vc-btn">Open ${v.id} →</a>
+ </div>
+ </div>`;
+ }).join('');
+ grid.innerHTML = html;
+}
+
+document.addEventListener('DOMContentLoaded', renderVersions);
+</script>
+</body>
+</html>

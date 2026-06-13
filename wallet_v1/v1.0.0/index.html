@@ -10,11 +10,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .screen{display:none;min-height:100vh}
 .screen.active{display:flex;flex-direction:column}
 .card-shell{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:40px 20px 60px}
-.card{width:100%;max-width:480px;border:1px solid #ccc;border-radius:6px;padding:32px 28px;background:#fff}
-.topbar{border-bottom:1px solid #eee;padding:12px 20px;display:flex;align-items:center;gap:12px;font-size:12px}
+.card{width:100%;max-width:480px;border:1px solid #e0e0e0;border-radius:12px;padding:32px 28px;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.topbar{border-bottom:1px solid #ddd;padding:0 20px;display:flex;align-items:center;gap:12px;font-size:12px;background:#fff;box-shadow:0 2px 12px rgba(0,0,0,0.06);height:56px;justify-content:space-between}
 .topbar a{color:#000;text-decoration:none;font-weight:600}
 .topbar a:hover{text-decoration:underline}
-.topbar-title{font-size:13px;font-weight:700}
+.topbar-title{font-size:15px;font-weight:700}
 .step-dots{display:flex;gap:8px;justify-content:center;margin-bottom:28px}
 .step-dot{width:10px;height:10px;border-radius:50%;border:1.5px solid #000;background:#fff;transition:background 0.2s}
 .step-dot.active{background:#000}
@@ -24,18 +24,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .card-sub{font-size:13px;color:#555;margin-bottom:24px}
 .form-group{margin-bottom:18px}
 .form-label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#444;margin-bottom:6px}
-.form-input,.form-select{width:100%;padding:10px 12px;border:1px solid #ccc;border-radius:4px;font-size:13px;font-family:inherit;background:#fff;color:#000}
+.form-input,.form-select{width:100%;padding:10px 14px;border:1px solid #ddd;border-radius:8px;font-size:13px;font-family:inherit;background:#fff;color:#000;transition:border-color 0.15s}
 .form-input:focus,.form-select:focus{outline:none;border-color:#000}
 .form-input::placeholder{color:#999}
-.btn-primary{width:100%;padding:12px;background:#000;color:#fff;border:none;border-radius:4px;font-size:14px;font-weight:700;cursor:pointer}
-.btn-primary:hover{background:#333}
+.btn-primary{width:100%;padding:12px;background:#000;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;transition:background 0.15s}
+.btn-primary:hover{background:#222}
 .btn-primary:disabled{opacity:0.35;cursor:not-allowed}
-.btn-secondary{width:100%;padding:12px;background:#fff;color:#000;border:1px solid #ccc;border-radius:4px;font-size:14px;font-weight:700;cursor:pointer}
-.btn-secondary:hover{background:#f5f5f5}
+.btn-secondary{width:100%;padding:12px;background:#fff;color:#000;border:1px solid #ddd;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.15s}
+.btn-secondary:hover{background:#f5f5f5;border-color:#bbb}
 .btn-row{display:flex;gap:10px}
 .btn-row .btn-primary,.btn-row .btn-secondary{width:auto;flex:1}
 .choice-grid{display:grid;gap:10px;margin-bottom:16px}
-.choice-card{padding:20px 16px;border:1.5px solid #ccc;border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:14px}
+.choice-card{padding:20px 16px;border:1.5px solid #ddd;border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:14px;transition:all 0.15s}
 .choice-card:hover{border-color:#999;background:#f9f9f9}
 .choice-card.selected{border-color:#000;background:#f5f5f5}
 .choice-icon{font-size:28px;width:42px;text-align:center}
@@ -43,7 +43,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .choice-title{font-size:15px;font-weight:700;margin-bottom:2px}
 .choice-desc{font-size:11px;color:#666}
 .seed-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:18px}
-.seed-cell{padding:10px 6px;background:#f9f9f9;border:1px solid #e0e0e0;border-radius:4px;font-size:12px;font-family:'Courier New',monospace;font-weight:700;text-align:center;transition:all 0.3s}
+.seed-cell{padding:10px 6px;background:#f9f9f9;border:1px solid #e0e0e0;border-radius:6px;font-size:12px;font-family:'Courier New',monospace;font-weight:700;text-align:center;transition:all 0.3s}
 .seed-cell.blurred{filter:blur(5px);cursor:pointer;user-select:none}
 .seed-cell.blurred:hover{filter:blur(3px)}
 .seed-cell.revealed{filter:none}
@@ -71,7 +71,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .scan-pulse::after{content:'';position:absolute;inset:6px;border-radius:50%;background:#000;opacity:0.3}
 .scan-status{font-size:14px;font-weight:700;margin-bottom:4px}
 .scan-detail{font-size:12px;color:#666}
-.recovery-card{border:1px solid #ccc;border-radius:6px;padding:20px;margin-bottom:16px;text-align:center;background:#fafafa}
+.recovery-card{border:1px solid #e0e0e0;border-radius:10px;padding:20px;margin-bottom:16px;text-align:center;background:#fafafa}
 .recovery-amount{font-size:32px;font-weight:700;margin-bottom:4px}
 .recovery-label{font-size:12px;color:#666;margin-bottom:2px}
 .recovery-usd{font-size:14px;font-weight:700;margin-bottom:4px}
@@ -93,31 +93,39 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#000;color:#fff;padding:8px 16px;border-radius:4px;font-size:12px;font-weight:700;z-index:9999;transition:opacity 0.3s;pointer-events:none}
 .progress-bar-track{height:4px;background:#eee;border-radius:2px;overflow:hidden;margin-top:8px}
 .progress-bar-fill{height:100%;background:#000;border-radius:2px;transition:width 0.4s;width:0%}
-.warning-box{padding:10px;background:#fff8f0;border:1px solid #ffcc80;border-radius:4px;margin-bottom:16px;font-size:11px;text-align:center}
+.warning-box{padding:10px;background:#fff8f0;border:1px solid #ffcc80;border-radius:6px;margin-bottom:16px;font-size:11px;text-align:center}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#ddd;border-radius:3px}::-webkit-scrollbar-thumb:hover{background:#bbb}
+
+/* ANIMATIONS */
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.screen.active .card{animation:fadeIn 0.2s ease}
 </style>
 </head>
 <body>
 
 <header class="topbar">
-<span class="topbar-title">Unlimit Wallet</span>
+<span class="topbar-title">🚀 Unlimit Wallet <span style="font-size:10px;font-weight:400;color:#999">🔐 v1.0.0</span></span>
+
 </header>
 
 <!-- SCREEN: Splash -->
 <div class="screen active" id="scr-splash">
 <div class="card-shell">
 <div style="text-align:center;margin-bottom:24px;padding-top:20px">
-<div style="font-size:48px;margin-bottom:12px">🔮</div>
-<h1 style="font-size:28px;font-weight:700;margin-bottom:8px">Unlimit</h1>
+<div style="font-size:48px;margin-bottom:12px;border:2px solid #000;width:64px;height:64px;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;border-radius:6px;font-weight:700;font-size:24px">U</div>
+<h1 style="font-size:28px;font-weight:700;margin-bottom:8px">🔓 Unlimit</h1>
 <p style="font-size:14px;color:#666;max-width:320px;margin:0 auto">
-Your old wallets may hold <strong>forgotten SOL</strong> locked in empty accounts.
+Your old wallets may hold <strong>💎 forgotten SOL</strong> locked in empty accounts.
 </p>
 </div>
 <div class="card" style="text-align:center">
-<div class="section-tag">Wealth Recovery</div>
+<div class="section-tag">💰 Wealth Recovery</div>
 <div class="card-title">Find Your Lost SOL</div>
 <div class="card-sub">We scan every "Token Box" in your old wallets. Any locked SOL rent in empty accounts — we reclaim it.</div>
 <div style="display:flex;align-items:center;gap:8px;justify-content:center;margin-bottom:20px;padding:14px;background:#fafafa;border:1px solid #eee;border-radius:4px">
-<span style="font-size:18px">💰</span>
+<span style="font-size:18px">$</span>
 <span style="font-size:12px;color:#666">Average found: <strong>0.04 SOL</strong> per wallet</span>
 </div>
 <button class="btn-primary" onclick="go('scr-choose')">Get Started →</button>
@@ -134,12 +142,12 @@ Your old wallets may hold <strong>forgotten SOL</strong> locked in empty account
 <div class="card-sub">How would you like to set up Unlimit?</div>
 <div class="choice-grid">
 <div class="choice-card selected" id="choice-create" onclick="selectChoice('create')">
-<div class="choice-icon">✨</div>
-<div class="choice-info"><div class="choice-title">Create New Wallet</div><div class="choice-desc">12-word seed phrase + encrypted local storage</div></div>
+<div class="choice-icon">🪄</div>
+<div class="choice-info"><div class="choice-title">✨ Create New Wallet</div><div class="choice-desc">12-word seed phrase + encrypted local storage</div></div>
 </div>
 <div class="choice-card" id="choice-import" onclick="selectChoice('import')">
-<div class="choice-icon">🔑</div>
-<div class="choice-info"><div class="choice-title">Import Existing Wallet</div><div class="choice-desc">Seed phrase, private key, or JSON backup (triggers Wealth Recovery scan)</div></div>
+<div class="choice-icon">📥</div>
+<div class="choice-info"><div class="choice-title">🔐 Import Existing Wallet</div><div class="choice-desc">Seed phrase, private key, or JSON backup (triggers Wealth Recovery scan)</div></div>
 </div>
 </div>
 <div class="recovery-hint" style="font-weight:600">💰 Wealth Recovery — Import triggers instant scan for locked SOL across all your old token accounts.</div>
@@ -156,15 +164,15 @@ Your old wallets may hold <strong>forgotten SOL</strong> locked in empty account
 <div class="card-shell">
 <div class="card">
 <div class="step-dots"><span class="step-dot active"></span><span class="step-dot"></span><span class="step-dot"></span><span class="step-dot"></span><span class="step-dot"></span></div>
-<div class="section-tag">Step 1 of 5</div>
+<div class="section-tag">📜 Step 1 of 5</div>
 <div class="card-title">Understand Your Power</div>
 <div class="card-sub">Unlimit is non-custodial. You — and only you — control your keys.</div>
 <div style="margin-bottom:20px;font-size:12px;color:#444;line-height:1.8">
-<p style="margin-bottom:6px">✓ <strong>Encrypted local storage</strong> — seed never leaves this device</p>
-<p style="margin-bottom:6px">✓ <strong>BIP-39 compliant</strong> — compatible with Phantom, Solflare, Backpack</p>
-<p style="margin-bottom:6px">✓ <strong>Wealth Recovery</strong> — auto-scans for locked rent SOL on import</p>
-<p style="margin-bottom:6px">✓ <strong>Invisible Token Manager</strong> — no Add Token button; all ATAs auto-provisioned</p>
-<p>✓ <strong>No tracking. No telemetry.</strong></p>
+<p style="margin-bottom:6px">🔒 <strong>Encrypted local storage</strong> — seed never leaves this device</p>
+<p style="margin-bottom:6px">✅ <strong>BIP-39 compliant</strong> — compatible with Phantom, Solflare, Backpack</p>
+<p style="margin-bottom:6px">💰 <strong>Wealth Recovery</strong> — auto-scans for locked rent SOL on import</p>
+<p style="margin-bottom:6px">🪄 <strong>Invisible Token Manager</strong> — no Add Token button; all ATAs auto-provisioned</p>
+<p>🔇 <strong>No tracking. No telemetry.</strong></p>
 </div>
 <div class="btn-row">
 <button class="btn-secondary" onclick="go('scr-choose')">← Back</button>
@@ -179,10 +187,10 @@ Your old wallets may hold <strong>forgotten SOL</strong> locked in empty account
 <div class="card-shell">
 <div class="card">
 <div class="step-dots"><span class="step-dot done"></span><span class="step-dot active"></span><span class="step-dot"></span><span class="step-dot"></span><span class="step-dot"></span></div>
-<div class="section-tag">Step 2 of 5</div>
+<div class="section-tag">✏️ Step 2 of 5</div>
 <div class="card-title">Name Your Wallet</div>
 <div class="card-sub">Local label only — visible just to you.</div>
-<div class="form-group"><label class="form-label">Wallet Name</label><input type="text" class="form-input" id="wallet-name" value="My Unlimit Wallet"></div>
+<div class="form-group"><label class="form-label">🏷️ Wallet Name</label><input type="text" class="form-input" id="wallet-name" value="My Unlimit Wallet"></div>
 <div class="btn-row">
 <button class="btn-secondary" onclick="go('scr-terms')">← Back</button>
 <button class="btn-primary" onclick="go('scr-c-password')">Continue →</button>
@@ -196,7 +204,7 @@ Your old wallets may hold <strong>forgotten SOL</strong> locked in empty account
 <div class="card-shell">
 <div class="card">
 <div class="step-dots"><span class="step-dot done"></span><span class="step-dot done"></span><span class="step-dot active"></span><span class="step-dot"></span><span class="step-dot"></span></div>
-<div class="section-tag">Step 3 of 5</div>
+<div class="section-tag">🔐 Step 3 of 5</div>
 <div class="card-title">Create App Password</div>
 <div class="card-sub">Locks Unlimit locally. Not your seed phrase.</div>
 <div class="form-group"><label class="form-label">Password</label><input type="password" class="form-input" id="password1" placeholder="8+ characters" oninput="checkPassword()">
@@ -215,15 +223,15 @@ Your old wallets may hold <strong>forgotten SOL</strong> locked in empty account
 <div class="card-shell">
 <div class="card">
 <div class="step-dots"><span class="step-dot done"></span><span class="step-dot done"></span><span class="step-dot done"></span><span class="step-dot active"></span><span class="step-dot"></span></div>
-<div class="section-tag">Step 4 of 5</div>
+<div class="section-tag">🗝️ Step 4 of 5</div>
 <div class="card-title">Your Seed Phrase</div>
 <div class="card-sub">Write it down. Store it offline. Never share it.</div>
 <div class="seed-grid" id="seed-grid"></div>
-<button class="btn-secondary" style="margin-bottom:10px" onclick="toggleSeedVisibility()" id="btn-reveal-seed">👁 Reveal Seed Phrase</button>
-<div class="warning-box">⚠ Anyone with this phrase can control your funds. Unlimit will never ask for it.</div>
+<button class="btn-secondary" style="margin-bottom:10px" onclick="toggleSeedVisibility()" id="btn-reveal-seed">Reveal Seed Phrase</button>
+<div class="warning-box">! Anyone with this phrase can control your funds. Unlimit will never ask for it.</div>
 <div class="btn-row">
 <button class="btn-secondary" onclick="go('scr-c-password')">← Back</button>
-<button class="btn-primary" id="btn-seed-confirm" disabled onclick="go('scr-c-confirm');renderPicker()">I''ve Saved It →</button>
+<button class="btn-primary" id="btn-seed-confirm" disabled onclick="go('scr-c-confirm');renderPicker()">I've Saved It →</button>
 </div>
 </div>
 </div>
@@ -234,14 +242,14 @@ Your old wallets may hold <strong>forgotten SOL</strong> locked in empty account
 <div class="card-shell">
 <div class="card">
 <div class="step-dots"><span class="step-dot done"></span><span class="step-dot done"></span><span class="step-dot done"></span><span class="step-dot done"></span><span class="step-dot active"></span></div>
-<div class="section-tag">Step 5 of 5</div>
+<div class="section-tag">✅ Step 5 of 5</div>
 <div class="card-title">Confirm Your Seed</div>
 <div class="card-sub">Place words back in the correct order.</div>
 <div class="wp-slots" id="wp-slots"></div>
 <div class="wp-counter" id="wp-count">0 / 12 words placed</div>
 <div class="wp-pool" id="wp-pool"></div>
 <div class="btn-row">
-<button class="btn-secondary" onclick="resetPicker()">↺ Reset</button>
+<button class="btn-secondary" onclick="resetPicker()">Reset</button>
 <button class="btn-primary" id="btn-verify" disabled onclick="go('scr-c-success');populateCreateSummary()">Verify →</button>
 </div>
 </div>
@@ -252,15 +260,15 @@ Your old wallets may hold <strong>forgotten SOL</strong> locked in empty account
 <div class="screen" id="scr-c-success">
 <div class="card-shell">
 <div class="card" style="text-align:center">
-<div class="success-icon">✓</div>
+<div style="font-size:48px;margin-bottom:12px">🎉</div>
 <div class="card-title">Wallet Created</div>
 <div class="card-sub">Your <strong id="cs-name">Wallet</strong> is ready.</div>
 <div class="summary-list" style="text-align:left">
-<div class="summary-item"><span class="label">Status</span><span class="value">✓ Secured</span></div>
-<div class="summary-item"><span class="label">Encryption</span><span class="value">AES-256-GCM</span></div>
-<div class="summary-item"><span class="label">Seed Format</span><span class="value">BIP-39 · 12 words</span></div>
+<div class="summary-item"><span class="label">✅ Status</span><span class="value">Secured</span></div>
+<div class="summary-item"><span class="label">🔒 Encryption</span><span class="value">AES-256-GCM</span></div>
+<div class="summary-item"><span class="label">🗝️ Seed Format</span><span class="value">BIP-39 · 12 words</span></div>
 </div>
-<button class="btn-primary" onclick="completeOnboarding('create')">Open Wallet →</button>
+<button class="btn-primary" onclick="completeOnboarding('create')">🚀 Open Wallet →</button>
 </div>
 </div>
 </div>
@@ -269,13 +277,13 @@ Your old wallets may hold <strong>forgotten SOL</strong> locked in empty account
 <div class="screen" id="scr-i-phrase">
 <div class="card-shell">
 <div class="card">
-<div class="section-tag">Import Wallet</div>
+<div class="section-tag">📥 Import Wallet</div>
 <div class="card-title">Enter Seed Phrase</div>
 <div class="card-sub">12 or 24 words. Paste supported.</div>
 <div style="margin-bottom:12px"><button class="btn-secondary" style="width:auto;padding:6px 14px;font-size:12px" id="toggle-wc" onclick="toggleWordCount()">Switch to 24 words</button></div>
 <div id="ig-12"></div>
 <div id="ig-24" style="display:none"></div>
-<div class="recovery-hint" style="margin-top:14px"><strong>💰 Wealth Recovery</strong> — After import, we scan all your old token boxes for locked SOL rent.</div>
+<div class="recovery-hint" style="margin-top:14px"><strong>Wealth Recovery</strong> — After import, we scan all your old token boxes for locked SOL rent.</div>
 <div class="btn-row" style="margin-top:12px">
 <button class="btn-secondary" onclick="go('scr-choose')">← Back</button>
 <button class="btn-primary" onclick="go('scr-i-scanning');startRecoveryScan()">Import & Scan →</button>
@@ -288,7 +296,7 @@ Your old wallets may hold <strong>forgotten SOL</strong> locked in empty account
 <div class="screen" id="scr-i-scanning">
 <div class="card-shell">
 <div class="card" style="text-align:center">
-<div class="section-tag">Wealth Recovery</div>
+<div class="section-tag">💰 Wealth Recovery</div>
 <div class="card-title">Scanning Your Accounts...</div>
 <div class="card-sub">Searching for locked SOL across all token boxes.</div>
 <div class="scan-animation">
@@ -310,19 +318,19 @@ Your old wallets may hold <strong>forgotten SOL</strong> locked in empty account
 <div class="screen" id="scr-i-results">
 <div class="card-shell">
 <div class="card" style="text-align:center">
-<div class="section-tag">Wealth Recovery</div>
-<div class="card-title">We Found Forgotten SOL!</div>
+<div class="section-tag">💰 Wealth Recovery</div>
+<div class="card-title">🎉 We Found Forgotten SOL!</div>
 <div class="card-sub">Locked rent in your old empty token accounts.</div>
 <div class="recovery-card">
 <div class="recovery-label">Recoverable SOL</div>
 <div class="recovery-amount">0.05 SOL</div>
-<div class="recovery-usd">≈ $7.80</div>
+<div class="recovery-usd">— $7.80</div>
 <div class="recovery-breakdown">From 3 empty token accounts</div>
 </div>
 <div class="accounts-list">
-<div class="account-item">📦 Empty USDC Account <span class="acct-amount">+0.0204 SOL</span></div>
-<div class="account-item">📦 Empty BONK Account <span class="acct-amount">+0.0204 SOL</span></div>
-<div class="account-item">📦 Empty JTO Account <span class="acct-amount">+0.0204 SOL</span></div>
+<div class="account-item">Empty USDC Account <span class="acct-amount">+0.0204 SOL</span></div>
+<div class="account-item">Empty BONK Account <span class="acct-amount">+0.0204 SOL</span></div>
+<div class="account-item">Empty JTO Account <span class="acct-amount">+0.0204 SOL</span></div>
 </div>
 <div style="margin-bottom:12px"><span class="badge badge-recover">Gas: ~0.000005 SOL</span></div>
 <button class="btn-primary" onclick="performRecovery()" style="margin-bottom:8px">Reclaim 0.05 SOL →</button>
@@ -348,14 +356,14 @@ Your old wallets may hold <strong>forgotten SOL</strong> locked in empty account
 <div class="screen" id="scr-i-success">
 <div class="card-shell">
 <div class="card" style="text-align:center">
-<div class="success-icon">💰</div>
+<div style="font-size:48px;margin-bottom:12px">🎉</div>
 <div class="card-title">Wallet Imported</div>
 <div class="card-sub"><strong id="is-name">Wallet</strong> is ready.</div>
 <div class="summary-list" style="text-align:left">
-<div class="summary-item"><span class="label">Recovered</span><span class="value" id="is-recovered">0.05 SOL</span></div>
-<div class="summary-item"><span class="label">Status</span><span class="value">✓ Active</span></div>
+<div class="summary-item"><span class="label">💰 Recovered</span><span class="value" id="is-recovered">0.05 SOL</span></div>
+<div class="summary-item"><span class="label">✅ Status</span><span class="value">Active</span></div>
 </div>
-<button class="btn-primary" onclick="completeOnboarding('import')">Open Wallet →</button>
+<button class="btn-primary" onclick="completeOnboarding('import')">🚀 Open Wallet →</button>
 </div>
 </div>
 </div>
@@ -383,7 +391,7 @@ document.getElementById('btn-pass-continue').disabled=!(s>=2&&p1&&p1===p2)
 function toggleSeedVisibility(){
 seedVisible=!seedVisible;
 document.querySelectorAll('.seed-cell').forEach(function(c){c.className=seedVisible?'seed-cell revealed':'seed-cell blurred'});
-document.getElementById('btn-reveal-seed').textContent=seedVisible?'🙈 Hide Seed Phrase':'👁 Reveal Seed Phrase';
+document.getElementById('btn-reveal-seed').textContent=seedVisible?'Hide Seed Phrase':'Reveal Seed Phrase';
 if(seedVisible)document.getElementById('btn-seed-confirm').disabled=false
 }
 
@@ -420,7 +428,7 @@ function populateImportSummary(){var n=document.getElementById('cs-name');if(n)n
 
 function completeOnboarding(type){
 try{localStorage.setItem('onboarding_complete','true');localStorage.setItem('wallet_type',type);var n=document.getElementById(type==='create'?'wallet-name':'i-name');localStorage.setItem('wallet_name',n?n.value||'My Wallet':'My Wallet')}catch(e){}
-window.location.href='sprint2.html'
+var ver=localStorage.getItem('targetVersion')||'v2.0.0';window.location.href='../'+ver+'/index.html'
 }
 
 function showToast(msg){
@@ -429,7 +437,7 @@ t.textContent=msg;t.style.opacity='1';clearTimeout(t._t);t._t=setTimeout(functio
 }
 
 renderSeedGrid();renderImportGrids();
-try{if(localStorage.getItem('onboarding_complete')==='true')window.location.href='sprint2.html'}catch(e){}
+try{if(localStorage.getItem('onboarding_complete')==='true')window.location.href='../v2.0.0/index.html'}catch(e){}
 </script>
 </body>
 </html>
