@@ -3236,7 +3236,7 @@ appState.watchlist = {
 feedState.screener = {
   minChange: '', maxChange: '', minMcap: '', maxMcap: '',
   direction: 'all', sortKey: 'rank', sortDir: 'asc',
-  minVolume: '', whaleActivity: 'any'
+  minVolume: '', maxVolume: '', whaleActivity: 'any'
 };
 
 // DEX pools data
@@ -4129,7 +4129,7 @@ function navigateTo(page){
   else if (page==='widgets'){     setCrumbs(['Widgets']); renderWidgetBuilder(); }
   else if (page==='dashboard'){   setCrumbs(['My Dashboard']); renderMyDashboard(); }
   else if (page==='watchlist'){   setCrumbs(['Watchlist']); renderWatchlist(); }
-  else if (page==='screener'){    feedState.top100Tab='assets'; setCrumbs(['Tokens']); renderTop100(); return; }
+  else if (page==='screener'){    setCrumbs(['Tokens','Screener']); renderScreener(); return; }
   else if (page==='network'){     navigateTo('overview'); return; }
   else if (page==='alertrules'){  setCrumbs(['Alert Rules']); renderAlertRules(); }
   else if (page==='consensus'){   setCrumbs(['Consensus']); renderConsensus(); }
@@ -4440,6 +4440,7 @@ function renderTop100(){
   appState.currentPage = 'top100';
   if (!feedState.top100Tab) feedState.top100Tab = 'assets';
   const tab = feedState.top100Tab;
+  const filters = feedState.screener;
 
   const tabBar = `
     <div class="settings-tabs" style="margin-bottom:16px;">
@@ -4452,8 +4453,12 @@ function renderTop100(){
   // ── All Assets tab ──
   const q = (feedState.top100Search||'').trim().toLowerCase();
   const sortDir = feedState.top100Dir, sortKey = feedState.top100Sort;
+  const mcapPreset = filters.maxMcap==='' && ['1000000','100000000','1000000000'].includes(String(filters.minMcap)) ? String(filters.minMcap) : '';
+  const volumePreset = filters.maxVolume==='' && ['100000','1000000','100000000'].includes(String(filters.minVolume)) ? String(filters.minVolume) : '';
 
-  let rows = [...top100Tokens].filter(t => !q || t.sym.toLowerCase().includes(q) || t.name.toLowerCase().includes(q))
+  let rows = top100Tokens.map(_tokDecorate)
+    .filter(t => _tokMatchesMarketFilters(t, filters))
+    .filter(t => !q || t.sym.toLowerCase().includes(q) || t.name.toLowerCase().includes(q))
     .sort((a,b)=>{
       let av=a[sortKey], bv=b[sortKey];
       if (typeof av === 'string') return sortDir==='asc' ? av.localeCompare(bv) : bv.localeCompare(av);
@@ -4473,8 +4478,9 @@ function renderTop100(){
       <td class="price-cell">${fmtP(t.price)}</td>
       <td class="${t.pos?'change-pos':'change-neg'}">${t.pos?'↑':'↓'} ${Math.abs(t.change).toFixed(2)}%</td>
       <td style="color:var(--muted);">${t.mcap}</td>
+      <td style="color:var(--muted);">${t.volume24h}</td>
       <td><button class="btn btn-sm btn-ghost" onclick="event.stopPropagation();addToWatchlistToken('${t.sym}')">Watch</button></td>
-    </tr>`).join('') || `<tr><td colspan="6"><div class="empty-state"><div class="empty-state-title">No assets match</div><p>Try a different search term.</p></div></td></tr>`;
+    </tr>`).join('') || `<tr><td colspan="7"><div class="empty-state"><div class="empty-state-title">No assets match</div><p>Try a different search term or relax the market filters.</p></div></td></tr>`;
 
   document.getElementById('content').innerHTML = `
     <div class="hero">
@@ -4488,6 +4494,47 @@ function renderTop100(){
     </div>
 
     ${tabBar}
+
+    <div class="screener-filters" style="margin-bottom:16px;">
+      <div class="screener-field">
+        <label>Market Cap</label>
+        <select class="form-select" onchange="feedState.screener.minMcap=this.value; if(this.value) feedState.screener.maxMcap=''">
+          <option value="" ${mcapPreset===''?'selected':''}>Any</option>
+          <option value="1000000" ${mcapPreset==='1000000'?'selected':''}>≥ $1M</option>
+          <option value="100000000" ${mcapPreset==='100000000'?'selected':''}>≥ $100M</option>
+          <option value="1000000000" ${mcapPreset==='1000000000'?'selected':''}>≥ $1B</option>
+        </select>
+      </div>
+      <div class="screener-field">
+        <label>Market Cap Min (USD)</label>
+        <input class="form-input" type="number" placeholder="e.g. 1000000" value="${filters.minMcap}" oninput="feedState.screener.minMcap=this.value" />
+      </div>
+      <div class="screener-field">
+        <label>Market Cap Max (USD)</label>
+        <input class="form-input" type="number" placeholder="e.g. 1000000000" value="${filters.maxMcap}" oninput="feedState.screener.maxMcap=this.value" />
+      </div>
+      <div class="screener-field">
+        <label>24h Volume</label>
+        <select class="form-select" onchange="feedState.screener.minVolume=this.value; if(this.value) feedState.screener.maxVolume=''">
+          <option value="" ${volumePreset===''?'selected':''}>Any</option>
+          <option value="100000" ${volumePreset==='100000'?'selected':''}>≥ $100K</option>
+          <option value="1000000" ${volumePreset==='1000000'?'selected':''}>≥ $1M</option>
+          <option value="100000000" ${volumePreset==='100000000'?'selected':''}>≥ $100M</option>
+        </select>
+      </div>
+      <div class="screener-field">
+        <label>24h Volume Min (USD)</label>
+        <input class="form-input" type="number" placeholder="e.g. 100000" value="${filters.minVolume}" oninput="feedState.screener.minVolume=this.value" />
+      </div>
+      <div class="screener-field">
+        <label>24h Volume Max (USD)</label>
+        <input class="form-input" type="number" placeholder="e.g. 100000000" value="${filters.maxVolume}" oninput="feedState.screener.maxVolume=this.value" />
+      </div>
+      <div class="screener-field" style="align-self:flex-end;display:flex;gap:8px;">
+        <button class="btn btn-sm" onclick="resetTop100MarketFilters();renderTop100()">Reset</button>
+        <button class="btn btn-primary btn-sm" onclick="renderTop100()">Apply</button>
+      </div>
+    </div>
 
     <div class="card">
       <div class="card-header">
@@ -4505,7 +4552,8 @@ function renderTop100(){
               <th>Asset</th>
               <th class="sortable ${sortKey==='price'?'sorted':''}" onclick="sortTop100('price')">Price <span class="sort-ind">${si('price')}</span></th>
               <th class="sortable ${sortKey==='change'?'sorted':''}" onclick="sortTop100('change')">24h <span class="sort-ind">${si('change')}</span></th>
-              <th>Market Cap</th>
+              <th class="sortable ${sortKey==='mcapNum'?'sorted':''}" onclick="sortTop100('mcapNum')">Market Cap <span class="sort-ind">${si('mcapNum')}</span></th>
+              <th class="sortable ${sortKey==='volume24hNum'?'sorted':''}" onclick="sortTop100('volume24hNum')">24h Volume <span class="sort-ind">${si('volume24hNum')}</span></th>
               <th></th>
             </tr>
           </thead>
@@ -5890,6 +5938,43 @@ function _tokParseMcap(mc){
   const n = parseFloat(m[1]); const u = (m[2]||'').toUpperCase();
   return n * ({K:1e3,M:1e6,B:1e9,T:1e12}[u] || 1);
 }
+function _tokVolume24h(token){
+  return _tokParseMcap(token.mcap) * (0.04 + (_tokSeed(token.sym)%18)/100);
+}
+function _tokDecorate(token){
+  const mcapNum = _tokParseMcap(token.mcap);
+  const volume24hNum = _tokVolume24h(token);
+  return {
+    ...token,
+    mcapNum,
+    volume24hNum,
+    volume24h: _tokFmtBig(volume24hNum),
+    whaleScore: Math.round(20 + (_tokSeed(token.sym) % 78))
+  };
+}
+function _tokWithinRange(value, min, max){
+  const minNum = min === '' ? null : Number(min);
+  const maxNum = max === '' ? null : Number(max);
+  if (minNum !== null && !Number.isNaN(minNum) && value < minNum) return false;
+  if (maxNum !== null && !Number.isNaN(maxNum) && value > maxNum) return false;
+  return true;
+}
+function _tokMatchesMarketFilters(token, filters){
+  return _tokWithinRange(token.mcapNum, filters.minMcap, filters.maxMcap)
+    && _tokWithinRange(token.volume24hNum, filters.minVolume, filters.maxVolume);
+}
+function _resetScreenerState(){
+  feedState.screener = {
+    minChange:'', maxChange:'', minMcap:'', maxMcap:'',
+    direction:'all', sortKey:'rank', sortDir:'asc',
+    minVolume:'', maxVolume:'', whaleActivity:'any'
+  };
+}
+function resetTop100MarketFilters(){
+  Object.assign(feedState.screener, {
+    minMcap:'', maxMcap:'', minVolume:'', maxVolume:''
+  });
+}
 function showTokPreview(sym, evt){
   const t = top100Tokens.find(x=>x.sym===sym); if (!t) return;
   const el = document.getElementById('tokPreview'); if (!el) return;
@@ -5902,7 +5987,7 @@ function showTokPreview(sym, evt){
   const stroke = t.pos ? 'oklch(76% 0.16 175)' : 'oklch(70% 0.20 25)';
   const gradId = 'tg_'+sym;
   const fdv = _tokParseMcap(t.mcap) * (1 + (_tokSeed(sym)%20)/100);
-  const vol = _tokParseMcap(t.mcap) * (0.04 + (_tokSeed(sym)%18)/100);
+  const vol = _tokVolume24h(t);
   const fmtP = p => p<0.001 ? '$'+p.toFixed(6) : p<1 ? '$'+p.toFixed(4) : '$'+p.toFixed(2);
   const arrow = t.pos
     ? '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 14 12 8 18 14"/></svg>'
@@ -6872,18 +6957,17 @@ function renderScreener(){
   const isPro = _isPro();
   const s = feedState.screener;
   const fmtP = p => p<0.001 ? '$'+p.toFixed(6) : p<1 ? '$'+p.toFixed(4) : '$'+p.toFixed(2);
+  const mcapPreset = s.maxMcap==='' && ['1000000','100000000','1000000000'].includes(String(s.minMcap)) ? String(s.minMcap) : '';
+  const volumePreset = s.maxVolume==='' && ['100000','1000000','100000000'].includes(String(s.minVolume)) ? String(s.minVolume) : '';
 
-  let results = top100Tokens.map(t => ({
-    ...t,
-    whaleScore: Math.round(20 + (_tokSeed(t.sym) % 78)),
-    volume: '_tokParseMcap' in window ? 0 : 0
-  }));
+  let results = top100Tokens.map(_tokDecorate);
 
   // Apply filters
   if (s.direction === 'bullish') results = results.filter(t => t.pos);
   if (s.direction === 'bearish') results = results.filter(t => !t.pos);
   if (s.minChange !== '') results = results.filter(t => Math.abs(t.change) >= parseFloat(s.minChange));
   if (s.maxChange !== '') results = results.filter(t => Math.abs(t.change) <= parseFloat(s.maxChange));
+  results = results.filter(t => _tokMatchesMarketFilters(t, s));
   if (isPro && s.whaleActivity && s.whaleActivity !== 'any'){
     const minScore = s.whaleActivity === 'high' ? 60 : s.whaleActivity === 'medium' ? 40 : 0;
     results = results.filter(t => t.whaleScore >= minScore);
@@ -6891,6 +6975,8 @@ function renderScreener(){
   results.sort((a,b) => {
     if (s.sortKey === 'rank') return s.sortDir === 'asc' ? a.rank-b.rank : b.rank-a.rank;
     if (s.sortKey === 'change') return s.sortDir === 'asc' ? a.change-b.change : b.change-a.change;
+    if (s.sortKey === 'mcapNum') return s.sortDir === 'asc' ? a.mcapNum-b.mcapNum : b.mcapNum-a.mcapNum;
+    if (s.sortKey === 'volume24hNum') return s.sortDir === 'asc' ? a.volume24hNum-b.volume24hNum : b.volume24hNum-a.volume24hNum;
     if (s.sortKey === 'whaleScore') return s.sortDir === 'asc' ? a.whaleScore-b.whaleScore : b.whaleScore-a.whaleScore;
     return a.rank - b.rank;
   });
@@ -6907,6 +6993,7 @@ function renderScreener(){
       <td class="price-cell">${fmtP(t.price)}</td>
       <td class="${t.pos?'change-pos':'change-neg'}">${t.pos?'↑':'↓'} ${Math.abs(t.change).toFixed(2)}%</td>
       <td style="color:var(--muted);">${t.mcap}</td>
+      <td style="color:var(--muted);">${t.volume24h}</td>
       <td>
         ${isPro
           ? `<div class="whale-score-bar"><span style="font-family:'JetBrains Mono',monospace;font-size:11px;">${t.whaleScore}</span><div class="bar"><span style="width:${t.whaleScore}%;"></span></div></div>`
@@ -6958,14 +7045,52 @@ function renderScreener(){
       <div class="screener-field">
         <label>Sort by</label>
         <select onchange="const[k,d]=this.value.split(':');feedState.screener.sortKey=k;feedState.screener.sortDir=d;renderScreener()">
-          <option value="rank:asc">Rank (default)</option>
-          <option value="change:desc">24h change (high)</option>
-          <option value="change:asc">24h change (low)</option>
-          ${isPro ? '<option value="whaleScore:desc">Whale score (high)</option>' : ''}
+          <option value="rank:asc" ${s.sortKey==='rank'&&s.sortDir==='asc'?'selected':''}>Rank (default)</option>
+          <option value="change:desc" ${s.sortKey==='change'&&s.sortDir==='desc'?'selected':''}>24h change (high)</option>
+          <option value="change:asc" ${s.sortKey==='change'&&s.sortDir==='asc'?'selected':''}>24h change (low)</option>
+          <option value="mcapNum:desc" ${s.sortKey==='mcapNum'&&s.sortDir==='desc'?'selected':''}>Market cap (high)</option>
+          <option value="mcapNum:asc" ${s.sortKey==='mcapNum'&&s.sortDir==='asc'?'selected':''}>Market cap (low)</option>
+          <option value="volume24hNum:desc" ${s.sortKey==='volume24hNum'&&s.sortDir==='desc'?'selected':''}>24h volume (high)</option>
+          <option value="volume24hNum:asc" ${s.sortKey==='volume24hNum'&&s.sortDir==='asc'?'selected':''}>24h volume (low)</option>
+          ${isPro ? `<option value="whaleScore:desc" ${s.sortKey==='whaleScore'&&s.sortDir==='desc'?'selected':''}>Whale score (high)</option>` : ''}
         </select>
       </div>
+      <div class="screener-field">
+        <label>Market Cap</label>
+        <select onchange="feedState.screener.minMcap=this.value; if(this.value) feedState.screener.maxMcap=''; renderScreener()">
+          <option value="" ${mcapPreset===''?'selected':''}>Any</option>
+          <option value="1000000" ${mcapPreset==='1000000'?'selected':''}>≥ $1M</option>
+          <option value="100000000" ${mcapPreset==='100000000'?'selected':''}>≥ $100M</option>
+          <option value="1000000000" ${mcapPreset==='1000000000'?'selected':''}>≥ $1B</option>
+        </select>
+      </div>
+      <div class="screener-field">
+        <label>Market Cap Min (USD)</label>
+        <input type="number" placeholder="e.g. 1000000" value="${s.minMcap}" oninput="feedState.screener.minMcap=this.value;renderScreener()" />
+      </div>
+      <div class="screener-field">
+        <label>Market Cap Max (USD)</label>
+        <input type="number" placeholder="e.g. 1000000000" value="${s.maxMcap}" oninput="feedState.screener.maxMcap=this.value;renderScreener()" />
+      </div>
+      <div class="screener-field">
+        <label>24h Volume</label>
+        <select onchange="feedState.screener.minVolume=this.value; if(this.value) feedState.screener.maxVolume=''; renderScreener()">
+          <option value="" ${volumePreset===''?'selected':''}>Any</option>
+          <option value="100000" ${volumePreset==='100000'?'selected':''}>≥ $100K</option>
+          <option value="1000000" ${volumePreset==='1000000'?'selected':''}>≥ $1M</option>
+          <option value="100000000" ${volumePreset==='100000000'?'selected':''}>≥ $100M</option>
+        </select>
+      </div>
+      <div class="screener-field">
+        <label>24h Volume Min (USD)</label>
+        <input type="number" placeholder="e.g. 100000" value="${s.minVolume}" oninput="feedState.screener.minVolume=this.value;renderScreener()" />
+      </div>
+      <div class="screener-field">
+        <label>24h Volume Max (USD)</label>
+        <input type="number" placeholder="e.g. 100000000" value="${s.maxVolume}" oninput="feedState.screener.maxVolume=this.value;renderScreener()" />
+      </div>
       <div class="screener-field" style="align-self:flex-end;">
-        <button class="btn btn-sm" onclick="feedState.screener={minChange:'',maxChange:'',minMcap:'',maxMcap:'',direction:'all',sortKey:'rank',sortDir:'asc',minVolume:'',whaleActivity:'any'};renderScreener()">Reset filters</button>
+        <button class="btn btn-sm" onclick="_resetScreenerState();renderScreener()">Reset filters</button>
       </div>
     </div>
 
@@ -6984,11 +7109,12 @@ function renderScreener(){
             <th>Asset</th>
             <th>Price</th>
             <th class="sortable ${s.sortKey==='change'?'sorted':''}" onclick="feedState.screener.sortKey='change';feedState.screener.sortDir=s.sortDir==='asc'?'desc':'asc';renderScreener()">24h <span class="sort-ind">${si('change')}</span></th>
-            <th>Market Cap</th>
+            <th class="sortable ${s.sortKey==='mcapNum'?'sorted':''}" onclick="feedState.screener.sortKey='mcapNum';feedState.screener.sortDir=s.sortDir==='asc'?'desc':'asc';renderScreener()">Market Cap <span class="sort-ind">${si('mcapNum')}</span></th>
+            <th class="sortable ${s.sortKey==='volume24hNum'?'sorted':''}" onclick="feedState.screener.sortKey='volume24hNum';feedState.screener.sortDir=s.sortDir==='asc'?'desc':'asc';renderScreener()">24h Volume <span class="sort-ind">${si('volume24hNum')}</span></th>
             <th class="${isPro?'sortable':''}">Whale Score</th>
             <th></th>
           </tr></thead>
-          <tbody>${tableRows || `<tr><td colspan="7"><div class="empty-state"><div class="empty-state-title">No tokens match</div><p>Try relaxing your filter criteria.</p></div></td></tr>`}</tbody>
+          <tbody>${tableRows || `<tr><td colspan="8"><div class="empty-state"><div class="empty-state-title">No tokens match</div><p>Try relaxing your filter criteria.</p></div></td></tr>`}</tbody>
         </table>
       </div>
     </div>`;
@@ -10346,7 +10472,7 @@ const GLOSSARY = {
 
 function applyGlossary(root) {
   root = root || document;
-  const selectors = '.stat-label, .lbl, .pnl-box .lbl, h1, h2, h3, .card-title, .heatmap-stat-label, .net-stat-label, .strategy-stat-label, .pf-stat-label, .profiler-stat-label, .scard-title';
+  const selectors = '.stat-label, .lbl, .pnl-box .lbl, h1, h2, h3, .card-title, .heatmap-stat-label, .net-stat-label, .strategy-stat-label, .pf-stat-label, .profiler-stat-label, .scard-title, th';
   root.querySelectorAll(selectors).forEach(el => {
     if (el.querySelector('.gloss-icon')) return;
     const raw = el.textContent.replace(/·.*$/, '').trim();
