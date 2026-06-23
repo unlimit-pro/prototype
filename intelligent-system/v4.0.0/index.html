@@ -4528,10 +4528,11 @@ function renderTop100(){
   // ── All Assets tab ──
   const q = (feedState.top100Search||'').trim().toLowerCase();
   const sortDir = feedState.top100Dir, sortKey = feedState.top100Sort;
-  const hasMarketFilters = ['minMcap','maxMcap','minVolume','maxVolume'].some(key => filters[key] !== '');
-  const activeMarketFilterCount = ['minMcap','maxMcap','minVolume','maxVolume'].filter(key => filters[key] !== '').length;
+  const hasMarketFilters = ['minMcap','maxMcap','minVolume','maxVolume','minChange','maxChange'].some(key => filters[key] !== '');
+  const activeMarketFilterCount = ['minMcap','maxMcap','minVolume','maxVolume','minChange','maxChange'].filter(key => filters[key] !== '').length;
   const mcapSummary = _tokFmtFilterSummary(filters.minMcap, filters.maxMcap);
   const volumeSummary = _tokFmtFilterSummary(filters.minVolume, filters.maxVolume);
+  const changeSummary = _tokFmtFilterSummary(filters.minChange, filters.maxChange);
 
   let rows = top100Tokens.map(_tokDecorate)
     .filter(t => _tokMatchesMarketFilters(t, filters))
@@ -4593,6 +4594,14 @@ function renderTop100(){
       <div class="screener-field">
         <label>24h Volume Max (USD)</label>
         <input class="form-input" type="number" placeholder="e.g. 100000000" value="${filters.maxVolume}" oninput="feedState.screener.maxVolume=this.value" />
+      </div>
+      <div class="screener-field">
+        <label>24h Change Min (%)</label>
+        <input class="form-input" type="number" placeholder="e.g. 3" value="${filters.minChange}" oninput="feedState.screener.minChange=this.value" />
+      </div>
+      <div class="screener-field">
+        <label>24h Change Max (%)</label>
+        <input class="form-input" type="number" placeholder="e.g. 20" value="${filters.maxChange}" oninput="feedState.screener.maxChange=this.value" />
       </div>
       <div class="screener-field" style="align-self:flex-end;">
         <button class="btn btn-sm" onclick="resetTop100MarketFilters();renderTop100()">Reset</button>
@@ -6045,7 +6054,7 @@ function _resetScreenerState(){
 function resetTop100MarketFilters(){
   Object.assign(feedState.screener, {
     minMcap:'', maxMcap:'', minVolume:'', maxVolume:'',
-    minPrice:'', maxPrice:''
+    minPrice:'', maxPrice:'', minChange:'', maxChange:''
   });
 }
 function showTokPreview(sym, evt){

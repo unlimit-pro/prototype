@@ -4545,7 +4545,7 @@ function renderTop100(){
   // ── All Assets tab ──
   const q = (feedState.top100Search||'').trim().toLowerCase();
   const sortDir = feedState.top100Dir, sortKey = feedState.top100Sort;
-  const filterKeys = ['minMcap','maxMcap','minVolume','maxVolume','minPrice','maxPrice','minWhaleScore','maxWhaleScore'];
+  const filterKeys = ['minMcap','maxMcap','minVolume','maxVolume','minPrice','maxPrice','minChange','maxChange','minWhaleScore','maxWhaleScore'];
   const hasMarketFilters = filterKeys.some(key => filters[key] !== '');
   const activeMarketFilterCount = filterKeys.filter(key =>
     key.startsWith('min')||key.startsWith('max') ? filters[key] !== '' : (filters[key] && filters[key] !== 'all')
@@ -4553,6 +4553,7 @@ function renderTop100(){
   const mcapSummary = _tokFmtFilterSummary(filters.minMcap, filters.maxMcap);
   const volumeSummary = _tokFmtFilterSummary(filters.minVolume, filters.maxVolume);
   const priceSummary = _tokFmtFilterSummary(filters.minPrice, filters.maxPrice);
+  const changeSummary = _tokFmtFilterSummary(filters.minChange, filters.maxChange);
 
   let rows = top100Tokens.map(_tokDecorate)
     .filter(t => _tokMatchesEnhancedFilters(t, filters))
@@ -4608,6 +4609,11 @@ function renderTop100(){
         <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h4"/></svg>
         <span>Price</span>
         <strong>${priceSummary}</strong>
+      </div>
+      <div class="market-filter-chip ${filters.minChange!=='' || filters.maxChange!=='' ? 'active' : ''}" onclick="document.querySelector('.market-filter-popover summary')?.click()" style="cursor:pointer;">
+        <svg viewBox="0 0 24 24"><path d="M8 2v4M16 2v4M3 9h18M5 21h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z"/></svg>
+        <span>24h Change</span>
+        <strong>${changeSummary}</strong>
       </div>
       <details class="market-filter-popover">
         <summary class="market-filter-chip ${hasMarketFilters ? 'active' : ''}">
@@ -6136,7 +6142,7 @@ function _resetScreenerState(){
 function resetTop100MarketFilters(){
   Object.assign(feedState.screener, {
     minMcap:'', maxMcap:'', minVolume:'', maxVolume:'',
-    minPrice:'', maxPrice:''
+    minPrice:'', maxPrice:'', minChange:'', maxChange:''
   });
 }
 function showTokPreview(sym, evt){

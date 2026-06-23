@@ -4419,7 +4419,7 @@ function renderTop100(){
   const q = (feedState.top100Search||'').trim().toLowerCase();
   const sortDir = feedState.top100Dir, sortKey = feedState.top100Sort;
   // Enhanced filter state tracking
-  const filterKeys = ['minMcap','maxMcap','minVolume','maxVolume','minPrice','maxPrice','minWhaleScore','maxWhaleScore'];
+  const filterKeys = ['minMcap','maxMcap','minVolume','maxVolume','minPrice','maxPrice','minChange','maxChange','minWhaleScore','maxWhaleScore'];
   const hasMarketFilters = filterKeys.some(key => key.startsWith('min')||key.startsWith('max') ? filters[key] !== '' : (filters[key] && filters[key] !== 'all'));
   const activeMarketFilterCount = filterKeys.filter(key =>
     key.startsWith('min')||key.startsWith('max') ? filters[key] !== '' : (filters[key] && filters[key] !== 'all')
@@ -4427,6 +4427,7 @@ function renderTop100(){
   const mcapSummary = _tokFmtFilterSummary(filters.minMcap, filters.maxMcap);
   const volumeSummary = _tokFmtFilterSummary(filters.minVolume, filters.maxVolume);
   const priceSummary = _tokFmtFilterSummary(filters.minPrice, filters.maxPrice);
+  const changeSummary = _tokFmtFilterSummary(filters.minChange, filters.maxChange);
 
   let rows = top100Tokens.map(_tokDecorate)
     .filter(t => _tokMatchesEnhancedFilters(t, filters))
@@ -4482,6 +4483,11 @@ function renderTop100(){
         <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h4"/></svg>
         <span>Price</span>
         <strong>${priceSummary}</strong>
+      </div>
+      <div class="market-filter-chip ${filters.minChange!=='' || filters.maxChange!=='' ? 'active' : ''}" onclick="document.querySelector('.market-filter-popover summary')?.click()" style="cursor:pointer;">
+        <svg viewBox="0 0 24 24"><path d="M8 2v4M16 2v4M3 9h18M5 21h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z"/></svg>
+        <span>24h Change</span>
+        <strong>${changeSummary}</strong>
       </div>
       <details class="market-filter-popover">
         <summary class="market-filter-chip ${hasMarketFilters ? 'active' : ''}">
@@ -4541,6 +4547,7 @@ function renderTop100(){
           </div>
           <div class="market-filter-actions">
             <button class="btn btn-sm" onclick="resetTop100MarketFilters();renderTop100()">Reset all</button>
+            <button class="btn btn-primary btn-sm" onclick="renderTop100()">Apply filters</button>
           </div>
         </div>
       </details>
@@ -4637,40 +4644,40 @@ function _renderScreenerTab(tabBar){
     <div class="screener-filters" style="margin-bottom:16px;">
       <div class="screener-field" style="min-width:90px;">
         <label>Price Min ($)</label>
-        <input class="form-input" type="number" step="any" placeholder="e.g. 0.001" value="${s.minPrice}" oninput="feedState.screener.minPrice=this.value;renderTop100()" />
+        <input class="form-input" type="number" step="any" placeholder="e.g. 0.001" value="${s.minPrice}" oninput="feedState.screener.minPrice=this.value" />
       </div>
       <div class="screener-field" style="min-width:90px;">
         <label>Price Max ($)</label>
-        <input class="form-input" type="number" step="any" placeholder="e.g. 100" value="${s.maxPrice}" oninput="feedState.screener.maxPrice=this.value;renderTop100()" />
+        <input class="form-input" type="number" step="any" placeholder="e.g. 100" value="${s.maxPrice}" oninput="feedState.screener.maxPrice=this.value" />
       </div>
       <div class="screener-field" style="min-width:80px;">
         <label>Min Δ%</label>
-        <input class="form-input" type="number" placeholder="e.g. 3" value="${s.minChange}" oninput="feedState.screener.minChange=this.value;renderTop100()" />
+        <input class="form-input" type="number" placeholder="e.g. 3" value="${s.minChange}" oninput="feedState.screener.minChange=this.value" />
       </div>
       <div class="screener-field" style="min-width:80px;">
         <label>Max Δ%</label>
-        <input class="form-input" type="number" placeholder="e.g. 20" value="${s.maxChange}" oninput="feedState.screener.maxChange=this.value;renderTop100()" />
+        <input class="form-input" type="number" placeholder="e.g. 20" value="${s.maxChange}" oninput="feedState.screener.maxChange=this.value" />
       </div>
       <div class="screener-field" style="min-width:90px;">
         <label>Mcap Min ($)</label>
-        <input class="form-input" type="number" placeholder="e.g. 1M" value="${s.minMcap}" oninput="feedState.screener.minMcap=this.value;renderTop100()" />
+        <input class="form-input" type="number" placeholder="e.g. 1M" value="${s.minMcap}" oninput="feedState.screener.minMcap=this.value" />
       </div>
       <div class="screener-field" style="min-width:90px;">
         <label>Mcap Max ($)</label>
-        <input class="form-input" type="number" placeholder="e.g. 1B" value="${s.maxMcap}" oninput="feedState.screener.maxMcap=this.value;renderTop100()" />
+        <input class="form-input" type="number" placeholder="e.g. 1B" value="${s.maxMcap}" oninput="feedState.screener.maxMcap=this.value" />
       </div>
       <div class="screener-field" style="min-width:90px;">
         <label>Vol Min ($)</label>
-        <input class="form-input" type="number" placeholder="e.g. 100K" value="${s.minVolume}" oninput="feedState.screener.minVolume=this.value;renderTop100()" />
+        <input class="form-input" type="number" placeholder="e.g. 100K" value="${s.minVolume}" oninput="feedState.screener.minVolume=this.value" />
       </div>
       <div class="screener-field" style="min-width:90px;">
         <label>Vol Max ($)</label>
-        <input class="form-input" type="number" placeholder="e.g. 100M" value="${s.maxVolume}" oninput="feedState.screener.maxVolume=this.value;renderTop100()" />
+        <input class="form-input" type="number" placeholder="e.g. 100M" value="${s.maxVolume}" oninput="feedState.screener.maxVolume=this.value" />
       </div>
       <div class="screener-field" style="min-width:120px;">
         <label>Whale Score</label>
         ${isPro
-          ? `<div style="display:flex;gap:4px;"><input class="form-input" type="number" placeholder="Min" min="0" max="100" value="${s.minWhaleScore}" oninput="feedState.screener.minWhaleScore=this.value;renderTop100()" style="width:48%;" /><input class="form-input" type="number" placeholder="Max" min="0" max="100" value="${s.maxWhaleScore}" oninput="feedState.screener.maxWhaleScore=this.value;renderTop100()" style="width:48%;" /></div>`
+          ? `<div style="display:flex;gap:4px;"><input class="form-input" type="number" placeholder="Min" min="0" max="100" value="${s.minWhaleScore}" oninput="feedState.screener.minWhaleScore=this.value" style="width:48%;" /><input class="form-input" type="number" placeholder="Max" min="0" max="100" value="${s.maxWhaleScore}" oninput="feedState.screener.maxWhaleScore=this.value" style="width:48%;" /></div>`
           : `<div class="screener-locked-overlay" onclick="navigateTo('settings');setTimeout(()=>switchTab('billing'),50)"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> PRO only</div>`}
       </div>
       <div class="screener-field" style="min-width:140px;">
@@ -4689,8 +4696,9 @@ function _renderScreenerTab(tabBar){
           <option value="whaleScore:asc" ${s.sortKey==='whaleScore'&&s.sortDir==='asc'?'selected':''}>Whale ↑</option>` : ''}
         </select>
       </div>
-      <div class="screener-field" style="align-self:flex-end;">
+      <div class="screener-field" style="align-self:flex-end;display:flex;gap:6px;">
         <button class="btn btn-sm" onclick="_resetScreenerState();renderTop100()">Reset</button>
+        <button class="btn btn-primary btn-sm" onclick="renderTop100()">Apply</button>
       </div>
     </div>
 
@@ -5880,7 +5888,7 @@ function _resetScreenerState(){
 function resetTop100MarketFilters(){
   Object.assign(feedState.screener, {
     minMcap:'', maxMcap:'', minVolume:'', maxVolume:'',
-    minPrice:'', maxPrice:''
+    minPrice:'', maxPrice:'', minChange:'', maxChange:''
   });
 }
 function showTokPreview(sym, evt){
@@ -6887,40 +6895,40 @@ function renderScreener(){
     <div class="screener-filters">
       <div class="screener-field">
         <label>Price Min ($)</label>
-        <input type="number" step="any" placeholder="e.g. 0.001" value="${s.minPrice}" oninput="feedState.screener.minPrice=this.value;renderScreener()" />
+        <input type="number" step="any" placeholder="e.g. 0.001" value="${s.minPrice}" oninput="feedState.screener.minPrice=this.value" />
       </div>
       <div class="screener-field">
         <label>Price Max ($)</label>
-        <input type="number" step="any" placeholder="e.g. 100" value="${s.maxPrice}" oninput="feedState.screener.maxPrice=this.value;renderScreener()" />
+        <input type="number" step="any" placeholder="e.g. 100" value="${s.maxPrice}" oninput="feedState.screener.maxPrice=this.value" />
       </div>
       <div class="screener-field">
         <label>Min Δ (%)</label>
-        <input type="number" placeholder="e.g. 3" value="${s.minChange}" oninput="feedState.screener.minChange=this.value;renderScreener()" />
+        <input type="number" placeholder="e.g. 3" value="${s.minChange}" oninput="feedState.screener.minChange=this.value" />
       </div>
       <div class="screener-field">
         <label>Max Δ (%)</label>
-        <input type="number" placeholder="e.g. 20" value="${s.maxChange}" oninput="feedState.screener.maxChange=this.value;renderScreener()" />
+        <input type="number" placeholder="e.g. 20" value="${s.maxChange}" oninput="feedState.screener.maxChange=this.value" />
       </div>
       <div class="screener-field">
         <label>Market Cap Min ($)</label>
-        <input type="number" placeholder="e.g. 1M" value="${s.minMcap}" oninput="feedState.screener.minMcap=this.value;renderScreener()" />
+        <input type="number" placeholder="e.g. 1M" value="${s.minMcap}" oninput="feedState.screener.minMcap=this.value" />
       </div>
       <div class="screener-field">
         <label>Market Cap Max ($)</label>
-        <input type="number" placeholder="e.g. 1B" value="${s.maxMcap}" oninput="feedState.screener.maxMcap=this.value;renderScreener()" />
+        <input type="number" placeholder="e.g. 1B" value="${s.maxMcap}" oninput="feedState.screener.maxMcap=this.value" />
       </div>
       <div class="screener-field">
         <label>Vol Min ($)</label>
-        <input type="number" placeholder="e.g. 100K" value="${s.minVolume}" oninput="feedState.screener.minVolume=this.value;renderScreener()" />
+        <input type="number" placeholder="e.g. 100K" value="${s.minVolume}" oninput="feedState.screener.minVolume=this.value" />
       </div>
       <div class="screener-field">
         <label>Vol Max ($)</label>
-        <input type="number" placeholder="e.g. 100M" value="${s.maxVolume}" oninput="feedState.screener.maxVolume=this.value;renderScreener()" />
+        <input type="number" placeholder="e.g. 100M" value="${s.maxVolume}" oninput="feedState.screener.maxVolume=this.value" />
       </div>
       <div class="screener-field">
         <label>Whale Score</label>
         ${isPro
-          ? `<div style="display:flex;gap:4px;"><input type="number" placeholder="Min" min="0" max="100" value="${s.minWhaleScore}" oninput="feedState.screener.minWhaleScore=this.value;renderScreener()" style="width:48%;" /><input type="number" placeholder="Max" min="0" max="100" value="${s.maxWhaleScore}" oninput="feedState.screener.maxWhaleScore=this.value;renderScreener()" style="width:48%;" /></div>`
+          ? `<div style="display:flex;gap:4px;"><input type="number" placeholder="Min" min="0" max="100" value="${s.minWhaleScore}" oninput="feedState.screener.minWhaleScore=this.value" style="width:48%;" /><input type="number" placeholder="Max" min="0" max="100" value="${s.maxWhaleScore}" oninput="feedState.screener.maxWhaleScore=this.value" style="width:48%;" /></div>`
           : `<div class="screener-locked-overlay" onclick="navigateTo('settings');setTimeout(()=>switchTab('billing'),50)"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> PRO only</div>`}
       </div>
       <div class="screener-field">
@@ -6939,8 +6947,9 @@ function renderScreener(){
           <option value="whaleScore:asc" ${s.sortKey==='whaleScore'&&s.sortDir==='asc'?'selected':''}>Whale ↑</option>` : ''}
         </select>
       </div>
-      <div class="screener-field" style="align-self:flex-end;">
+      <div class="screener-field" style="align-self:flex-end;display:flex;gap:6px;">
         <button class="btn btn-sm" onclick="_resetScreenerState();renderScreener()">Reset</button>
+        <button class="btn btn-primary btn-sm" onclick="renderScreener()">Apply</button>
       </div>
     </div>
 
