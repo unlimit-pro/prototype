@@ -1414,14 +1414,14 @@
     border-color: var(--ink);
   }
 
-  /* TOKEN HOVER PREVIEW */
+  /* ==================== SOLANA MODULE HOVER PREVIEW ==================== */
   .tok-preview{
     position: fixed;
     z-index: 200;
-    width: 390px;
-    background: #11161b;
+    width: 420px;
+    background: #0e1218;
     color: #f3f4f6;
-    border: 1px solid oklch(31% 0.015 245);
+    border: 1px solid oklch(28% 0.02 245);
     border-radius: 14px;
     padding: 16px;
     box-shadow: 0 24px 60px -20px rgba(0,0,0,0.55), 0 8px 24px -10px rgba(0,0,0,0.35);
@@ -1446,62 +1446,59 @@
   .tok-preview-score{ min-width:74px; text-align:right; }
   .tok-preview-score .score-num{ font-size:24px; font-weight:800; letter-spacing:-0.03em; color:#f3f4f6; }
   .tok-preview-score .score-label{ font-size:9px; color:#8a93a0; text-transform:uppercase; letter-spacing:0.08em; }
-  .tok-preview-chart{
-    height: 56px;
-    margin: 0 -2px 10px;
-    position: relative;
-  }
-  .tok-preview-chart svg{ width: 100%; height: 100%; display:block; }
-  .tok-preview-grid{
-    display:grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 6px;
-    margin-bottom: 8px;
-  }
-  .tok-preview-grid > div{ background:#151b22; border:1px solid rgba(255,255,255,0.06); border-radius:8px; padding:7px; min-width:0; }
-  .tok-preview-grid .lbl{
-    font-size: 9px;
-    color: #8a93a0;
-    margin-bottom: 3px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
-  .tok-preview-grid .val{
-    font-size: 15px;
-    font-weight: 700;
-    color: #f3f4f6;
-    letter-spacing: -0.01em;
-    font-feature-settings: "tnum","zero";
-    display:flex; align-items:baseline; gap: 8px;
-  }
-  .tok-preview-grid .val .delta{
-    font-size: 13px; font-weight: 600;
-    display:inline-flex; align-items:center; gap:2px;
-  }
-  .tok-preview-grid .val .delta.pos{ color: oklch(74% 0.18 152); }
-  .tok-preview-grid .val .delta.neg{ color: oklch(70% 0.20 25); }
-  .tok-preview-insight{
-    border:1px solid rgba(255,255,255,0.08);
-    background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.02));
-    border-radius:10px;
-    padding:8px 9px;
-    margin-bottom:8px;
-  }
-  .tok-preview-insight .kicker{ font-size:9px; color:#8a93a0; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:4px; }
-  .tok-preview-insight .txt{ font-size:11px; line-height:1.3; color:#e9edf2; }
-  .tok-preview-signals{ display:grid; grid-template-columns:1fr 1fr; gap:6px; }
-  .tok-preview-signal{ display:flex; justify-content:space-between; align-items:center; gap:8px; background:#151b22; border:1px solid rgba(255,255,255,0.06); border-radius:8px; padding:6px 8px; }
-  .tok-preview-signal .name{ font-size:10px; color:#9aa3af; }
-  .tok-preview-signal .metric{ font-size:12px; font-weight:700; color:#f3f4f6; font-variant-numeric:tabular-nums; white-space:nowrap; }
-  .tok-preview-badge{ display:inline-flex; align-items:center; height:22px; padding:0 8px; border-radius:999px; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; }
-  .tok-preview-badge.good{ color:oklch(83% 0.14 152); background:rgba(37,183,116,0.14); }
-  .tok-preview-badge.warn{ color:oklch(82% 0.14 75); background:rgba(214,158,46,0.14); }
-  .tok-preview-badge.risk{ color:oklch(76% 0.18 25); background:rgba(224,82,82,0.16); }
-  .tok-preview-flow{ display:flex; align-items:center; gap:7px; margin-top:8px; }
-  .tok-preview-flow span{ height:5px; border-radius:999px; background:#26313b; flex:1; overflow:hidden; }
-  .tok-preview-flow i{ display:block; height:100%; border-radius:999px; background:linear-gradient(90deg, oklch(73% 0.15 175), oklch(74% 0.18 152)); }
+
+  /* Module nav tabs */
+  .tok-mod-tabs{ display:flex; gap:4px; margin-bottom:10px; flex-wrap:wrap; }
+  .tok-mod-tab{ font-size:10px; font-weight:600; padding:4px 9px; border-radius:6px; cursor:pointer; background:rgba(255,255,255,0.05); color:#8a93a0; border:1px solid transparent; transition:all .12s; font-family:inherit; letter-spacing:0.02em; }
+  .tok-mod-tab:hover{ background:rgba(255,255,255,0.08); color:#f3f4f6; }
+  .tok-mod-tab.active{ background:rgba(255,255,255,0.10); color:#f3f4f6; border-color:rgba(255,255,255,0.12); }
+
+  /* Module container — only one visible at a time via JS */
+  .tok-module{ display:none; }
+  .tok-module.active{ display:block; }
+
+  /* Shared module grid */
+  .tok-mod-grid{ display:grid; grid-template-columns:1fr 1fr; gap:5px; }
+  .tok-mod-item{ background:#151b22; border:1px solid rgba(255,255,255,0.06); border-radius:8px; padding:7px 9px; min-width:0; }
+  .tok-mod-item.full{ grid-column:1 / -1; }
+  .tok-mod-item .lbl{ font-size:9px; color:#8a93a0; margin-bottom:3px; letter-spacing:0.06em; text-transform:uppercase; }
+  .tok-mod-item .val{ font-size:14px; font-weight:700; color:#f3f4f6; letter-spacing:-0.01em; font-feature-settings:"tnum","zero"; display:flex; align-items:baseline; gap:6px; }
+  .tok-mod-item .val .delta{ font-size:12px; font-weight:600; display:inline-flex; align-items:center; gap:2px; }
+  .tok-mod-item .val .delta.pos{ color:oklch(74% 0.18 152); }
+  .tok-mod-item .val .delta.neg{ color:oklch(70% 0.20 25); }
+  .tok-mod-item .val .badge-sm{ font-size:9px; font-weight:700; padding:1px 6px; border-radius:4px; letter-spacing:0.03em; }
+  .tok-mod-item .badge-sm.safe{ color:oklch(74% 0.18 152); background:rgba(37,183,116,0.15); }
+  .tok-mod-item .badge-sm.warn{ color:oklch(82% 0.14 75); background:rgba(214,158,46,0.15); }
+  .tok-mod-item .badge-sm.danger{ color:oklch(76% 0.18 25); background:rgba(224,82,82,0.16); }
+  .tok-mod-item .badge-sm.info{ color:oklch(70% 0.18 260); background:rgba(66,133,244,0.15); }
+  .tok-mod-item .badge-sm.off{ color:#8a93a0; background:rgba(255,255,255,0.05); }
+
+  /* Chip for DEX badges inside pool rows */
+  .tp-dex-chip{ font-size:8px; font-weight:700; padding:1px 5px; border-radius:3px; letter-spacing:0.04em; margin-left:4px; }
+  .tp-dex-chip.ray{ background:rgba(255,140,20,0.18); color:oklch(82% 0.14 60); }
+  .tp-dex-chip.orca{ background:rgba(120,80,255,0.18); color:oklch(72% 0.18 280); }
+  .tp-dex-chip.jup{ background:rgba(140,200,60,0.18); color:oklch(82% 0.14 110); }
+
+  /* Horizontal bar mixin for flow/liquidity */
+  .tp-bar-track{ height:4px; border-radius:2px; background:#26313b; overflow:hidden; margin-top:3px; }
+  .tp-bar-fill{ height:100%; border-radius:2px; background:linear-gradient(90deg, oklch(73% 0.15 175), oklch(74% 0.18 152)); transition:width .2s; }
+  .tp-bar-fill.neg{ background:linear-gradient(90deg, oklch(70% 0.18 25), oklch(72% 0.14 25)); }
+  .tp-bar-fill.neutral{ background:#8a93a0; }
+  .tp-bar-fill.accent{ background:oklch(70% 0.18 295); }
+
+  /* Compact pool row inside module */
+  .tp-pool-row{ display:flex; justify-content:space-between; align-items:center; padding:5px 0; border-bottom:1px solid rgba(255,255,255,0.04); font-size:11px; }
+  .tp-pool-row:last-child{ border-bottom:none; }
+  .tp-pool-label{ display:flex; align-items:center; gap:4px; color:#b0b8c4; }
+  .tp-pool-val{ font-weight:600; font-variant-numeric:tabular-nums; color:#f3f4f6; }
+
+  /* Flow signals row (RPC pulse) */
+  .tp-flow-row{ display:flex; gap:4px; margin-top:6px; }
+  .tp-flow-row span{ height:4px; border-radius:2px; background:#26313b; flex:1; overflow:hidden; }
+  .tp-flow-row i{ display:block; height:100%; border-radius:2px; background:oklch(73% 0.14 175); }
+
   @media (max-height: 680px){
-    .tok-preview-chart{ display:none; }
+    .tok-module.active .tok-mod-chart{ display:none; }
   }
 
   /* SECTION HEADER */
@@ -5922,107 +5919,459 @@ function resetTop100MarketFilters(){
     minPrice:'', maxPrice:'', minChange:'', maxChange:''
   });
 }
+// ==================== SOLANA MODULE-BASED TOKEN PREVIEW ====================
 function showTokPreview(sym, evt){
   const t = top100Tokens.find(x=>x.sym===sym); if (!t) return;
   const el = document.getElementById('tokPreview'); if (!el) return;
-  const pts = _tokSpark(sym, t.pos);
-  const W = 288, H = 88, PAD = 4;
-  const xs = pts.map((_,i) => PAD + (i*(W-PAD*2))/(pts.length-1));
-  const ys = pts.map(p => PAD + (1-p)*(H-PAD*2));
-  const path = xs.map((x,i)=> (i?'L':'M')+x.toFixed(1)+' '+ys[i].toFixed(1)).join(' ');
-  const fill = `${path} L ${xs[xs.length-1].toFixed(1)} ${H-PAD} L ${xs[0].toFixed(1)} ${H-PAD} Z`;
-  const stroke = t.pos ? 'oklch(76% 0.16 175)' : 'oklch(70% 0.20 25)';
-  const gradId = 'tg_'+sym;
   const seed = _tokSeed(sym);
   const rnd = _tokRand(seed);
-  const mcapNum = _tokParseMcap(t.mcap);
-  const vol = _tokVolume24h(t);
   const fmtP = p => p<0.001 ? '$'+p.toFixed(6) : p<1 ? '$'+p.toFixed(4) : '$'+p.toFixed(2);
   const arrow = t.pos
     ? '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 14 12 8 18 14"/></svg>'
     : '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 10 12 16 18 10"/></svg>';
-  const whaleNet = Math.round((t.pos ? 1 : -1) * (18 + rnd()*72));
-  const smartWallets = Math.round(4 + rnd()*24);
-  const top10Share = Math.round(24 + rnd()*38);
-  const freshWalletShare = Math.round(6 + rnd()*27);
-  const routeDepth = Math.round(38 + rnd()*58);
-  const lpBurn = Math.round(42 + rnd()*52);
-  const holderDelta = Math.round((t.pos ? 1 : -1) * (3 + rnd()*19));
-  const cexFlow = Math.round((rnd()-0.45) * 54);
-  const botNoise = Math.round(8 + rnd()*42);
-  const unlockRisk = Math.round(9 + rnd()*56);
-  const flowScore = Math.max(6, Math.min(96, 50 + whaleNet*0.28 + holderDelta*1.4 - top10Share*0.18 - botNoise*0.22));
-  const qualityScore = Math.max(1, Math.min(99, Math.round(flowScore + routeDepth*0.16 + lpBurn*0.12 - unlockRisk*0.22)));
-  const riskClass = qualityScore >= 70 ? 'good' : qualityScore >= 48 ? 'warn' : 'risk';
-  const riskText = qualityScore >= 70 ? 'Accumulation' : qualityScore >= 48 ? 'Mixed Tape' : 'Distribution Risk';
-  const pressureText = whaleNet >= 0 ? `Elite wallets added ${_tokFmtBig(Math.abs(whaleNet)*1000)} net` : `Elite wallets offloaded ${_tokFmtBig(Math.abs(whaleNet)*1000)} net`;
-  const insight = qualityScore >= 70
-    ? `${pressureText}; fresh wallets are expanding while routed liquidity can absorb buys with lower slippage.`
-    : qualityScore >= 48
-      ? `${pressureText}, but holder concentration and bot noise make the move less clean than price alone suggests.`
-      : `${pressureText}; rising concentration plus weaker routing depth means rallies may be easier to fade.`;
+
+  // Act as a "virtual module" tracker bound to this preview instance
+  const activeMod = (el._activeMod === undefined) ? 0 : el._activeMod;
+
+  // ---- Solana-Specific Mock Data ----
+  // 1. Raydium/Orca Pool Dynamics
+  const dexData = [
+    {dex:'Raydium', pair:`${sym}/SOL`, tvl: (1.8 + rnd()*12).toFixed(1) + 'M', apy: (8 + rnd()*38).toFixed(1)+'%', vol: (0.4 + rnd()*4.2).toFixed(1) + 'M', liqDepth: Math.round(42 + rnd()*48) },
+    {dex:'Orca',    pair:`${sym}/USDC`, tvl: (1.2 + rnd()*8.4).toFixed(1) + 'M', apy: (6 + rnd()*42).toFixed(1)+'%',  vol: (0.3 + rnd()*3.6).toFixed(1) + 'M', liqDepth: Math.round(38 + rnd()*52) }
+  ];
+  const poolLiquidityScore = Math.round(16 + rnd()*78);
+
+  // 2. Active Wallet Growth
+  const activeWalletsBase = Math.round(1200 + rnd()*8800);
+  const growth24h    = Math.round((rnd()-0.38) * 32);
+  const growth7d     = Math.round((rnd()-0.30) * 58);
+  const medianAge    = Math.round(4 + rnd()*42);
+  const retention    = Math.round(38 + rnd()*48);
+  const newWallets24h= Math.round(80 + rnd()*520);
+  const walletMomentum = Math.round(20 + rnd()*74);
+
+  // 3. Token Mint / Freeze Authority Status
+  const mintAuthority    = rnd() > 0.60;                     // 40% chance revoked
+  const freezeAuthority  = rnd() > 0.75;                     // 25% chance revoked
+  const immutableFlag    = rnd() > 0.55;                     // 45% chance set
+  const lpLocked         = rnd() > 0.38;                     // 62% chance locked
+  const contractVerified = rnd() > (sym==='MEOW'||sym==='SHADOW'?0.6:0.25);
+  const authorityStatus  = mintAuthority ? 'Mint active' : 'Revoked';
+  const authorityClass   = mintAuthority ? 'warn' : 'safe';
+  const freezeStatus     = freezeAuthority ? 'Freeze active' : 'None';
+  const freezeClass      = freezeAuthority ? 'danger' : 'safe';
+  const immutStatus      = immutableFlag ? 'Upgradable' : 'Frozen';
+  const immutClass       = immutableFlag ? 'warn' : 'safe';
+  const lockStatus       = lpLocked ? 'Locked' : 'Unlocked';
+  const lockClass        = lpLocked ? 'safe' : 'danger';
+  const auditStatus      = contractVerified ? 'Verified' : 'Unverified';
+  const auditClass       = contractVerified ? 'safe' : 'warn';
+
+  // 4. RPC-Level Activity
+  const txCount24h  = Math.round(rnd() * (t.sym==='SOL'?4800000:240000));
+  const uniqueSigners = Math.round(txCount24h * (0.12 + rnd()*0.34));
+  const computeUnits = Math.round(txCount24h * (2.4 + rnd()*4.2));
+  const avgPriorityFee = (2 + rnd()*18).toFixed(0);
+  const tpsSpike    = Math.round(400 + rnd()*1200);
+  const txFailRate  = (0.4 + rnd()*2.8).toFixed(1);
+  const programCalls = Math.round(12 + rnd()*38);
+  const rpcActivityScore = Math.max(1, Math.min(99, Math.round(30 + txCount24h/80000 + tpsSpike/20 - parseFloat(txFailRate)*5)));
+
+  // 5. Staking & Yield (NEW)
+  const stakingApy    = (4.2 + rnd()*3.8).toFixed(2);
+  const totalStaked   = (42 + rnd()*48).toFixed(1);
+  const stakeRatio    = Math.round(38 + rnd()*42);
+  const validators    = Math.round(800 + rnd()*800);
+  const lstDominance  = (12 + rnd()*28).toFixed(1);
+  const inflationRate = (3.2 + rnd()*2.4).toFixed(2);
+  const mevTips       = (0.4 + rnd()*2.2).toFixed(1);
+  const yieldScore    = Math.round(20 + rnd()*72);
+
+  // 6. Tokenomics & Supply (NEW)
+  const totalSupply   = Math.round(100 + rnd()*9900) * (sym==='BONK'||sym==='PIPPIN'?1e12:sym==='SOL'?1e6:1e6);
+  const circSupply    = Math.round(totalSupply * (0.4 + rnd()*0.5));
+  const holderCount   = Math.round(1200 + rnd()*88000);
+  const top10Pct      = (22 + rnd()*56).toFixed(1);
+  const emissionRate  = (1.2 + rnd()*4.8).toFixed(2);
+  const burnRate      = (0.2 + rnd()*1.8).toFixed(2);
+  const unlockPct     = Math.round(12 + rnd()*58);
+  const circRatio     = Math.round((circSupply / Math.max(totalSupply,1)) * 100);
+  const tokenomicsScore = Math.max(1, Math.min(99, Math.round(65 - parseFloat(top10Pct)*0.4 + parseFloat(burnRate)*8 - unlockPct*0.3)));
+
+  // 7. DeFi Health (NEW)
+  const tvlToken      = (8 + rnd()*180).toFixed(1);
+  const protocolCount = Math.round(2 + rnd()*10);
+  const lendRate      = (3 + rnd()*18).toFixed(1);
+  const borrowRate    = (6 + rnd()*24).toFixed(1);
+  const stableBacking = Math.round(40 + rnd()*50);
+  const dexRatio      = (0.08 + rnd()*0.42).toFixed(2);
+  const protocolFees  = (0.2 + rnd()*4.8).toFixed(2);
+  const defiScore     = Math.round(14 + rnd()*78);
+
+  // 8. Security & Audit (NEW)
+  const programUpgrade = rnd() > 0.55;          // 45% chance revoked
+  const multisigActive = rnd() > 0.48;          // 52% chance active
+  const auditRecency   = ['< 30d', '1-3mo', '3-6mo', '6-12mo', '> 12mo'][Math.floor(rnd()*5)];
+  const bugBounty      = rnd() > 0.35;          // 65% chance has one
+  const timelockActive = rnd() > 0.60;          // 40% chance active
+  const ownershipRenounced = rnd() > 0.55;      // 45% chance renounced
+  const secScore = Math.round(
+    40
+    + (programUpgrade ? 0 : 18)
+    + (multisigActive ? 12 : 0)
+    + (auditRecency === '< 30d' ? 12 : auditRecency === '1-3mo' ? 8 : auditRecency === '3-6mo' ? 5 : auditRecency === '6-12mo' ? 2 : 0)
+    + (bugBounty ? 8 : 0)
+    + (timelockActive ? 10 : 0)
+    + (ownershipRenounced ? 15 : 0)
+  );
+  const secClass = secScore >= 68 ? 'safe' : secScore >= 45 ? 'warn' : 'danger';
+  const secLabel = secScore >= 68 ? 'Strong' : secScore >= 45 ? 'Moderate' : 'Weak';
+
+  // Build overall safety/quality composite from Solana perspective
+  const safetyScore = Math.round(
+    50
+    + (mintAuthority ? 0 : 20)
+    + (freezeAuthority ? 0 : 15)
+    + (immutableFlag ? 0 : 12)
+    + (lpLocked ? 18 : 0)
+    + (contractVerified ? 10 : 0)
+    + (retention > 55 ? 10 : 0)
+    + (poolLiquidityScore > 50 ? 8 : 0)
+    + (walletMomentum > 50 ? 7 : 0)
+  );
+  const safetyClass = safetyScore >= 70 ? 'safe' : safetyScore >= 48 ? 'warn' : 'danger';
+  const safetyLabel = safetyScore >= 70 ? 'Low Risk' : safetyScore >= 48 ? 'Caution' : 'High Risk';
+
+  // ---- Module tab rendering ----
+  const mods = [
+    { id:'dex',        label:'DEX Pools' },
+    { id:'wallets',    label:'Wallet Growth' },
+    { id:'staking',    label:'Staking & Yield' },
+    { id:'tokenomics', label:'Tokenomics' },
+    { id:'defi',       label:'DeFi Health' },
+    { id:'authority',  label:'Authority' },
+    { id:'security',   label:'Security' },
+    { id:'rpc',        label:'RPC Activity' }
+  ];
+
+  function renderModDex(){
+    return `
+      <div class="tok-mod-grid">
+        <div class="tok-mod-item full">
+          <div class="lbl">Pool Liquidity Score</div>
+          <div class="val">${poolLiquidityScore}/100 <span class="delta ${poolLiquidityScore>=50?'pos':'neg'}">${poolLiquidityScore>=50?'Adequate':'Thin'}</span></div>
+          <div class="tp-bar-track"><div class="tp-bar-fill" style="width:${poolLiquidityScore}%"></div></div>
+        </div>
+        ${dexData.map(d => `
+        <div class="tok-mod-item">
+          <div class="lbl">${d.pair} <span class="tp-dex-chip ${d.dex.toLowerCase().substring(0,3)}">${d.dex}</span></div>
+          <div class="val" style="font-size:13px;">TVL $${d.tvl} <span class="delta pos">${d.apy}</span></div>
+          <div style="font-size:10px;color:#8a93a0;margin-top:2px;">Vol $${d.vol} · Depth ${d.liqDepth}%</div>
+        </div>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  function renderModWallets(){
+    return `
+      <div class="tok-mod-grid">
+        <div class="tok-mod-item full">
+          <div class="lbl">Active Wallets (24h)</div>
+          <div class="val">${activeWalletsBase.toLocaleString()} <span class="delta ${walletMomentum>=50?'pos':'neg'}">Momentum ${walletMomentum}/100</span></div>
+          <div style="display:flex;gap:12px;font-size:10px;color:#8a93a0;margin-top:4px;">
+            <span>24h: <b style="color:${growth24h>=0?'oklch(74% 0.18 152)':'oklch(70% 0.20 25)'}">${growth24h>=0?'+':''}${growth24h}%</b></span>
+            <span>7d: <b style="color:${growth7d>=0?'oklch(74% 0.18 152)':'oklch(70% 0.20 25)'}">${growth7d>=0?'+':''}${growth7d}%</b></span>
+          </div>
+        </div>
+        <div class="tok-mod-item">
+          <div class="lbl">New Wallets (24h)</div>
+          <div class="val">${newWallets24h.toLocaleString()}</div>
+        </div>
+        <div class="tok-mod-item">
+          <div class="lbl">Wallet Retention</div>
+          <div class="val">${retention}%</div>
+        </div>
+        <div class="tok-mod-item">
+          <div class="lbl">Median Wallet Age</div>
+          <div class="val">${medianAge}d</div>
+        </div>
+        <div class="tok-mod-item">
+          <div class="lbl">Growth Rate (7d)</div>
+          <div class="val"><span class="delta ${growth7d>=0?'pos':'neg'}">${growth7d>=0?'+':''}${growth7d}%</span></div>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderModStaking(){
+    const lstNames = ['jitoSOL','mSOL','bSOL','INF'];
+    const lstTop = lstNames.slice(0, 2 + Math.floor(rnd()*2));
+    return `
+      <div class="tok-mod-grid">
+        <div class="tok-mod-item full">
+          <div class="lbl">Staking Yield Score</div>
+          <div class="val">${yieldScore}/100 <span class="delta ${yieldScore>=50?'pos':'neg'}">${yieldScore>=50?'Attractive':'Below avg'}</span></div>
+          <div class="tp-bar-track"><div class="tp-bar-fill" style="width:${yieldScore}%"></div></div>
+        </div>
+        <div class="tok-mod-item">
+          <div class="lbl">Staking APY</div>
+          <div class="val">${stakingApy}%</div>
+        </div>
+        <div class="tok-mod-item">
+          <div class="lbl">Total Staked</div>
+          <div class="val">${totalStaked}M SOL</div>
+        </div>
+        <div class="tok-mod-item">
+          <div class="lbl">Stake Ratio</div>
+          <div class="val">${stakeRatio}% <span class="delta" style="font-size:10px;color:#8a93a0;">of supply</span></div>
+        </div>
+        <div class="tok-mod-item">
+          <div class="lbl">Active Validators</div>
+          <div class="val">${validators.toLocaleString()}</div>
+        </div>
+        <div class="tok-mod-item">
+          <div class="lbl">LST Dominance</div>
+          <div class="val">${lstDominance}% <span class="delta pos">${lstTop.slice(0,2).join(' · ')}</span></div>
+        </div>
+        <div class="tok-mod-item">
+          <div class="lbl">Inflation Rate</div>
+          <div class="val">${inflationRate}%</div>
+        </div>
+        <div class="tok-mod-item">
+          <div class="lbl">MEV Tips (24h)</div>
+          <div class="val">${mevTips}K SOL</div>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderModTokenomics(){
+    const fmtSupply = n => n >= 1e12 ? (n/1e12).toFixed(2)+'T' : n >= 1e9 ? (n/1e9).toFixed(2)+'B' : n >= 1e6 ? (n/1e6).toFixed(2)+'M' : n.toLocaleString();
+    return `
+      <div class="tok-mod-grid">
+        <div class="tok-mod-item full">
+          <div class="lbl">Tokenomics Score</div>
+          <div class="val">${tokenomicsScore}/100 <span class="delta ${tokenomicsScore>=55?'pos':'neg'}">${tokenomicsScore>=55?'Healthy':'Concentrated'}</span></div>
+          <div class="tp-bar-track"><div class="tp-bar-fill" style="width:${tokenomicsScore}%"></div></div>
+        </div>
+        <div class="tok-mod-item">
+          <div class="lbl">Circulating Supply</div>
+          <div class="val" style="font-size:12px;">${fmtSupply(circSupply)}</div>
+        </div>
+        <div class="tok-mod-item">
+          <div class="lbl">Circ / Total</div>
+          <div class="val">${circRatio}%</div>
+        </div>
+        <div class="tok-mod-item">
+          <div class="lbl">Holders</div>
+          <div class="val" style="font-size:12px;">${(holderCount >= 1000 ? (holderCount/1000).toFixed(1)+'K' : holderCount)}</div>
+        </div>
+        <div class="tok-mod-item">
+          <div class="lbl">Top 10 Hold</div>
+          <div class="val">${top10Pct}%</div>
+        </div>
+        <div class="tok-mod-item">
+          <div class="lbl">Emission Rate</div>
+          <div class="val">${emissionRate}%/mo</div>
+        </div>
+        <div class="tok-mod-item">
+          <div class="lbl">Burn Rate</div>
+          <div class="val" style="color:${parseFloat(burnRate) > 0.5 ? 'oklch(74% 0.18 152)' : '#f3f4f6'};">${burnRate}%/mo</div>
+        </div>
+        <div class="tok-mod-item">
+          <div class="lbl">Unlock Schedule</div>
+          <div class="val"><span class="badge-sm ${unlockPct > 40 ? 'warn' : 'safe'}">${unlockPct}% unlocked</span></div>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderModDefi(){
+    return `
+      <div class="tok-mod-grid">
+        <div class="tok-mod-item full">
+          <div class="lbl">DeFi Health Score</div>
+          <div class="val">${defiScore}/100 <span class="delta ${defiScore>=50?'pos':'neg'}">${defiScore>=50?'Active':'Inactive'}</span></div>
+          <div class="tp-bar-track"><div class="tp-bar-fill" style="width:${defiScore}%"></div></div>
+        </div>
+        <div class="tok-mod-item">
+          <div class="lbl">TVL (all protocols)</div>
+          <div class="val" style="font-size:12px;">$${tvlToken}M</div>
+        </div>
+        <div class="tok-mod-item">
+          <div class="lbl">Active Protocols</div>
+          <div class="val">${protocolCount}</div>
+        </div>
+        <div class="tok-mod-item">
+          <div class="lbl">Supply / Borrow</div>
+          <div class="val" style="font-size:12px;">${lendRate}% / ${borrowRate}%</div>
+        </div>
+        <div class="tok-mod-item">
+          <div class="lbl">Stablecoin Backing</div>
+          <div class="val">${stableBacking}%</div>
+        </div>
+        <div class="tok-mod-item">
+          <div class="lbl">DEX Vol / Mcap</div>
+          <div class="val">${dexRatio}x</div>
+        </div>
+        <div class="tok-mod-item">
+          <div class="lbl">Protocol Fees (24h)</div>
+          <div class="val">$${protocolFees}M</div>
+        </div>
+        <div class="tok-mod-item">
+          <div class="lbl">Rev / Fee Ratio</div>
+          <div class="val">${(12 + rnd()*38).toFixed(0)}%</div>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderModAuthority(){
+    return `
+      <div class="tok-mod-grid">
+        <div class="tok-mod-item">
+          <div class="lbl">Mint Authority</div>
+          <div class="val"><span class="badge-sm ${authorityClass}">${authorityStatus}</span></div>
+        </div>
+        <div class="tok-mod-item">
+          <div class="lbl">Freeze Authority</div>
+          <div class="val"><span class="badge-sm ${freezeClass}">${freezeStatus}</span></div>
+        </div>
+        <div class="tok-mod-item">
+          <div class="lbl">Upgrade Status</div>
+          <div class="val"><span class="badge-sm ${immutClass}">${immutStatus}</span></div>
+        </div>
+        <div class="tok-mod-item">
+          <div class="lbl">LP Locked</div>
+          <div class="val"><span class="badge-sm ${lockClass}">${lockStatus}</span></div>
+        </div>
+        <div class="tok-mod-item">
+          <div class="lbl">Contract Verified</div>
+          <div class="val"><span class="badge-sm ${auditClass}">${auditStatus}</span></div>
+        </div>
+        <div class="tok-mod-item">
+          <div class="lbl">Safety Composite</div>
+          <div class="val"><span class="badge-sm ${safetyClass}" style="font-size:11px;">${safetyScore}/100 · ${safetyLabel}</span></div>
+          <div class="tp-bar-track"><div class="tp-bar-fill ${safetyClass==='danger'?'neg':safetyClass==='warn'?'neutral':'accent'}" style="width:${safetyScore}%"></div></div>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderModSecurity(){
+    return `
+      <div class="tok-mod-grid">
+        <div class="tok-mod-item full">
+          <div class="lbl">Security Score</div>
+          <div class="val">${secScore}/100 <span class="delta ${secScore>=68?'pos':secScore>=45?'':'neg'}">${secLabel}</span></div>
+          <div class="tp-bar-track"><div class="tp-bar-fill ${secClass==='danger'?'neg':secClass==='warn'?'neutral':'accent'}" style="width:${secScore}%"></div></div>
+        </div>
+        <div class="tok-mod-item">
+          <div class="lbl">Program Upgrade</div>
+          <div class="val"><span class="badge-sm ${programUpgrade?'warn':'safe'}">${programUpgrade?'Active':'Revoked'}</span></div>
+        </div>
+        <div class="tok-mod-item">
+          <div class="lbl">Multisig</div>
+          <div class="val"><span class="badge-sm ${multisigActive?'safe':'off'}">${multisigActive?'Active':'None'}</span></div>
+        </div>
+        <div class="tok-mod-item">
+          <div class="lbl">Audit Recency</div>
+          <div class="val"><span class="badge-sm ${auditRecency==='< 30d'?'safe':auditRecency==='1-3mo'?'info':auditRecency==='3-6mo'?'warn':'danger'}">${auditRecency}</span></div>
+        </div>
+        <div class="tok-mod-item">
+          <div class="lbl">Bug Bounty</div>
+          <div class="val"><span class="badge-sm ${bugBounty?'safe':'off'}">${bugBounty?'Active':'None'}</span></div>
+        </div>
+        <div class="tok-mod-item">
+          <div class="lbl">Timelock</div>
+          <div class="val"><span class="badge-sm ${timelockActive?'safe':'off'}">${timelockActive?'Active':'None'}</span></div>
+        </div>
+        <div class="tok-mod-item">
+          <div class="lbl">Ownership</div>
+          <div class="val"><span class="badge-sm ${ownershipRenounced?'safe':'warn'}">${ownershipRenounced?'Renounced':'Active'}</span></div>
+        </div>
+        <div class="tok-mod-item">
+          <div class="lbl">Program DAO</div>
+          <div class="val"><span class="badge-sm ${programUpgrade && !ownershipRenounced?'warn':'info'}">${multisigActive?'Multisig DAO':'EOA'}</span></div>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderModRpc(){
+    return `
+      <div class="tok-mod-grid">
+        <div class="tok-mod-item full">
+          <div class="lbl">RPC Activity Score</div>
+          <div class="val">${rpcActivityScore}/100 <span class="delta ${rpcActivityScore>=50?'pos':'neg'}">${rpcActivityScore>=50?'High traffic':'Low activity'}</span></div>
+          <div class="tp-bar-track"><div class="tp-bar-fill" style="width:${rpcActivityScore}%"></div></div>
+        </div>
+        <div class="tok-mod-item">
+          <div class="lbl">TX count (24h)</div>
+          <div class="val">${txCount24h >= 1000 ? (txCount24h/1000).toFixed(1)+'K' : txCount24h}</div>
+        </div>
+        <div class="tok-mod-item">
+          <div class="lbl">Unique Signers</div>
+          <div class="val">${uniqueSigners >= 1000 ? (uniqueSigners/1000).toFixed(1)+'K' : uniqueSigners}</div>
+        </div>
+        <div class="tok-mod-item">
+          <div class="lbl">Avg Priority Fee</div>
+          <div class="val">${avgPriorityFee} <span style="font-size:9px;color:#8a93a0;">µSOL</span></div>
+        </div>
+        <div class="tok-mod-item">
+          <div class="lbl">Peak TPS</div>
+          <div class="val">${tpsSpike}</div>
+        </div>
+        <div class="tok-mod-item">
+          <div class="lbl">TX Fail Rate</div>
+          <div class="val" style="color:${parseFloat(txFailRate)>1.5?'oklch(76% 0.18 25)':'#f3f4f6'}">${txFailRate}%</div>
+        </div>
+        <div class="tok-mod-item">
+          <div class="lbl">Program Calls</div>
+          <div class="val">${programCalls.toLocaleString()}</div>
+        </div>
+        <div class="tok-mod-item">
+          <div class="lbl">Compute Units</div>
+          <div class="val" style="font-size:12px;">${computeUnits >= 1e6 ? (computeUnits/1e6).toFixed(1)+'M' : (computeUnits/1e3).toFixed(1)+'K'}</div>
+        </div>
+      </div>
+    `;
+  }
+
+  const modContent = [renderModDex(), renderModWallets(), renderModStaking(), renderModTokenomics(), renderModDefi(), renderModAuthority(), renderModSecurity(), renderModRpc()];
+
   el.innerHTML = `
     <div class="tok-preview-head">
       <div class="tok-preview-title">
         <div class="tok-preview-icon">${t.sym.substring(0,3)}</div>
         <div><div class="tok-preview-sym">${t.sym}</div><div class="tok-preview-sub">${t.name} · Solana on-chain pulse</div></div>
       </div>
-      <div class="tok-preview-score"><div class="score-num">${qualityScore}</div><div class="score-label">Alpha score</div></div>
+      <div class="tok-preview-score"><div class="score-num">${safetyScore}</div><div class="score-label">Safety</div></div>
     </div>
-    <div class="tok-preview-chart">
-      <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
-        <defs>
-          <linearGradient id="${gradId}" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="${stroke}" stop-opacity="0.45"/>
-            <stop offset="100%" stop-color="${stroke}" stop-opacity="0"/>
-          </linearGradient>
-        </defs>
-        <path d="${fill}" fill="url(#${gradId})"/>
-        <path d="${path}" fill="none" stroke="${stroke}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;padding:6px 8px;background:rgba(255,255,255,0.03);border-radius:8px;">
+      <span style="font-size:14px;font-weight:700;">${fmtP(t.price)}</span>
+      <span class="delta ${t.pos?'pos':'neg'}" style="font-size:12px;font-weight:600;display:inline-flex;align-items:center;gap:2px;">${arrow}${Math.abs(t.change).toFixed(2)}%</span>
+      <span style="margin-left:auto;font-size:10px;color:#8a93a0;">${t.mcap} mcap</span>
     </div>
-    <div class="tok-preview-grid">
-      <div>
-        <div class="lbl">Price Pulse</div>
-        <div class="val">${fmtP(t.price)} <span class="delta ${t.pos?'pos':'neg'}">${arrow}${Math.abs(t.change).toFixed(2)}%</span></div>
-      </div>
-      <div>
-        <div class="lbl">Smart Buys</div>
-        <div class="val">${smartWallets}</div>
-      </div>
-      <div>
-        <div class="lbl">Whale Net</div>
-        <div class="val"><span class="delta ${whaleNet>=0?'pos':'neg'}">${whaleNet>=0?'+':''}${whaleNet}</span></div>
-      </div>
-      <div>
-        <div class="lbl">DEX Depth</div>
-        <div class="val">${routeDepth}%</div>
-      </div>
-      <div>
-        <div class="lbl">Fresh Wallets</div>
-        <div class="val">${freshWalletShare}%</div>
-      </div>
-      <div>
-        <div class="lbl">Top 10 Hold</div>
-        <div class="val">${top10Share}%</div>
-      </div>
+    <div class="tok-mod-tabs">
+      ${mods.map((m,i) => `<button class="tok-mod-tab ${i===activeMod?'active':''}" data-mi="${i}" onclick="switchTokMod(event, ${i})">${m.label}</button>`).join('')}
     </div>
-    <div class="tok-preview-insight">
-      <div class="kicker">Why it matters</div>
-      <div class="txt">${insight}</div>
-      <div class="tok-preview-flow"><span><i style="width:${Math.round(flowScore)}%;"></i></span><b class="tok-preview-badge ${riskClass}">${riskText}</b></div>
-    </div>
-    <div class="tok-preview-signals">
-      <div class="tok-preview-signal"><span class="name">LP lock / burn</span><span class="metric">${lpBurn}%</span></div>
-      <div class="tok-preview-signal"><span class="name">CEX pressure</span><span class="metric ${cexFlow<=0?'change-pos':'change-neg'}">${cexFlow>=0?'+':''}${cexFlow}%</span></div>
-      <div class="tok-preview-signal"><span class="name">Holder growth</span><span class="metric ${holderDelta>=0?'change-pos':'change-neg'}">${holderDelta>=0?'+':''}${holderDelta}%</span></div>
-      <div class="tok-preview-signal"><span class="name">Bot noise</span><span class="metric">${botNoise}%</span></div>
-      <div class="tok-preview-signal"><span class="name">Unlock risk</span><span class="metric">${unlockRisk}%</span></div>
-      <div class="tok-preview-signal"><span class="name">Turnover / mcap</span><span class="metric">${Math.max(1, Math.round((vol / Math.max(mcapNum,1))*100))}%</span></div>
-    </div>
+    ${modContent.map((html,i) => `<div class="tok-module ${i===activeMod?'active':''}" data-mi="${i}">${html}</div>`).join('')}
   `;
+  el._activeMod = activeMod;
   positionTokPreview(evt);
   el.classList.add('visible');
+}
+
+// Module tab switching inside the preview
+function switchTokMod(evt, idx){
+  const el = document.getElementById('tokPreview'); if (!el) return;
+  el._activeMod = idx;
+  // Update tab active states
+  el.querySelectorAll('.tok-mod-tab').forEach((tab,i) => tab.classList.toggle('active', i===idx));
+  el.querySelectorAll('.tok-module').forEach((mod,i) => mod.classList.toggle('active', i===idx));
+  evt.stopPropagation();
 }
 function positionTokPreview(evt){
   const el = document.getElementById('tokPreview'); if (!el) return;
