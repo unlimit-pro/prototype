@@ -3186,7 +3186,8 @@ const feedState = {
   signalsFilter:'all',
   discoveryFilter:'all', discoverySort:'newest', discoverySearch:'',
   heatmapTimeRange:'24h',
-  chatOpen: false, chatMessages:[]
+  chatOpen: false, chatMessages:[],
+  feedFilterCategory:'impact'
 };
 
 const discoveredTokens = [
@@ -4946,16 +4947,22 @@ function renderFeed(){
     <div class="card">
       <div class="card-header" style="flex-wrap:wrap;gap:10px;padding-bottom:14px;">
         <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+          <!-- Category switcher tabs -->
+          <div style="display:flex;gap:2px;border:1px solid var(--line);border-radius:8px;overflow:hidden;" class="seg-btn-group">
+            <button class="seg-btn ${feedState.feedFilterCategory==='impact'?'active':''}" onclick="feedState.feedFilterCategory='impact';renderFeed()" style="border:none;border-radius:0;padding:7px 14px;">Impact</button>
+            <button class="seg-btn ${feedState.feedFilterCategory==='source'?'active':''}" onclick="feedState.feedFilterCategory='source';renderFeed()" style="border:none;border-radius:0;padding:7px 14px;">Source</button>
+          </div>
+          <!-- Impact pills -->
+          ${feedState.feedFilterCategory==='impact' ? `
           <div class="pills" style="margin-right:4px;">
             <button class="pill ${filter==='all'?'active':''}" onclick="setFeedFilter('all')">All</button>
             <button class="pill ${filter==='high'?'active':''}" onclick="setFeedFilter('high')">High impact</button>
             <button class="pill ${filter==='bullish'?'active':''}" onclick="setFeedFilter('bullish')">Bullish</button>
             <button class="pill ${filter==='bearish'?'active':''}" onclick="setFeedFilter('bearish')">Bearish</button>
-          </div>
-          <div style="width:1px;height:20px;background:var(--line);flex-shrink:0;"></div>
+          </div>` : `
           <div class="pills">
             ${sources.map(s=>`<button class="pill ${srcFilter===s?'active':''}" onclick="setFeedSourceFilter('${s}')">${s.charAt(0).toUpperCase()+s.slice(1)}</button>`).join('')}
-          </div>
+          </div>`}
         </div>
         <div style="display:flex;gap:10px;align-items:center;">
           <input class="search-input" style="width:220px;" placeholder="Search news or token…" value="${feedState.search}" oninput="setFeedSearch(this.value)" />
