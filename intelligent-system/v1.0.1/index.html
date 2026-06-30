@@ -7445,7 +7445,7 @@ function renderBillingTab(){
     ? `<span id="renewalCountdown" style="font-family:'JetBrains Mono',monospace;font-weight:600;">—</span>`
     : '';
 
-  // Payment methods — each card has actions: set default, edit expiry, remove
+  // Payment methods — production-aligned actions: set default, replace, remove
   const paymentMethods = (appState.paymentHistory || []).map((pm, _i) => {
     const gIdx = (appState.paymentHistory || []).indexOf(pm);
     const isCard = pm.provider === 'stripe';
@@ -7484,7 +7484,7 @@ function renderBillingTab(){
         </div>
         <div style="display:flex;gap:6px;margin-top:12px;padding-top:12px;border-top:1px solid var(--line-2);">
           ${!pm.isDefault ? `<button class="btn btn-sm btn-ghost" onclick="setPMDefault(${gIdx})">Set as default</button>` : ''}
-          ${isCard ? `<button class="btn btn-sm btn-ghost" onclick="editPM(${gIdx})">Edit details</button>` : ''}
+          ${isCard ? `<button class="btn btn-sm btn-ghost" onclick="replacePM(${gIdx})">Replace card</button>` : ''}
           ${!pm.isDefault ? `<button class="btn btn-sm btn-ghost" style="color:var(--neg);" onclick="deletePM(${gIdx})">Remove</button>` : ''}
         </div>
       </div>`;
@@ -8495,50 +8495,68 @@ function deletePM(idx){
   openModal('confirmDeleteModal');
 }
 
-function editPM(idx){
+function replacePM(idx){
   const pm = appState.paymentHistory[idx];
+  if (!pm) return;
   const modal = document.getElementById('addPaymentMethodModal');
-  // Repurpose the add modal for editing
-  document.getElementById('pmCardNumber').value = '•••• •••• •••• ' + pm.last4;
-  document.getElementById('pmCardNumber').disabled = true;
-  document.getElementById('pmCardExpiry').value = String(pm.expMonth).padStart(2, '0') + ' / ' + pm.expYear;
+  modal.querySelector('.modal-header').textContent = 'Replace payment method';
+  const addBtn = modal.querySelector('.btn-accent');
+  addBtn.textContent = 'Replace card';
+  addBtn.setAttribute('onclick', 'saveReplacementPM(' + idx + ')');
+  document.getElementById('pmCardNumber').disabled = false;
+  document.getElementById('pmCardNumber').value = '';
+  document.getElementById('pmCardExpiry').value = '';
   document.getElementById('pmCardCvc').value = '';
   document.getElementById('pmCardZip').value = '';
-  document.getElementById('pmSetDefault').checked = pm.isDefault;
-  // Change modal title and button
-  modal.querySelector('.modal-header').textContent = 'Edit payment method';
-  const addBtn = modal.querySelector('.btn-accent');
-  addBtn.textContent = 'Save changes';
-  addBtn.setAttribute('onclick', 'saveEditPM(' + idx + ')');
+  document.getElementById('pmSetDefault').checked = true;
+  showToast('Enter a replacement card. In production this would use the billing provider update flow.');
   openModal('addPaymentMethodModal');
 }
 
-function saveEditPM(idx){
-  const pm = appState.paymentHistory[idx];
+function saveReplacementPM(idx){
+  const oldPm = appState.paymentHistory[idx];
+  if (!oldPm) return;
+
+  const num = document.getElementById('pmCardNumber').value.replace(/\s/g, '');
+  const last4 = num.substring(num.length - 4) || '0000';
   const expVal = document.getElementById('pmCardExpiry').value.replace(/\s/g, '');
   const parts = expVal.split('/');
-  const expMonth = parseInt(parts[0]) || pm.expMonth;
-  const expYear = parseInt(parts[1]) || pm.expYear;
-  pm.expMonth = expMonth;
-  pm.expYear = expYear;
-  const isDefault = document.getElementById('pmSetDefault').checked;
-  if (isDefault && !pm.isDefault) {
-    (appState.paymentHistory || []).forEach(p => p.isDefault = false);
+  const expMonth = parseInt(parts[0]) || 12;
+  const expYear = parseInt(parts[1]) || 28;
+  const brandMap = { '4': 'Visa', '5':'Mastercard', '3':'Amex', '6':'Discover' };
+  const brand = brandMap[num.charAt(0)] || 'Visa';
+  const isDefault = document.getElementById('pmSetDefault').checked || oldPm.isDefault;
+
+  appState.paymentHistory[idx] = {
+    id: 'pm_' + Date.now(),
+    provider: 'stripe',
+    last4, brand,
+    expMonth, expYear,
+    isDefault
+  };
+
+  appState.cards = (appState.cards || []).filter(c => !(c.label && oldPm.last4 && c.label.includes(oldPm.last4)));
+  if (isDefault) {
+    (appState.paymentHistory || []).forEach((p, pIdx) => p.isDefault = pIdx === idx);
     (appState.cards || []).forEach(c => c.isDefault = false);
-    pm.isDefault = true;
-    const card = (appState.cards || []).find(c => c.label && c.label.includes(pm.last4));
-    if (card) card.isDefault = true;
+    appState.cards.unshift({ provider: 'stripe', label: brand + ' •••• ' + last4, isDefault: true });
+  } else {
+    appState.cards.push({ provider: 'stripe', label: brand + ' •••• ' + last4, isDefault: false });
   }
-  // Reset modal to "add" mode
+
   const modal = document.getElementById('addPaymentMethodModal');
   modal.querySelector('.modal-header').textContent = 'Add payment method';
   const addBtn = modal.querySelector('.btn-accent');
   addBtn.textContent = 'Add card';
   addBtn.setAttribute('onclick', 'saveNewPaymentMethod()');
-  document.getElementById('pmCardNumber').disabled = false;
+  document.getElementById('pmCardNumber').value = '';
+  document.getElementById('pmCardExpiry').value = '';
+  document.getElementById('pmCardCvc').value = '';
+  document.getElementById('pmCardZip').value = '';
+  document.getElementById('pmSetDefault').checked = true;
   closeModal('addPaymentMethodModal');
   renderSettings();
-  showToast('✅ Payment method updated');
+  showToast('✅ Replacement payment method saved');
 }
 
 function requestRefund(idx){
